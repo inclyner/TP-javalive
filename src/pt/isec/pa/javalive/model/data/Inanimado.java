@@ -1,6 +1,7 @@
 package pt.isec.pa.javalive.model.data;
 
 public non-sealed class Inanimado extends ElementoBase {
+
     @Override
     public int getId() {
         return 0;
@@ -19,3 +20,6 @@ public non-sealed class Inanimado extends ElementoBase {
 
 
 }
+
+
+
