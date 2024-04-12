@@ -12,4 +12,9 @@ public class Erva extends Flora{
         forca+=0.5;
     }
 
+    public void reproduz(){
+        numdeReproducoes++;
+        forca=60;
+    }
+
 }
