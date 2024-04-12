@@ -7,6 +7,11 @@ public abstract sealed class ElementoBase
     int x,y;
     int size;
 
+    public ElementoBase(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public int[] getcoords() {
         return new int[] {x,y};
     }
