@@ -38,6 +38,5 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
 
     @Override
     public void setForca(double forca) {
-        this.for
     }
 }
