@@ -1,4 +1,4 @@
-package pt.isec.pa.javalive.model.gameengine;
+package pt.isec.pa.javalife.model.gameengine;
 
 import java.util.HashSet;
 import java.util.List;

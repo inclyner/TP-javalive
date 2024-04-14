@@ -1,4 +1,4 @@
-package pt.isec.pa.javalive.model.data;
+package pt.isec.pa.javalife.model.data;
 
 
 public enum Elemento {

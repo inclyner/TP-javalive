@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TP-javalive.iml" filepath="$PROJECT_DIR$/TP-javalive.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TP-javalife.iml" filepath="$PROJECT_DIR$/TP-javalife.iml" />
     </modules>
   </component>
 </project>

@@ -1,7 +1,8 @@
-package pt.isec.pa.javalive.model.data;
+package pt.isec.pa.javalife.model.data;
 
-public non-sealed class Fauna extends ElementoBase {
-    public Fauna(int x, int y) {
+public sealed class Inanimado extends ElementoBase permits Pedra{
+
+    public Inanimado(int x, int y) {
         super(x, y);
     }
 
@@ -19,4 +20,10 @@ public non-sealed class Fauna extends ElementoBase {
     public Area getArea() {
         return null;
     }
+
+
+
 }
+
+
+

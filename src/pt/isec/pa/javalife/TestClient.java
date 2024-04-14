@@ -1,7 +1,7 @@
-package pt.isec.pa.javalive;
+package pt.isec.pa.javalife;
 
-import pt.isec.pa.javalive.model.gameengine.IGameEngine;
-import pt.isec.pa.javalive.model.gameengine.IGameEngineEvolve;
+import pt.isec.pa.javalife.model.gameengine.IGameEngine;
+import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
 public class TestClient implements IGameEngineEvolve {
     int count = 0;

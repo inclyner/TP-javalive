@@ -1,4 +1,4 @@
-package pt.isec.pa.javalive.model.data;
+package pt.isec.pa.javalife.model.data;
 
 public interface IElementoComImagem {
     String getImagem(); // path da imagem

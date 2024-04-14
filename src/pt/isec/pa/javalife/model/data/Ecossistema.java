@@ -1,8 +1,8 @@
-package pt.isec.pa.javalive.model.data;
+package pt.isec.pa.javalife.model.data;
 
 
-import pt.isec.pa.javalive.model.gameengine.IGameEngine;
-import pt.isec.pa.javalive.model.gameengine.IGameEngineEvolve;
+import pt.isec.pa.javalife.model.gameengine.IGameEngine;
+import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
 import java.io.Serializable;
 import java.util.Set;

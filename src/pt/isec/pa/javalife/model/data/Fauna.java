@@ -1,8 +1,11 @@
-package pt.isec.pa.javalive.model.data;
+package pt.isec.pa.javalife.model.data;
 
-public non-sealed class Inanimado extends ElementoBase {
+public sealed class Fauna extends ElementoBase permits Animal {
 
-    public Inanimado(int x, int y) {
+    int velocidade,direcao;
+    boolean estadoProcuraComida=false;
+
+    public Fauna(int x, int y) {
         super(x, y);
     }
 
@@ -20,10 +23,4 @@ public non-sealed class Inanimado extends ElementoBase {
     public Area getArea() {
         return null;
     }
-
-
-
 }
-
-
-

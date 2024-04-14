@@ -1,6 +1,6 @@
-import pt.isec.pa.javalive.TestClient;
-import pt.isec.pa.javalive.model.gameengine.GameEngine;
-import pt.isec.pa.javalive.model.gameengine.IGameEngine;
+import pt.isec.pa.javalife.TestClient;
+import pt.isec.pa.javalife.model.gameengine.GameEngine;
+import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 
 public class Main {
     public static void main(String[] args) {
