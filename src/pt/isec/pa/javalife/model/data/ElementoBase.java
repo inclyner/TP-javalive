@@ -7,9 +7,11 @@ public abstract sealed class ElementoBase
     int x,y;
     int sizeX,sizeY;
 
-    public ElementoBase(int x, int y) {
+    public ElementoBase(int x, int y,int sizeX, int sizeY) {
         this.x = x;
         this.y = y;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
     }
 
     public int[] getcoords() {
@@ -19,6 +21,13 @@ public abstract sealed class ElementoBase
     public void setcoords(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public int getSizeX(){
+        return sizeX;
+    }
+    public int getSizeY(){
+        return sizeY;
     }
 
 

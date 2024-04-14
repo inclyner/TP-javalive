@@ -1,6 +1,6 @@
 package pt.isec.pa.javalife.model.data;
 
-public sealed class Flora extends ElementoBase permits Erva {
+public sealed class Flora extends ElementoBase implements IElementoComForca permits Erva {
 
     boolean reproduzivel=false; // quando a forca chega aos 90 a erva pode reproduzir
     int numdeReproducoes=0; //quantas vezes a erva ja foi reproduzida (max de 2)
@@ -29,4 +29,13 @@ public sealed class Flora extends ElementoBase permits Erva {
     }
 
 
+    @Override
+    public double getForca() {
+        return 0;
+    }
+
+    @Override
+    public void setForca(double forca) {
+        this.for
+    }
 }

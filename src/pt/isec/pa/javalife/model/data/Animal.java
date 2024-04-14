@@ -1,12 +1,12 @@
 package pt.isec.pa.javalife.model.data;
 
-public final class Animal extends Fauna{
+import pt.isec.pa.javalife.model.data.Fauna;
+
+public final class Animal extends Fauna {
 
 
-    public Animal(int x, int y) {
-        super(x, y);
-        direcao= (int) (Math.random()*360);
+    public Animal(int x, int y, int sizeX, int sizeY) {
+        super(x, y, sizeX, sizeY);
+        direcao = (int) (Math.random() * 360);
     }
-
-
 }
