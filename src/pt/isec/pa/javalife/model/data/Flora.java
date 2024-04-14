@@ -24,8 +24,10 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
     }
 
     public void reproduz(){
-        numdeReproducoes++;
-        //forca=60; setforca(..)
+        if (reproduzivel && numdeReproducoes < 2){
+            numdeReproducoes++;
+            setForca(60);
+        }
     }
 
 

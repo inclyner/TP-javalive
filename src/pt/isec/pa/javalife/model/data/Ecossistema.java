@@ -20,7 +20,8 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
         // Adiciona pedras na borda superior e inferior
         for (double i = area.esquerda(); i <= area.direita(); i += 1) {
-            elementos.add(new Pedra((int) i, (int) area.cima()));
+            elementos.add(new Pedra((int) i, (int) area.cima(), 1, 1));
+            elementos.add(new Pedra((int) i, (int) area.baixo(), 1, 1));
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
