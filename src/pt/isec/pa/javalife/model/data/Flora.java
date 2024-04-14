@@ -4,8 +4,8 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
 
     boolean reproduzivel=false; // quando a forca chega aos 90 a erva pode reproduzir
     int numdeReproducoes=0; //quantas vezes a erva ja foi reproduzida (max de 2)
-    public Flora(int x, int y) {
-        super(x, y);
+    public Flora(int x, int y, int sizeX, int sizeY) {
+        super(x, y, sizeX, sizeY);
     }
 
     @Override

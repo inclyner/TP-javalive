@@ -5,10 +5,11 @@ import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Ecossistema implements Serializable, IGameEngineEvolve {
-    private Set<IElemento> elementos;
+    private Set<IElemento> elementos = null;
 
 
     // set up inicial do ecossistema (criação e inserção de elementos)
@@ -28,6 +29,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             elementos.add(new Pedra((int) j, (int) area.direita(), 1, 1));
         }
     }
+
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
 
