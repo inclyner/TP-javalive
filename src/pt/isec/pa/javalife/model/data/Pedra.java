@@ -4,7 +4,7 @@ import pt.isec.pa.javalife.model.data.Inanimado;
 
 public final class Pedra extends Inanimado {
 
-    public Pedra(int x, int y, int sizeX, int sizeY) {
-        super(x, y, sizeX, sizeY);
+    public Pedra(int cima, int esquerda, int baixo, int direita) {
+        super(new Area (cima, esquerda, baixo, direita));;
     }
 }

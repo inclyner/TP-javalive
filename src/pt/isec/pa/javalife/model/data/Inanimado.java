@@ -1,11 +1,9 @@
 package pt.isec.pa.javalife.model.data;
 
-public sealed class Inanimado extends ElementoBase permits Pedra {
+public sealed class Inanimado extends ElementoBase permits Pedra{
 
-    int id;
-
-    public Inanimado(int x, int y,int sizeX,int sizeY) {
-         super(x, y,sizeX,sizeY);
+    public Inanimado(Area area) {
+        super(area);
     }
 
     @Override
