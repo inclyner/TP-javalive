@@ -38,8 +38,6 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
         setForca(forca - forcaSobreposicao);
     }
 
-
-
 //region gets e sets
     @Override
     public int getId() {
