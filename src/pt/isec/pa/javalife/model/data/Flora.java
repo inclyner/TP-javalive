@@ -1,11 +1,13 @@
 package pt.isec.pa.javalife.model.data;
 
 public sealed class Flora extends ElementoBase implements IElementoComForca permits Erva {
-    static int proxID = 1;
-    int id;
-    double forca;
-    boolean reproduzivel = false; // quando a forca chega aos 90 a erva pode reproduzir
-    int numdeReproducoes = 0;//quantas vezes a erva ja foi reproduzida (max de 2)
+    private static int proxID = 1;
+    private int id;
+    private double forca;
+    private boolean reproduzivel=false; // quando a forca chega aos 90 a erva pode reproduzir
+    private int numdeReproducoes=0;//quantas vezes a erva ja foi reproduzida (max de 2)
+    private final float forcaTick = 0.5f;
+    private float forcaSobreposicao = 1;
 
 
     public Flora(Area area) {
@@ -15,39 +17,30 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
         setForca(50);
     }
 
-    public void evoluir() {
-        aumentarForca(0.5);
-        if (forca >= 90 && !reproduzivel) {
+    public void evoluir(){
+        setForca(forca + forcaTick);
+        if(forca>=90 && !reproduzivel){
             reproduzivel = true;
         }
 
     }
 
     public boolean reproduz() {
-        if (reproduzivel && numdeReproducoes < 2) {
-            return true;
-        }
-        return false;
+        return reproduzivel && numdeReproducoes < 2;
     }
 
-    public void reproduziu() {
+    public void reproduziu(){
         numdeReproducoes++;
         setForca(60);
     }
 
-    public void aumentarForca(double valor) {
-        setForca(forca + valor);
-    }
-
-    public void reduzirForca(double valor) {
-        setForca(forca - valor);
-        if (forca <= 0) {
-            //Ecossistema.removerElemento(this);
-        }
+    public void reduzirForcaSobreposicao() {
+        setForca(forca - forcaSobreposicao);
     }
 
 
-    //region gets e sets
+
+//region gets e sets
     @Override
     public int getId() {
         return id;
@@ -58,11 +51,6 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
         return Elemento.FLORA;
     }
 
-    @Override
-    public Area getArea() {
-        return area;
-    }
-
 
     @Override
     public double getForca() {
@@ -71,8 +59,16 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
 
     @Override
     public void setForca(double forca) {
-        this.forca = Math.min(Math.max(forca, 0), 100);
-
+        this.forca = Math.min(Math.max(forca,0), 100);
     }
-//endregion
+
+    public float getForcaSobreposicao() {
+        return forcaSobreposicao;
+    }
+
+    public void setForcaSobreposicao(float forcaSobreposicao) {
+        this.forcaSobreposicao = forcaSobreposicao;
+    }
+
+    //endregion
 }

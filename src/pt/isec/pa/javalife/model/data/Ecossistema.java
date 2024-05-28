@@ -76,14 +76,25 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         for (IElemento e : elementos) {
             System.out.println(e.getArea());
             System.out.println("e.getId()  = " + e.getId() + " e.getType() = " + e.getType());
+            //region evoluçao da flora
             if (e instanceof Flora flora) {
                 flora.evoluir();
                 if (flora.reproduz()) {
-                    if (verificaAdjacentes(flora) != null)
+                    Area a = verificaAdjacentes(flora);
+                    if (a != null) {
                         flora.reproduziu();
+                        //!MUDAR ISTO (Adicionar erva)
+                        if (flora instanceof Erva)
+                            addElemento(new Erva(a));
+                    }
                 }
-
+                for (int i = 0; i < verificaSobreposicao(e).size(); i++)
+                    flora.reduzirForcaSobreposicao();
+                if (flora.getForca() <= 0)
+                    elementos.remove(flora);
             }
+            //endregion
+
         }
     }
 
@@ -99,7 +110,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         // Lista para armazenar as áreas adjacentes
         List<Area> areasAdjacentes = new ArrayList<>();
 
-        // Adiciona áreas adjacentes
+        //region verifica ajacentes
         if (areaA.cima() - altura >= 0) {
             areasAdjacentes.add(new Area(areaA.cima() - altura, areaA.esquerda(), areaA.cima(), areaA.direita()));
         }
@@ -112,6 +123,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         if (areaA.direita() + largura <= area.direita()) {
             areasAdjacentes.add(new Area(areaA.cima(), areaA.direita(), areaA.baixo(), areaA.direita() + largura));
         }
+        //endregion
 
         // Verifica se alguma área adjacente está livre
         for (Area adj : areasAdjacentes) {
@@ -131,15 +143,16 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
         return false;
     }
-/*
-    public boolean verificaSobreposicao(IElemento elemento){
-        Area areaA = elemento.getArea();
-        for(IElemento elemento : elementos){
-            if(elemento instanceof Fauna fauna){
-                fauna.getArea();
-            }
-        }
 
+    public List<Elemento> verificaSobreposicao(IElemento elemento){
+        Area area = elemento.getArea();
+        List<Elemento> list = new ArrayList<>();
+        for(IElemento e : elementos){
+            if(e.getId() == elemento.getId() && e.getType()==elemento.getType())
+                continue;
+            if(elemento.getArea().compareTo(area))
+                list.add(e.getType());
+        }
+        return list;
     }
-*/
 }

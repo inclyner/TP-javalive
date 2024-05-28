@@ -6,6 +6,9 @@ public final class Erva extends Flora{
         super(new Area (cima, esquerda, baixo, direita));
     }
 
+    public Erva(Area area){
+        super(area);
+    }
 
 }
 
