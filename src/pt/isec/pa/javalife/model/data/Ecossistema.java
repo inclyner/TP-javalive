@@ -125,7 +125,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
         return false;
     }
-
+/*
     public boolean verificaSobreposicao(IElemento elemento){
         Area areaA = elemento.getArea();
         for(IElemento elemento : elementos){
@@ -135,5 +135,5 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
 
     }
-
+*/
 }
