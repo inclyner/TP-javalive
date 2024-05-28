@@ -3,7 +3,6 @@ package pt.isec.pa.javalife.model.data;
 
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,10 +10,14 @@ import java.util.Set;
 public class Ecossistema implements Serializable, IGameEngineEvolve {
     private Set<IElemento> elementos= new HashSet<>();
 
+    private Set<IElemento> p_elementos;
 
     // set up inicial do ecossistema (criação e inserção de elementos)
     public Ecossistema(){
         //TODO alterar para meter as coordenadas pelas definições
+        // definir as unidades (tipo 1000 pixeis de largura são 2 pixeis por unidade)
+
+        //region criação de pedras
         Area area= new Area(0,0,10,10);
         //preenche a cerca da area com pedras
 
@@ -45,7 +48,8 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
             // verifica se ha alguma elemento na posição gerada
             for (IElemento e: elementos) {
-                if(e.getArea().esquerda()<= x && e.getArea().direita()>=x+ largura && e.getArea().cima() <= y && e.getArea().baixo() >= y+ altura) { // se houver um elemento no sitio, ou dentro dos limites deste nao o adiciona e retira 1 ao ciclo
+                // se houver um elemento no sitio, ou dentro dos limites deste nao o adiciona e retira 1 ao ciclo
+                if(e.getArea().esquerda()<= x && e.getArea().direita()>=x+ largura && e.getArea().cima() <= y && e.getArea().baixo() >= y+ altura) {
                     i--;
                     System.out.println("x = " + x + "Y =" +y);
                     System.out.println("valor:" + (e.getArea().esquerda()<= x && e.getArea().direita()>=x+ largura && e.getArea().cima() <= y && e.getArea().baixo() >= y+ altura));
@@ -57,6 +61,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             elementos.add(new Pedra(x, y, x+ altura, y+ largura));
         }
 
+        //endregion
 
 
 
@@ -64,12 +69,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
+        //class memento
 
         //! TEMPORÁRIO apenas para testes
         for (IElemento e: elementos) {
             System.out.println(e.getArea());
             System.out.println("e.getId()  = " + e.getId() + " e.getType() = " + e.getType());
-
 
         }
 

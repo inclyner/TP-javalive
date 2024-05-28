@@ -10,7 +10,6 @@ public sealed class Inanimado extends ElementoBase permits Pedra{
         super(area);
         this.id = proxid;
         proxid++;
-
     }
 
     @Override
@@ -27,6 +26,7 @@ public sealed class Inanimado extends ElementoBase permits Pedra{
     public Area getArea() {
         return area;
     }
+
 
 
 
