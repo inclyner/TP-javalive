@@ -12,8 +12,6 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     private FaunaState state;
     int velocidade, direcao;
     double forca = 50;
-    boolean estadoProcuraComida = false;
-
     static int proxid = 1;
     int id;
 
@@ -30,6 +28,17 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     private void setState(FaunaState state) {
         this.state = state;
+    }
+
+
+    public void evoluir() {
+        if (state == FaunaState.NAO_PROCURA_COMIDA) {
+
+        }
+        else if (state == FaunaState.PROCURA_COMIDA) {
+
+        }
+
     }
 
     @Override
