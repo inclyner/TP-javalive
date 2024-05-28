@@ -15,5 +15,4 @@ public abstract sealed class ElementoBase
         return area;
     }
 
-
 }
