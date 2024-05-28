@@ -1,6 +1,8 @@
 package pt.isec.pa.javalife.model.data;
 
 
+import pt.isec.pa.javalife.model.factory.ElementFactory;
+import pt.isec.pa.javalife.model.factory.ElementType;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
@@ -22,17 +24,24 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //region criação de pedras
         Area area = new Area(0, 0, 10, 10);
         //preenche a cerca da area com pedras
-
+        Area aux = new Area(0, 0, 0, 0);
         // Adiciona pedras na borda superior e inferior
         for (double i = area.esquerda(); i <= area.direita(); i += 1) {
-            elementos.add(new Pedra((int) i, (int) area.cima(), 1, 1));
-            elementos.add(new Pedra((int) i, (int) area.baixo(), 1, 1));
+            // Adiciona pedras na borda superior e inferior
+            aux = new Area(i, area.cima(), 1, 1);
+            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
+            aux = new Area((int) i, (int) area.baixo(), 1, 1);
+            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
         for (double j = area.cima() + 1; j < area.baixo(); j += 1) {
-            elementos.add(new Pedra((int) area.esquerda(), (int) j, 1, 1));
-            elementos.add(new Pedra((int) j, (int) area.direita(), 1, 1));
+            // adiciona pedras na borda esquerda
+            aux = new Area(area.esquerda(), j, 1, 1);
+            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
+            // adiciona pedras na borda direita
+            aux = new Area(j, (int) area.direita(), 1, 1);
+            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
         }
 
         //cria pedras de varios tamanhos
@@ -60,7 +69,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             }
 
             // considero o x e y cima e esquerda como a base do elemento e adiciono a altura e a largura
-            elementos.add(new Pedra(x, y, x + altura, y + largura));
+            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, new Area(x, y,x+ altura, y+largura)));
         }
 
         //endregion
@@ -144,13 +153,13 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return false;
     }
 
-    public List<Elemento> verificaSobreposicao(IElemento elemento){
+    public List<Elemento> verificaSobreposicao(IElemento elemento) {
         Area area = elemento.getArea();
         List<Elemento> list = new ArrayList<>();
-        for(IElemento e : elementos){
-            if(e.getId() == elemento.getId() && e.getType()==elemento.getType())
+        for (IElemento e : elementos) {
+            if (e.getId() == elemento.getId() && e.getType() == elemento.getType())
                 continue;
-            if(elemento.getArea().compareTo(area))
+            if (elemento.getArea().compareTo(area))
                 list.add(e.getType());
         }
         return list;
