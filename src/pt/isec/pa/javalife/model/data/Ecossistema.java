@@ -3,14 +3,16 @@ package pt.isec.pa.javalife.model.data;
 
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Ecossistema implements Serializable, IGameEngineEvolve {
     private Set<IElemento> elementos= new HashSet<>();
-
-    private Set<IElemento> p_elementos;
+    private Area area;
 
     // set up inicial do ecossistema (criação e inserção de elementos)
     public Ecossistema(){
@@ -75,18 +77,69 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         for (IElemento e: elementos) {
             System.out.println(e.getArea());
             System.out.println("e.getId()  = " + e.getId() + " e.getType() = " + e.getType());
+            if(e instanceof Flora flora) {
+                flora.evoluir();
+                if(flora.reproduz()){
+                    if(verificaAdjacentes(flora)!=null)
+                        flora.reproduziu();
+                }
 
+            }
         }
-
-
     }
 
     public void addElemento(IElemento elemento) {
-        this.elementos.add(elemento);
+        elementos.add(elemento);
     }
 
+    public Area verificaAdjacentes(IElemento elemento){
+        Area areaA = elemento.getArea();
+        double altura = areaA.baixo() - areaA.cima() + 1;
+        double largura = areaA.direita() - areaA.esquerda() + 1;
 
+        // Lista para armazenar as áreas adjacentes
+        List<Area> areasAdjacentes = new ArrayList<>();
 
+        // Adiciona áreas adjacentes
+        if (areaA.cima() - altura >= 0) {
+            areasAdjacentes.add(new Area(areaA.cima() - altura, areaA.esquerda(), areaA.cima(), areaA.direita()));
+        }
+        if (areaA.baixo() + altura <= area.baixo()) {
+            areasAdjacentes.add(new Area(areaA.baixo(), areaA.esquerda(), areaA.baixo() + altura, areaA.direita()));
+        }
+        if (areaA.esquerda() - largura >= 0) {
+            areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() - largura, areaA.baixo(), areaA.esquerda()));
+        }
+        if (areaA.direita() + largura <= area.direita()) {
+            areasAdjacentes.add(new Area(areaA.cima(), areaA.direita(), areaA.baixo(), areaA.direita() + largura));
+        }
 
+        // Verifica se alguma área adjacente está livre
+        for (Area adj : areasAdjacentes) {
+            if (isAreaLivre(adj)) {
+                return adj;
+            }
+        }
 
+        return null;
+    }
+    private boolean isAreaLivre(Area area){
+        for(IElemento elemento : elementos){
+            if(elemento.getArea().compareTo(area)){
+                return true;
+            }
+        }
+        return false;
+    }
+/*
+    public boolean verificaSobreposicao(IElemento elemento){
+        Area areaA = elemento.getArea();
+        for(IElemento elemento : elementos){
+            if(elemento instanceof Fauna fauna){
+                fauna.getArea();
+            }
+        }
+
+    }
+*/
 }
