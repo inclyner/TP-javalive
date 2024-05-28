@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.Set;
 
 public class Ecossistema implements Serializable, IGameEngineEvolve {
-    private Set<IElemento> elementos= new HashSet<>();
+    private Set<IElemento> elementos = new HashSet<>();
     private Area area;
 
     // set up inicial do ecossistema (criação e inserção de elementos)
-    public Ecossistema(){
+    public Ecossistema() {
         //TODO alterar para meter as coordenadas pelas definições
         // definir as unidades (tipo 1000 pixeis de largura são 2 pixeis por unidade)
 
         //region criação de pedras
-        Area area= new Area(0,0,10,10);
+        Area area = new Area(0, 0, 10, 10);
         //preenche a cerca da area com pedras
 
         // Adiciona pedras na borda superior e inferior
@@ -31,12 +31,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
         for (double j = area.cima() + 1; j < area.baixo(); j += 1) {
-            elementos.add(new Pedra((int) area.esquerda(), (int) j,1,1));
+            elementos.add(new Pedra((int) area.esquerda(), (int) j, 1, 1));
             elementos.add(new Pedra((int) j, (int) area.direita(), 1, 1));
         }
 
         //cria pedras de varios tamanhos
-        int quantidade= 10;
+        int quantidade = 10;
         // Cria um objeto Random para gerar dimensões aleatórias
         java.util.Random random = new java.util.Random();
         for (int i = 0; i < quantidade; i++) {
@@ -45,26 +45,25 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             int altura = random.nextInt(2) + 1;
 
             // posição aleatória dentro da área especificada
-            double x = random.nextDouble() * (area.direita()-1)+area.esquerda()+1; //gera valores entre 1 e 10 nao inclusive (para area 0 0 10 10)
-            double y = random.nextDouble()* (area.baixo()-1)+ area.cima() + 1;// gera valores entre 1 e 10 nao inclusive (para area 0 0 10 10)
+            double x = random.nextDouble() * (area.direita() - 1) + area.esquerda() + 1; //gera valores entre 1 e 10 nao inclusive (para area 0 0 10 10)
+            double y = random.nextDouble() * (area.baixo() - 1) + area.cima() + 1;// gera valores entre 1 e 10 nao inclusive (para area 0 0 10 10)
 
             // verifica se ha alguma elemento na posição gerada
-            for (IElemento e: elementos) {
+            for (IElemento e : elementos) {
                 // se houver um elemento no sitio, ou dentro dos limites deste nao o adiciona e retira 1 ao ciclo
-                if(e.getArea().esquerda()<= x && e.getArea().direita()>=x+ largura && e.getArea().cima() <= y && e.getArea().baixo() >= y+ altura) {
+                if (e.getArea().esquerda() <= x && e.getArea().direita() >= x + largura && e.getArea().cima() <= y && e.getArea().baixo() >= y + altura) {
                     i--;
-                    System.out.println("x = " + x + "Y =" +y);
-                    System.out.println("valor:" + (e.getArea().esquerda()<= x && e.getArea().direita()>=x+ largura && e.getArea().cima() <= y && e.getArea().baixo() >= y+ altura));
+                    System.out.println("x = " + x + "Y =" + y);
+                    System.out.println("valor:" + (e.getArea().esquerda() <= x && e.getArea().direita() >= x + largura && e.getArea().cima() <= y && e.getArea().baixo() >= y + altura));
                     break;
                 }
             }
 
             // considero o x e y cima e esquerda como a base do elemento e adiciono a altura e a largura
-            elementos.add(new Pedra(x, y, x+ altura, y+ largura));
+            elementos.add(new Pedra(x, y, x + altura, y + largura));
         }
 
         //endregion
-
 
 
     }
@@ -74,13 +73,13 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //class memento
 
         //! TEMPORÁRIO apenas para testes
-        for (IElemento e: elementos) {
+        for (IElemento e : elementos) {
             System.out.println(e.getArea());
             System.out.println("e.getId()  = " + e.getId() + " e.getType() = " + e.getType());
-            if(e instanceof Flora flora) {
+            if (e instanceof Flora flora) {
                 flora.evoluir();
-                if(flora.reproduz()){
-                    if(verificaAdjacentes(flora)!=null)
+                if (flora.reproduz()) {
+                    if (verificaAdjacentes(flora) != null)
                         flora.reproduziu();
                 }
 
@@ -92,7 +91,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         elementos.add(elemento);
     }
 
-    public Area verificaAdjacentes(IElemento elemento){
+    public Area verificaAdjacentes(IElemento elemento) {
         Area areaA = elemento.getArea();
         double altura = areaA.baixo() - areaA.cima() + 1;
         double largura = areaA.direita() - areaA.esquerda() + 1;
@@ -123,9 +122,10 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
         return null;
     }
-    private boolean isAreaLivre(Area area){
-        for(IElemento elemento : elementos){
-            if(elemento.getArea().compareTo(area)){
+
+    private boolean isAreaLivre(Area area) {
+        for (IElemento elemento : elementos) {
+            if (elemento.getArea().compareTo(area)) {
                 return true;
             }
         }
