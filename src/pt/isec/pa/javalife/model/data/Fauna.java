@@ -23,11 +23,25 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         this.id = proxid;
         setState(FaunaState.NAO_PROCURA_COMIDA);
         proxid++;
+
+        //diracao varia de 0 a 360
+        direcao = (int) (Math.random() * 359);
     }
 
 
     private void setState(FaunaState state) {
         this.state = state;
+    }
+
+
+    public void evoluir() {
+        if (state == FaunaState.NAO_PROCURA_COMIDA) {
+
+        }
+        else if (state == FaunaState.PROCURA_COMIDA) {
+
+        }
+
     }
 
     private void movimentacao(){
