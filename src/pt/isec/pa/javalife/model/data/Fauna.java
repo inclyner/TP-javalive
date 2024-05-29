@@ -1,7 +1,5 @@
 package pt.isec.pa.javalife.model.data;
 
-import pt.isec.pa.javalife.model.gameengine.GameEngineState;
-
 public sealed class Fauna extends ElementoBase implements IElementoComForca permits Animal {
 
     public enum FaunaState {
@@ -12,14 +10,14 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     private FaunaState state;
     private int velocidade, direcao;
     private double forca = 50;
-    private boolean estadoProcuraComida = false;
+    private final boolean estadoProcuraComida = false;
     private final float forcaMovimentacao = 0.5f;
     private IElemento elemetoPerseguir;
 
-    private double forcaReproducao = 25;
-    private int unidTempo=0;
+    private final double forcaReproducao = 25;
+    private int unidTempo = 0;
     private static int proxid = 1;
-    private int id;
+    private final int id;
 
     public Fauna(Area area) {
         super(area);
@@ -39,24 +37,24 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         this.state = state;
     }
 
-    public boolean reproducao(boolean isInRange){
+    public boolean reproducao(boolean isInRange) {
 
-        if(isInRange){
+        if (isInRange) {
             unidTempo++;
-        }else{
-            unidTempo=0;
+        } else {
+            unidTempo = 0;
             return false;
         }
-        if(unidTempo==10){
-            this.setForca(forca-forcaReproducao);
-            unidTempo=0;
+        if (unidTempo == 10) {
+            this.setForca(forca - forcaReproducao);
+            unidTempo = 0;
             return true;
         }
         return false;
     }
 
 
-    public Area movimentacao(){
+    public Area movimentacao() {
         direcao = (int) (Math.random() * 359);
         //cima + velocidade * Math.cos(Math.toRadians(direcao));
         //esquerda + velocidade * Math.sin(Math.toRadians(direcao));
@@ -65,8 +63,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
                 getArea().baixo() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().direita() + velocidade * Math.sin(Math.toRadians(direcao)));
     }
 
-    public Area moverParaComida (Area area,boolean existePedra){
-        if(!existePedra) {
+    public Area moverParaComida(Area area, boolean existePedra) {
+        if (!existePedra) {
             double deltaX = area.esquerda() - this.getArea().esquerda();
             double deltaY = area.cima() - this.getArea().cima();
 
@@ -83,9 +81,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
                     this.getArea().esquerda() + deslocamentoX,
                     this.getArea().baixo() + deslocamentoY,
                     this.getArea().direita() + deslocamentoX);
-        }
-        else{
-           return movimentacao();
+        } else {
+            return movimentacao();
         }
     }
 
@@ -112,7 +109,7 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     @Override
     public void setForca(double forca) {
-        this.forca = Math.min(Math.max(forca,0), 100);
+        this.forca = Math.min(Math.max(forca, 0), 100);
         if (forca < 35)
             setState(FaunaState.PROCURA_COMIDA);
         else if (forca >= 80)
@@ -131,7 +128,7 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         return elemetoPerseguir;
     }
 
-    public boolean verificarAdjacente(){
+    public boolean verificarAdjacente() {
         return moverParaComida(area, false).compareTo(elemetoPerseguir.getArea());
     }
 }

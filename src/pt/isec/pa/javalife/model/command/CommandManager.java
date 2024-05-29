@@ -1,10 +1,6 @@
 package pt.isec.pa.javalife.model.command;
 
-import pt.isec.pa.javalife.model.memento.Originator;
-
 public class CommandManager {
-
-
 
 
     public static void undo() {

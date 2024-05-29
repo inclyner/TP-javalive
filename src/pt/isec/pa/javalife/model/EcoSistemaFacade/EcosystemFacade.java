@@ -5,18 +5,16 @@ import pt.isec.pa.javalife.model.command.AdicionarElementoCommand;
 import pt.isec.pa.javalife.model.command.CommandManager;
 import pt.isec.pa.javalife.model.command.RemoverElementoCommand;
 import pt.isec.pa.javalife.model.data.Ecossistema;
-import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.data.IElemento;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.List;
 
 public class EcosystemFacade {
 
-    private PropertyChangeSupport support;
+    private final PropertyChangeSupport support;
     private Ecossistema ecossistema;
-    private CommandManager cm;
+    private final CommandManager cm;
 
 
     public EcosystemFacade() {
@@ -53,8 +51,6 @@ public class EcosystemFacade {
         CommandManager.undo();
         support.firePropertyChange("ecosystem", null, ecossistema);
     }
-
-
 
 
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
