@@ -16,6 +16,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     private final float forcaMovimentacao = 0.5f;
     private IElemento elemetoPerseguir;
 
+    private double forcaReproducao = 25;
+    private int unidTempo=0;
     private static int proxid = 1;
     private int id;
 
@@ -24,6 +26,7 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         this.id = proxid;
         setState(FaunaState.NAO_PROCURA_COMIDA);
         proxid++;
+
         //diracao varia de 0 a 360
         //direcao = (int) (Math.random() * 359);
     }
@@ -36,16 +39,22 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         this.state = state;
     }
 
+    public boolean reproducao(boolean isInRange){
 
-    public void evoluir() {
-        if (state == FaunaState.NAO_PROCURA_COMIDA) {
-
+        if(isInRange){
+            unidTempo++;
+        }else{
+            unidTempo=0;
+            return false;
         }
-        else if (state == FaunaState.PROCURA_COMIDA) {
-
+        if(unidTempo==10){
+            this.setForca(forca-forcaReproducao);
+            unidTempo=0;
+            return true;
         }
-
+        return false;
     }
+
 
     public Area movimentacao(){
         direcao = (int) (Math.random() * 359);
@@ -56,12 +65,28 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
                 getArea().baixo() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().direita() + velocidade * Math.sin(Math.toRadians(direcao)));
     }
 
-    public void procuraComida(){
+    public Area moverParaComida (Area area,boolean existePedra){
+        if(!existePedra) {
+            double deltaX = area.esquerda() - this.getArea().esquerda();
+            double deltaY = area.cima() - this.getArea().cima();
 
-    }
+            // Calcula o ângulo em radianos entre a posição atual e a posição de destino
+            double angulo = Math.atan2(deltaY, deltaX);
 
-    public Area moverParaComida(Area area, boolean pedra){
-        return null;
+            double passo = 1;
+
+            // Calcula o deslocamento em X e Y baseado no ângulo e no passo
+            double deslocamentoX = passo * Math.cos(angulo);
+            double deslocamentoY = passo * Math.sin(angulo);
+
+            return new Area(this.getArea().cima() + deslocamentoY,
+                    this.getArea().esquerda() + deslocamentoX,
+                    this.getArea().baixo() + deslocamentoY,
+                    this.getArea().direita() + deslocamentoX);
+        }
+        else{
+           return movimentacao();
+        }
     }
 
     @Override
