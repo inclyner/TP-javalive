@@ -14,7 +14,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     private double forca = 50;
     private boolean estadoProcuraComida = false;
     private final float forcaMovimentacao = 0.5f;
-
+    private double forcaReproducao = 25;
+    private int unidTempo=0;
     private static int proxid = 1;
     private int id;
 
@@ -44,10 +45,56 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     }
 
-    private void movimentacao(){
+    public boolean reproducao(boolean isInRange){
+
+        if(isInRange){
+            unidTempo++;
+        }else{
+            unidTempo=0;
+            return false;
+        }
+        if(unidTempo==10){
+            this.setForca(forca-forcaReproducao);
+            unidTempo=0;
+            return true;
+        }
+        return false;
+    }
+
+
+    public Area movimentacao(){
         direcao = (int) (Math.random() * 359);
         //cima + velocidade * Math.cos(Math.toRadians(direcao));
-        setForca(getForca() - forcaMovimentacao);
+        //esquerda + velocidade * Math.sin(Math.toRadians(direcao));
+        //setForca(getForca() - forcaMovimentacao);
+        return new Area(getArea().cima() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().esquerda() + velocidade * Math.sin(Math.toRadians(direcao)),
+                getArea().baixo() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().direita() + velocidade * Math.sin(Math.toRadians(direcao)));
+    }
+
+
+
+    public Area moverParaComida (Area area,boolean existePedra){
+        if(!existePedra) {
+            double deltaX = area.esquerda() - this.getArea().esquerda();
+            double deltaY = area.cima() - this.getArea().cima();
+
+            // Calcula o ângulo em radianos entre a posição atual e a posição de destino
+            double angulo = Math.atan2(deltaY, deltaX);
+
+            double passo = 1;
+
+            // Calcula o deslocamento em X e Y baseado no ângulo e no passo
+            double deslocamentoX = passo * Math.cos(angulo);
+            double deslocamentoY = passo * Math.sin(angulo);
+
+            return new Area(this.getArea().cima() + deslocamentoY,
+                    this.getArea().esquerda() + deslocamentoX,
+                    this.getArea().baixo() + deslocamentoY,
+                    this.getArea().direita() + deslocamentoX);
+        }
+        else{
+           return movimentacao();
+        }
     }
 
     @Override
