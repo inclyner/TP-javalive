@@ -1,6 +1,6 @@
 package pt.isec.pa.javalife.model.data;
 
-public record Area(double cima, double esquerda,double baixo, double direita) {
+public record Area(double cima, double esquerda, double baixo, double direita) {
     public boolean compareTo(Area area) {
         // area.compareTo(area)
         //  areaanimal.compareto(areaquequeroir)
@@ -14,6 +14,6 @@ public record Area(double cima, double esquerda,double baixo, double direita) {
         //
 
         return (area.cima <= this.cima && area.cima >= this.baixo) || (area.baixo <= this.cima && area.baixo >= this.baixo)
-        || (area.direita >= this.esquerda && area.direita <= this.direita) || (area.esquerda >= this.esquerda && area.esquerda <= this.direita);
+                || (area.direita >= this.esquerda && area.direita <= this.direita) || (area.esquerda >= this.esquerda && area.esquerda <= this.direita);
     }
 }

@@ -1,26 +1,24 @@
 package pt.isec.pa.javalife.model.memento;
 
-public class Originator {
-    private String state;
+import pt.isec.pa.javalife.model.data.Ecossistema;
 
-    public void setState(String state) {
-        this.state = state;
+import java.io.IOException;
+import java.io.Serializable;
+
+public class Originator implements Serializable, IOriginator {
+    Ecossistema state;
+
+    @Override
+    public IMemento save() throws IOException {
+        return new Memento(this);
     }
 
-    public String getState() {
-        return state;
+    @Override
+    public void restore(IMemento memento) {
+        Object obj = memento.getState();
+        if (obj instanceof Originator m)
+            state = m.state;
     }
 
-    public Memento saveStateToMemento() {
-        return new Memento(state);
-    }
 
-    public void getStateFromMemento(Memento memento) {
-        state = memento.getState();
-    }
-
-    public void evolve() {
-        // Simula a evolução do estado
-        this.state = "Novo Estado após tick " + System.currentTimeMillis();
-    }
 }

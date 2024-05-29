@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Ecossistema implements Serializable, IGameEngineEvolve {
-    private Set<IElemento> elementos = new HashSet<>();
+    private final Set<IElemento> elementos = new HashSet<>();
     private Area area;
 
     // set up inicial do ecossistema (criação e inserção de elementos)
@@ -68,13 +68,14 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             }
 
             // considero o x e y cima e esquerda como a base do elemento e adiciono a altura e a largura
-            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, new Area(x, y,x+ altura, y+largura)));
+            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, new Area(x, y, x + altura, y + largura)));
         }
 
         //endregion
 
 
     }
+
 
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
@@ -92,14 +93,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     if (a != null) {
                         flora.reproduziu();
                         //!MUDAR ISTO (Adicionar erva)
-                        if (flora instanceof Erva)
-                            addElemento(new Erva(a));
+                        if (flora instanceof Erva) addElemento(new Erva(a));
                     }
                 }
                 for (int i = 0; i < verificaSobreposicao(e).size(); i++)
                     flora.reduzirForcaSobreposicao();
-                if (flora.getForca() <= 0)
-                    elementos.remove(flora);
+                if (flora.getForca() <= 0) elementos.remove(flora);
             }
             //endregion
 
@@ -156,11 +155,14 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         Area area = elemento.getArea();
         List<Elemento> list = new ArrayList<>();
         for (IElemento e : elementos) {
-            if (e.getId() == elemento.getId() && e.getType() == elemento.getType())
-                continue;
-            if (elemento.getArea().compareTo(area))
-                list.add(e.getType());
+            if (e.getId() == elemento.getId() && e.getType() == elemento.getType()) continue;
+            if (elemento.getArea().compareTo(area)) list.add(e.getType());
         }
         return list;
     }
+
+
+    //* novo a partir daqui
+
+
 }

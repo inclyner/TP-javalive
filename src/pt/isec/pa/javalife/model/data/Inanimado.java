@@ -1,6 +1,6 @@
 package pt.isec.pa.javalife.model.data;
 
-public sealed class Inanimado extends ElementoBase permits Pedra{
+public sealed class Inanimado extends ElementoBase permits Pedra {
 
     static int proxid = 1;
     int id;
@@ -26,8 +26,6 @@ public sealed class Inanimado extends ElementoBase permits Pedra{
     public Area getArea() {
         return area;
     }
-
-
 
 
 }
