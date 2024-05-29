@@ -93,7 +93,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //Aumenta a força e verifica se pode reproduzir, caso sim aumenta o numero de reproducao e verifica se tem espaço para o fazer
         //caso tenha adiciona elemento
         if (flora.evoluir()) {
-            Area a = verificaAdjacentes(flora);
+            Area a = verificaAdjacentes(flora, false);
             if (a != null) {
                 flora.reproduziu();
                 if (flora instanceof Erva)
@@ -184,7 +184,9 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                         fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
                     }
                     if (fauna.reproducao(verificarFaunaDistancia(fauna))) {
-
+                        Area temp = verificaAdjacentes(fauna, true);
+                        if(temp != null)
+                            addElemento(Elemento.FAUNA, temp);
                     }
                 }
             }
@@ -220,7 +222,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return true;
     }
 
-    public Area verificaAdjacentes(IElemento elemento) {
+    public Area verificaAdjacentes(IElemento elemento, boolean checkFlora) {
         Area areaA = elemento.getArea();
         double altura = areaA.baixo() - areaA.cima() + 1;
         double largura = areaA.direita() - areaA.esquerda() + 1;
@@ -243,9 +245,18 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
         //endregion
         // Verifica se alguma área adjacente está livre
-        for (Area adj : areasAdjacentes) {
-            if (isAreaLivre(adj)) {
-                return adj;
+        if(!checkFlora) {
+            for (Area adj : areasAdjacentes) {
+                if (isAreaLivre(adj)) {
+                    return adj;
+                }
+            }
+        }
+        else{
+            for (Area adj : areasAdjacentes) {
+                if (isLivrePedraFauna(adj)) {
+                    return adj;
+                }
             }
         }
 
