@@ -14,6 +14,8 @@ import java.util.Set;
 public class Ecossistema implements Serializable, IGameEngineEvolve {
     private Set<IElemento> elementos = new HashSet<>();
     private Area area;
+    private boolean contemPedra = false;
+    private boolean oneTime = true;
 
     // set up inicial do ecossistema (criação e inserção de elementos)
     public Ecossistema() {
@@ -78,36 +80,148 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
-        //class memento
-
-        //! TEMPORÁRIO apenas para testes
-        for (IElemento e : elementos) {
-            System.out.println(e.getArea());
-            System.out.println("e.getId()  = " + e.getId() + " e.getType() = " + e.getType());
-            //region evoluçao da flora
-            if (e instanceof Flora flora) {
-                flora.evoluir();
-                if (flora.reproduz()) {
-                    Area a = verificaAdjacentes(flora);
-                    if (a != null) {
-                        flora.reproduziu();
-                        //!MUDAR ISTO (Adicionar erva)
-                        if (flora instanceof Erva)
-                            addElemento(new Erva(a));
-                    }
-                }
-                for (int i = 0; i < verificaSobreposicao(e).size(); i++)
-                    flora.reduzirForcaSobreposicao();
-                if (flora.getForca() <= 0)
-                    elementos.remove(flora);
-            }
-            //endregion
-
+        verificarElementoMorre();
+        for(IElemento elemento : elementos) {
+            if(elemento instanceof Flora flora)
+                evolveFlora(flora);
+            else if(elemento instanceof Fauna fauna)
+                evolveFauna(fauna);
         }
     }
 
-    public void addElemento(IElemento elemento) {
-        elementos.add(elemento);
+    private void evolveFlora(Flora flora){
+        //Aumenta a força e verifica se pode reproduzir, caso sim aumenta o numero de reproducao e verifica se tem espaço para o fazer
+        //caso tenha adiciona elemento
+        if(flora.evoluir()){
+            Area a = verificaAdjacentes(flora);
+            if (a != null) {
+                flora.reproduziu();
+                if (flora instanceof Erva)
+                    addElemento(Elemento.FLORA, a);
+            }
+        }
+        //verifica se tem sobreposiçao e reduz a forca caso tenha
+        for (int i = 0; i < verificaSobreposicao(flora); i++)
+            flora.reduzirForcaSobreposicao();
+    }
+
+    private void evolveFauna(Fauna fauna){
+        Area a;
+        boolean mov = true;
+        //region verifica sobreposiçoes
+        for (int i = 0; i < verificaSobreposicao(fauna); i++){
+            if(fauna.getForca()<100){
+                mov = false;
+                fauna.setForca(fauna.getForca() + Flora.getForcaSobreposicao());
+            }
+        }
+        //endregion
+        if(mov){
+            if (fauna.getState() == Fauna.FaunaState.PROCURA_COMIDA) {
+                if(existeFlora()){
+                    //region procura elemento flora mais perto a tualiza area e forca
+                    do {
+                        a = fauna.moverParaComida(checkElementoMaisPerto(fauna.getArea()), contemPedra);
+                        contemPedra = isLivrePedraFauna(a);
+                    } while (!contemPedra);
+                    fauna.setArea(a);
+                    fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
+                    //endregion
+                }else {
+                    if (oneTime || !elementos.contains(fauna.getElemetoPerseguir())){
+                        procuraFaunaComMenosForca(fauna);
+                        oneTime = false;
+                    }
+                    //region perseguir elemento da fauna e atualizar area e forca
+                    do{
+                        for (IElemento aux : elementos) {
+                            if (fauna.getElemetoPerseguir().getId() == aux.getId() && Elemento.FAUNA == aux.getType()) {
+                                fauna.setElemetoPerseguir(aux);
+                            }
+                        }
+                        a = fauna.moverParaComida(fauna.getElemetoPerseguir().getArea(), contemPedra);
+                        contemPedra = isLivrePedraFauna(a);
+                    } while (!contemPedra);
+                    fauna.setArea(a);
+                    fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
+                    //endregion
+                    //region verifica adjacentes e atualiza forca caso seja adjacente
+                    if(fauna.verificarAdjacente()){
+                        for (IElemento aux : elementos) {
+                            if (fauna.getElemetoPerseguir().getId() == aux.getId() && Elemento.FAUNA == aux.getType()) {
+                                if (aux instanceof Fauna f) {
+                                    if(fauna.getForca()>10) {
+                                        fauna.setForca(fauna.getForca() + f.getForca() - 10);
+                                        f.setForca(0);
+                                    }else if (fauna.getForca() < 10){
+                                        f.setForca(fauna.getForca() + f.getForca());
+                                        fauna.setForca(0);
+                                    }else  if (fauna.getState() == Fauna.FaunaState.PROCURA_COMIDA && f.getState() == Fauna.FaunaState.PROCURA_COMIDA){
+                                        if(fauna.getForca()>f.getForca()){
+                                            fauna.setForca(fauna.getForca() - 10 + f.getForca() - 10);
+                                            f.setForca(0);
+                                        }else if (fauna.getForca() < f.getForca()){
+                                            f.setForca(f.getForca() - 10 + fauna.getForca() -10);
+                                            fauna.setForca(0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //endregion
+                }
+            }else if(fauna.getState() == Fauna.FaunaState.NAO_PROCURA_COMIDA){
+                IElemento aux;
+                if(fauna.getForca()>50){
+                    aux = procuraFaunaComMaisForca(fauna);
+                    if(aux != null){
+                        do{
+                            a = fauna.moverParaComida(aux.getArea(), contemPedra);
+                            contemPedra = isLivrePedraFauna(a);
+                        } while (!contemPedra);
+                        fauna.setArea(a);
+                        fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
+                    }
+                    if(fauna.reproducao(verificarFaunaDistancia(fauna))){
+                        do{
+                            Area a
+                        }
+                    }
+                    }
+                }
+            }
+        }
+    }
+
+    public void addElemento(Elemento elemento, Area aux) {
+        elementos.add(ElementFactory.createElement(elemento, aux));
+    }
+
+    public void removeElemento(IElemento elemento) {
+        elementos.remove(elemento);
+    }
+
+    public void verificarElementoMorre(){
+        for(IElemento elemento : elementos){
+            if(elemento instanceof Fauna fauna){
+                if(fauna.getForca()<=0)
+                    removeElemento(fauna);
+            }
+            else if (elemento instanceof Flora flora){
+                if(flora.getForca()<=0)
+                    removeElemento(flora);
+            }
+        }
+    }
+
+    private boolean isAreaLivre(Area area) {
+        for (IElemento elemento : elementos) {
+            if (elemento.getArea().compareTo(area)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Area verificaAdjacentes(IElemento elemento) {
@@ -120,19 +234,18 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
         //region verifica ajacentes
         if (areaA.cima() - altura >= 0) {
-            areasAdjacentes.add(new Area(areaA.cima() - altura, areaA.esquerda(), areaA.cima(), areaA.direita()));
+            areasAdjacentes.add(new Area(areaA.cima() - altura, areaA.esquerda(), areaA.baixo() - altura, areaA.direita()));
         }
         if (areaA.baixo() + altura <= area.baixo()) {
-            areasAdjacentes.add(new Area(areaA.baixo(), areaA.esquerda(), areaA.baixo() + altura, areaA.direita()));
+            areasAdjacentes.add(new Area(areaA.cima() + altura, areaA.esquerda(), areaA.baixo() + altura, areaA.direita()));
         }
         if (areaA.esquerda() - largura >= 0) {
-            areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() - largura, areaA.baixo(), areaA.esquerda()));
+            areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() - largura, areaA.baixo(), areaA.direita() - largura));
         }
         if (areaA.direita() + largura <= area.direita()) {
-            areasAdjacentes.add(new Area(areaA.cima(), areaA.direita(), areaA.baixo(), areaA.direita() + largura));
+            areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() + largura, areaA.baixo(), areaA.direita() + largura));
         }
         //endregion
-
         // Verifica se alguma área adjacente está livre
         for (Area adj : areasAdjacentes) {
             if (isAreaLivre(adj)) {
@@ -143,24 +256,91 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return null;
     }
 
-    private boolean isAreaLivre(Area area) {
+    private boolean isLivrePedraFauna(Area area) {
         for (IElemento elemento : elementos) {
-            if (elemento.getArea().compareTo(area)) {
-                return true;
+            if (elemento.getArea().compareTo(area) && (elemento.getType()==Elemento.INANIMADO || elemento.getType()==Elemento.FAUNA)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Area checkElementoMaisPerto(Area a){
+        Area last = null;
+        double dist = Double.MAX_VALUE;
+        for(IElemento e : elementos){
+            if(e.getType() == Elemento.FLORA){
+                double dx = a.esquerda() - e.getArea().esquerda();
+                double dy = a.cima() - e.getArea().cima();
+                double res = Math.sqrt(dx * dx + dy * dy);
+                if (res < dist){
+                    dist = res;
+                    last = e.getArea();
+                }
+            }
+        }
+        return last;
+    }
+
+    private boolean existeFlora(){
+        for (IElemento e : elementos) {
+            if(e.getType()==Elemento.FLORA){
+            return true;
             }
         }
         return false;
     }
 
-    public List<Elemento> verificaSobreposicao(IElemento elemento) {
+    private void procuraFaunaComMenosForca(Fauna elemento){
+        double lastforca = 100;
+        for (IElemento e : elementos) {
+            if(e instanceof Fauna fauna){
+                if(fauna.getForca()<lastforca){
+                    lastforca = fauna.getForca();
+                    elemento.setElemetoPerseguir(e);
+                }
+            }
+        }
+    }
+
+    private IElemento procuraFaunaComMaisForca(Fauna elemento){
+        double lastforca = 0;
+        IElemento aux = null;
+        for (IElemento e : elementos) {
+            if(e instanceof Fauna fauna){
+                if(fauna.getForca()>lastforca){
+                    lastforca = fauna.getForca();
+                    aux = e;
+                }
+            }
+        }
+        return aux;
+    }
+
+    public int verificaSobreposicao(IElemento elemento) {
         Area area = elemento.getArea();
-        List<Elemento> list = new ArrayList<>();
+        int count = 0;
         for (IElemento e : elementos) {
             if (e.getId() == elemento.getId() && e.getType() == elemento.getType())
                 continue;
             if (elemento.getArea().compareTo(area))
-                list.add(e.getType());
+                count ++;
         }
-        return list;
+        return count;
+    }
+
+    public boolean verificarFaunaDistancia(IElemento elemento){
+        double dist = 5;
+        for(IElemento e : elementos){
+            if(e.getType() == Elemento.FAUNA && e.getId()!=elemento.getId() ){
+                double dx = elemento.getArea().esquerda() - e.getArea().esquerda();
+                double dy = elemento.getArea().cima() - e.getArea().cima();
+                double res = Math.sqrt(dx * dx + dy * dy);
+                if (res < dist){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

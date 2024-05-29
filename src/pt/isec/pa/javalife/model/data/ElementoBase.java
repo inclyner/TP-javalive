@@ -14,5 +14,7 @@ public abstract sealed class ElementoBase
     public Area getArea() {
         return area;
     }
-
+    public void setArea(Area area) {
+        this.area = area;
+    }
 }

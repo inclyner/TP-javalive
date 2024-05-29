@@ -7,7 +7,7 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
     private boolean reproduzivel=false; // quando a forca chega aos 90 a erva pode reproduzir
     private int numdeReproducoes=0;//quantas vezes a erva ja foi reproduzida (max de 2)
     private final float forcaTick = 0.5f;
-    private float forcaSobreposicao = 1;
+    private static float forcaSobreposicao = 1;
 
 
     public Flora(Area area) {
@@ -17,16 +17,13 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
         setForca(50);
     }
 
-    public void evoluir(){
+    public boolean evoluir(){
         setForca(forca + forcaTick);
-        if(forca>=90 && !reproduzivel){
-            reproduzivel = true;
+        if(forca>=90){
+            return numdeReproducoes < 2;
         }
+        return false;
 
-    }
-
-    public boolean reproduz() {
-        return reproduzivel && numdeReproducoes < 2;
     }
 
     public void reproduziu(){
@@ -60,7 +57,7 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
         this.forca = Math.min(Math.max(forca,0), 100);
     }
 
-    public float getForcaSobreposicao() {
+    public static float getForcaSobreposicao() {
         return forcaSobreposicao;
     }
 
