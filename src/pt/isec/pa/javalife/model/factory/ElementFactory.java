@@ -4,7 +4,7 @@ import pt.isec.pa.javalife.model.data.*;
 
 public class ElementFactory {
 
-    public static ElementoBase createElement(ElementType type, Object... args) {
+    public static ElementoBase createElement(Elemento type, Object... args) {
         switch (type) {
             case INANIMADO:
                 if (args.length == 1 && args[0] instanceof Area) {

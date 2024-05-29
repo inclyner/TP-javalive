@@ -2,7 +2,6 @@ package pt.isec.pa.javalife.model.data;
 
 
 import pt.isec.pa.javalife.model.factory.ElementFactory;
-import pt.isec.pa.javalife.model.factory.ElementType;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
@@ -29,19 +28,19 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         for (double i = area.esquerda(); i <= area.direita(); i += 1) {
             // Adiciona pedras na borda superior e inferior
             aux = new Area(i, area.cima(), 1, 1);
-            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
+            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
             aux = new Area((int) i, (int) area.baixo(), 1, 1);
-            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
+            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
         for (double j = area.cima() + 1; j < area.baixo(); j += 1) {
             // adiciona pedras na borda esquerda
             aux = new Area(area.esquerda(), j, 1, 1);
-            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
+            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
             // adiciona pedras na borda direita
             aux = new Area(j, (int) area.direita(), 1, 1);
-            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, aux));
+            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
         }
 
         //cria pedras de varios tamanhos
@@ -69,7 +68,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             }
 
             // considero o x e y cima e esquerda como a base do elemento e adiciono a altura e a largura
-            elementos.add(ElementFactory.createElement(ElementType.INANIMADO, new Area(x, y,x+ altura, y+largura)));
+            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, new Area(x, y,x+ altura, y+largura)));
         }
 
         //endregion
