@@ -184,10 +184,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                         fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
                     }
                     if(fauna.reproducao(verificarFaunaDistancia(fauna))){
-                        do{
-                            Area a
-                        }
-                    }
+                        
                     }
                 }
             }
