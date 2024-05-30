@@ -32,7 +32,7 @@ public class EcossistemaFacade {
 
 
     // Adiciona um elemento ao ecossistema
-    public boolean AdicionarElemento(IElemento elemento) {
+    public void AdicionarElemento(String string) {
         //* fazer verificação se da para adicionar
 
 

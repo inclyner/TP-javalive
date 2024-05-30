@@ -43,7 +43,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
-        for (double j = area.cima() + 1; j < area.baixo(); j += 1) {
+        for (double j = area.cima() + 1; j < area.baixo()/escala-1; j += 1) {
             // adiciona pedras na borda esquerda
             aux = new Area(area.esquerda(), j, 1, 1);
             addElemento(Elemento.INANIMADO, aux);
@@ -78,7 +78,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             }
 
             // considero o x e y cima e esquerda como a base do elemento e adiciono a altura e a largura
-            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, new Area(x, y, x + altura, y + largura)));
+            addElemento(Elemento.INANIMADO, new Area(x, y, x + altura, y + largura));
         }
 
 
