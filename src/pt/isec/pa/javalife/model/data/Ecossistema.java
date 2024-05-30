@@ -5,6 +5,7 @@ import pt.isec.pa.javalife.model.factory.ElementFactory;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +15,8 @@ import java.util.Set;
 public class Ecossistema implements Serializable, IGameEngineEvolve {
     private final Set<IElemento> elementos = new HashSet<>();
     private Area area;
+    
+    private double escala;
     private boolean contemPedra = false;
     private boolean oneTime = true;
 
@@ -45,6 +48,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
         }
 
+        /*
         //cria pedras de varios tamanhos
         int quantidade = 10;
         // Cria um objeto Random para gerar dimensões aleatórias
@@ -73,6 +77,8 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             elementos.add(ElementFactory.createElement(Elemento.INANIMADO, new Area(x, y, x + altura, y + largura)));
         }
 
+
+         */
         //endregion
 
 
@@ -354,4 +360,15 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
         return false;
     }
+
+
+    public List<String> getElementosLista(){
+        List<String> list = new ArrayList<>();
+        for(IElemento elemento : elementos){
+            list.add(elemento.toString());
+        }
+        return list;
+    }
+
+
 }

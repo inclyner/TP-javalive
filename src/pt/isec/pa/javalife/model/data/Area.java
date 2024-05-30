@@ -16,4 +16,12 @@ public record Area(double cima, double esquerda, double baixo, double direita) {
         return (area.cima <= this.cima && area.cima >= this.baixo) || (area.baixo <= this.cima && area.baixo >= this.baixo)
                 || (area.direita >= this.esquerda && area.direita <= this.direita) || (area.esquerda >= this.esquerda && area.esquerda <= this.direita);
     }
+    public String toString() {
+        return  "(" + cima +
+                "," + esquerda +
+                "," + baixo +
+                "," + direita +
+                ')';
+    }
+
 }
