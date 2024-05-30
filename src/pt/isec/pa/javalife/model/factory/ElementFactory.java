@@ -1,5 +1,6 @@
 package pt.isec.pa.javalife.model.factory;
 
+import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
 import pt.isec.pa.javalife.model.data.*;
 
 public class ElementFactory {

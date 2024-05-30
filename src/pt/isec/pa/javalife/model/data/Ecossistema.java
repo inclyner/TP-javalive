@@ -1,6 +1,7 @@
 package pt.isec.pa.javalife.model.data;
 
 
+import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
 import pt.isec.pa.javalife.model.factory.ElementFactory;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
@@ -19,33 +20,36 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private double escala;
     private boolean contemPedra = false;
     private boolean oneTime = true;
+    private EcossistemaFacade ecossistemaFacade;
 
     // set up inicial do ecossistema (criação e inserção de elementos)
-    public Ecossistema() {
+    public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao,double escala) {
+        this.ecossistemaFacade = ecossistemaFacade;
         //TODO alterar para meter as coordenadas pelas definições
         // definir as unidades (tipo 1000 pixeis de largura são 2 pixeis por unidade)
-
         //region criação de pedras
-        Area area = new Area(0, 0, 10, 10);
+        Area area = new Area(0, 0, dimensao, dimensao);
+        this.escala = escala;
+        System.out.println("escala = " + escala);
         //preenche a cerca da area com pedras
-        Area aux = new Area(0, 0, 0, 0);
+        Area aux;
         // Adiciona pedras na borda superior e inferior
-        for (double i = area.esquerda(); i <= area.direita(); i += 1) {
+        for (double i = area.esquerda(); i < area.direita()/escala; i += 1) {
             // Adiciona pedras na borda superior e inferior
             aux = new Area(i, area.cima(), 1, 1);
-            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
-            aux = new Area((int) i, (int) area.baixo(), 1, 1);
-            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
+            addElemento(Elemento.INANIMADO, aux);
+            aux = new Area( i, area.baixo()/escala, 1, 1);
+            addElemento(Elemento.INANIMADO, aux);
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
         for (double j = area.cima() + 1; j < area.baixo(); j += 1) {
             // adiciona pedras na borda esquerda
             aux = new Area(area.esquerda(), j, 1, 1);
-            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
+            addElemento(Elemento.INANIMADO, aux);
             // adiciona pedras na borda direita
-            aux = new Area(j, (int) area.direita(), 1, 1);
-            elementos.add(ElementFactory.createElement(Elemento.INANIMADO, aux));
+            aux = new Area(area.direita()/escala, j, 1, 1);
+            addElemento(Elemento.INANIMADO, aux);
         }
 
         /*
@@ -81,9 +85,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
          */
         //endregion
 
-
     }
-
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
         verificarElementoMorre();
@@ -93,6 +95,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             else if (elemento instanceof Fauna fauna)
                 evolveFauna(fauna);
         }
+        //ecossistemaFacade.atualiza(getElementosLista());
     }
 
     private void evolveFlora(Flora flora) {
@@ -200,7 +203,10 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     public void addElemento(Elemento elemento, Area aux) {
-        elementos.add(ElementFactory.createElement(elemento, aux));
+        Area a = new Area(aux.cima()*escala, aux.esquerda()*escala, aux.baixo()*escala, aux.direita()*escala);
+        IElemento temp = ElementFactory.createElement(elemento, a);
+        elementos.add(temp);
+        ecossistemaFacade.AdicionarElemento(temp.toString());
     }
 
     public void removeElemento(IElemento elemento) {

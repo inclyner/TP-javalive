@@ -13,7 +13,22 @@ public abstract sealed class ElementoBase implements IElemento permits Inanimado
         return area;
     }
 
+    @Override
+    public int getId() {
+        return 0;
+    }
+
+    @Override
+    public Elemento getType() {
+        return null;
+    }
+
     public void setArea(Area area) {
         this.area = area;
+    }
+
+    @Override
+    public String toString() {
+        return "id:" + getId() + "type:" + getType()+ "area:" + getArea();
     }
 }

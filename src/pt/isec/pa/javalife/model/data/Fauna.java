@@ -131,4 +131,9 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     public boolean verificarAdjacente() {
         return moverParaComida(area, false).compareTo(elemetoPerseguir.getArea());
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "forca" + forca;
+    }
 }

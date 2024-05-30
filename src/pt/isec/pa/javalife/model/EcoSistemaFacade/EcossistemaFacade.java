@@ -14,6 +14,7 @@ import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.List;
 
 public class EcossistemaFacade {
 
