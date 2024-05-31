@@ -116,9 +116,9 @@ public class MainJFX extends Application implements PropertyChangeListener {
         sairItem.setOnAction(event -> sairSimulacao(primaryStage));
 
         configGeraisItem.setOnAction(event -> configurarEcossistema());
-        adicionarInanimadoItem.setOnAction(event -> adicionarElemento("inanimado"));
-        adicionarFloraItem.setOnAction(event -> adicionarElemento("flora"));
-        adicionarFaunaItem.setOnAction(event -> adicionarElemento("fauna"));
+        adicionarInanimadoItem.setOnAction(event -> adicionarElemento("INANIMADO"));
+        adicionarFloraItem.setOnAction(event -> adicionarElemento("FLORA"));
+        adicionarFaunaItem.setOnAction(event -> adicionarElemento("FAUNA"));
         editarElementoItem.setOnAction(event -> editarElemento());
         eliminarElementoItem.setOnAction(event -> eliminarElemento());
         undoItem.setOnAction(event -> undo());
@@ -209,7 +209,77 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void adicionarElemento(String tipo) {
-        // Lógica para adicionar um elemento
+        // Criar um diálogo para adicionar um elemento
+        Dialog<Elemento> dialog = new Dialog<>();
+        dialog.setTitle("Adicionar Elemento " + tipo);
+        dialog.setHeaderText("Insira os detalhes do novo elemento " + tipo);
+
+        // Definir os botões do diálogo
+        ButtonType adicionarButtonType = new ButtonType("Adicionar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(adicionarButtonType, ButtonType.CANCEL);
+
+        // Criar os campos de entrada
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+
+        TextField x = new TextField();
+        x.setPromptText("Posição X");
+        TextField y = new TextField();
+        y.setPromptText("Posição Y");
+        TextField altura = new TextField();
+        altura.setPromptText("Altura");
+        TextField largura = new TextField();
+        largura.setPromptText("Largura");
+        TextField forca = new TextField();
+        largura.setPromptText("Forca Inicial");
+
+
+        grid.add(new Label("Posição X:"), 0, 1);
+        grid.add(x, 1, 1);
+        grid.add(new Label("Posição Y:"), 0, 2);
+        grid.add(y, 1, 2);
+        grid.add(new Label("Altura:"), 0, 3);
+        grid.add(altura, 1, 3);
+        grid.add(new Label("Largura:"), 0, 4);
+        grid.add(largura, 1, 4);
+        grid.add(new Label("Forca Inicial:"), 0, 5);
+        grid.add(forca, 1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == adicionarButtonType) {
+                try {
+                    double posX = Double.parseDouble(x.getText());
+                    double posY = Double.parseDouble(y.getText());
+                    double alt = Double.parseDouble(altura.getText());
+                    double larg = Double.parseDouble(largura.getText());
+                    double forcaInicial = Double.parseDouble(forca.getText());
+
+                    // Adicionar o elemento ao ecossistema
+                    ecossistemaFacade.adicionaElementoCommand(tipo,posX,posY,alt,larg,forcaInicial);
+
+                } catch (NumberFormatException e) {
+                    // Tratar erro de formatação
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erro de Formatação");
+                    alert.setHeaderText("Valores Inválidos");
+                    alert.setContentText("Por favor, insira valores numéricos válidos.");
+                    alert.showAndWait();
+                }
+            }
+            return null;
+        });
+
+        // Mostrar o diálogo e esperar pela resposta do utilizador
+        dialog.showAndWait();
+
+
+
+
     }
 
     private void editarElemento() {
@@ -239,6 +309,14 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void pausarContinuarSimulacao() {
+        if(ecossistemaFacade.checkGameState()== GameEngineState.RUNNING){
+        ecossistemaFacade.pause_unpause();
+        primaryStage.setTitle("Simulação de Ecossistema (paused)");
+        }
+        else if(ecossistemaFacade.checkGameState()== GameEngineState.PAUSED){
+            ecossistemaFacade.pause_unpause();
+            primaryStage.setTitle("Simulação de Ecossistema (running)");
+        }
 
 
     }
