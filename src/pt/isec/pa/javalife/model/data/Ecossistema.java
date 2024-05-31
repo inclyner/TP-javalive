@@ -19,6 +19,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private boolean contemPedra = false;
     private boolean oneTime = true;
     private EcossistemaFacade ecossistemaFacade;
+    List<String> listStringElementos = new ArrayList<>();
 
     // set up inicial do ecossistema (criação e inserção de elementos)
     public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao,double escala) {
@@ -32,7 +33,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //preenche a cerca da area com pedras
         Area aux;
         // Adiciona pedras na borda superior e inferior
-        for (double i = area.cima(); i < area.baixo(); i += 1) {
+        /*for (double i = area.cima(); i < area.baixo(); i += 1) {
             // Adiciona pedras na borda superior e inferior
             aux = new Area(i, area.cima(), i+1, area.cima()+1);
             addElemento(Elemento.INANIMADO, aux);
@@ -48,7 +49,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             // adiciona pedras na borda direita
             aux = new Area(area.direita()-1, j, area.direita(), j+1);
             addElemento(Elemento.INANIMADO, aux);
-        }
+        }*/
         addElemento(Elemento.FLORA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
         //addElemento(Elemento.FAUNA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
     }
@@ -58,7 +59,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         synchronized (elementos){
             /*verificarElementoMorre();*/
             for(IElemento elemento : elementos) {
-                if(elemento instanceof Inanimado)
+                if(elemento instanceof Inanimado || elemento instanceof Fauna)
                     continue;
                 if (elemento instanceof Flora flora) {
                     evolveFlora(flora);
@@ -67,6 +68,45 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     evolveFauna(fauna);
                 }*/
             }
+        }
+        synchronized (listStringElementos){
+            if(!listStringElementos.isEmpty()) {
+                addElementoPorString();
+            }
+        }
+    }
+
+    private void addElementoPorString() {
+        for(String aux : listStringElementos){
+            System.out.println(aux);
+            String[] partes = aux.split(":");
+            if(Elemento.FLORA.toString().equals(partes[0])){
+                IElemento temp = ElementFactory.createElement(Elemento.FLORA, converterStringParaArea(partes[1]));
+                synchronized (elementos) {
+                    elementos.add(temp);
+                    Platform.runLater(()->ecossistemaFacade.AdicionarElemento(temp.toString()));
+                }
+            }
+        }
+        listStringElementos.clear();
+    }
+
+    private Area converterStringParaArea(String areaString) {
+        areaString = areaString.replace("(", "").replace(")", "");
+        String[] valores = areaString.split(",");
+        if (valores.length != 4) {
+            throw new IllegalArgumentException("A string deve conter exatamente 4 valores separados por ','");
+        }
+
+        try {
+            double cima = Double.parseDouble(valores[0]);
+            double esquerda = Double.parseDouble(valores[1]);
+            double baixo = Double.parseDouble(valores[2]);
+            double direita = Double.parseDouble(valores[3]);
+
+            return new Area(cima, esquerda, baixo, direita);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Todos os valores devem ser números válidos", e);
         }
     }
 
@@ -78,12 +118,17 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             if (a != null) {
                 flora.reproduziu();
                 if (flora instanceof Erva)
-                    addElemento(Elemento.FLORA, a);
+                    addElementoNoEvolve(Elemento.FLORA, a);
             }
         }
         //verifica se tem sobreposiçao de elementos fauna e reduz a forca caso tenha
         for (int i = 0; i < verificaSobreposicao(flora); i++)
             flora.reduzirForcaSobreposicao();
+    }
+
+    private void addElementoNoEvolve(Elemento elemento, Area aux) {
+        Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
+        listStringElementos.add(elemento+":"+a);
     }
 
     private void evolveFauna(Fauna fauna) {
@@ -176,11 +221,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     public void addElemento(Elemento elemento, Area aux) {
         Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
+        //listStringElementos.add(elemento+":"+a);
         IElemento temp = ElementFactory.createElement(elemento, a);
         synchronized (elementos) {
-            elementos.add(temp);
+          elementos.add(temp);
         }
-        Platform.runLater(()->ecossistemaFacade.AdicionarElemento(temp.toString()));
+        ecossistemaFacade.AdicionarElemento(temp.toString());
     }
 
     public void removeElemento(IElemento elemento) {
@@ -216,13 +262,22 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                 }
             }
         }
+        synchronized (listStringElementos){
+            if(!listStringElementos.isEmpty())
+                for (String string : listStringElementos) {
+                    String[] partes = string.split(":");
+                    if (converterStringParaArea(partes[1]).compareTo(area)) {
+                        return false;
+                    }
+                }
+        }
         return true;
     }
 
     public Area verificaAdjacentes(IElemento elemento, boolean checkFlora) {
         Area areaA = elemento.getArea();
-        double altura = areaA.baixo() - areaA.cima() + 1;
-        double largura = areaA.direita() - areaA.esquerda() + 1;
+        double altura = areaA.baixo() - areaA.cima();
+        double largura = areaA.direita() - areaA.esquerda();
 
         // Lista para armazenar as áreas adjacentes
         List<Area> areasAdjacentes = new ArrayList<>();
@@ -244,6 +299,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         // Verifica se alguma área adjacente está livre
         if(!checkFlora) {
             for (Area adj : areasAdjacentes) {
+                System.out.println(adj.toString());
                 if (isAreaLivre(adj)) {
                     return adj;
                 }
@@ -335,8 +391,6 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
         return count;
     }
-
-
 
     //* novo a partir daqui
 

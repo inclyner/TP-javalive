@@ -407,9 +407,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         launch(args);
     }
 
-
-
-
     private void createEatualizaElemento(String string){
         Pattern idPattern = Pattern.compile("id:(\\d+)");
         Pattern typePattern = Pattern.compile("type:([A-Z]+)");
@@ -441,15 +438,13 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 pane.getChildren().add(forcaLabel);
             }
             button.setLayoutX(x*escala); // Posição X do botão no Pane
-            button.setLayoutY(y*escala);
-            System.out.println(x*escala+"," + y*escala+"\n");// Posição Y do botão no Pane
+            button.setLayoutY(y*escala);// Posição Y do botão no Pane
             button.setMinWidth(width*escala);
             button.setPrefWidth(width*escala);
             button.setMaxWidth(width*escala);
             button.setMinHeight(height*escala);
             button.setPrefHeight(height*escala);
             button.setMaxHeight(height*escala);
-            System.out.println(width*escala + "," + height*escala + "\n");
             if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)){
                 button.setOnAction(actionEvent -> {
                     finalButton = button;
@@ -458,7 +453,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
                             System.out.println(entry.getKey());
                         }
                     }
-                    System.out.println(id+type);
                 });
             }
             if (type.equals(Elemento.INANIMADO.toString())) {
