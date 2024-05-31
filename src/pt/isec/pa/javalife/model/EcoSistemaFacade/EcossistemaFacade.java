@@ -1,6 +1,7 @@
 package pt.isec.pa.javalife.model.EcoSistemaFacade;
 
 
+import javafx.scene.control.TextField;
 import pt.isec.pa.javalife.model.command.AdicionarElementoCommand;
 import pt.isec.pa.javalife.model.command.CommandManager;
 import pt.isec.pa.javalife.model.command.RemoverElementoCommand;
@@ -8,6 +9,7 @@ import pt.isec.pa.javalife.model.data.Area;
 import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.Fauna;
 import pt.isec.pa.javalife.model.data.IElemento;
+import pt.isec.pa.javalife.model.factory.ElementFactory;
 import pt.isec.pa.javalife.model.gameengine.GameEngine;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
@@ -39,6 +41,9 @@ public class EcossistemaFacade {
         //ICommand command = new AdicionarElementoCommand(ecossistema, element);
         //commandManager.execute(command);
         support.firePropertyChange("adicionarElemento", null, string);
+
+
+        //cm.invokeCommand(new AdicionarElementoCommand(elemento));
         //cm.invokeCommand(new AdicionarElementoCommand(ecossistema));
     }
 
@@ -87,4 +92,23 @@ public class EcossistemaFacade {
     public void atualiza(String string){
         support.firePropertyChange("atualiza", null, string);
     }
+
+    public void adicionaElementoCommand(String tipo, double x, double y, double altura, double largura, double forca) {
+        cm.invokeCommand(new AdicionarElementoCommand(this.ecossistema,tipo,x,y,altura,largura,forca));
+        System.out.println("adicionaelementocommand na facade");
+        System.out.println("tipo = " + tipo + ", x = " + x + ", y = " + y + ", altura = " + altura + ", largura = " + largura + ", forca = " + forca);
+    }
+
+    public void pause_unpause() {
+        if(gameEngine.getCurrentState()== GameEngineState.RUNNING){
+            gameEngine.pause();
+        }
+        else if(gameEngine.getCurrentState()== GameEngineState.PAUSED){
+            gameEngine.resume();
+        }
+
+    }
+
+
+
 }
