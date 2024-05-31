@@ -1,12 +1,13 @@
 package pt.isec.pa.javalife.model.command;
 
+import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.IElemento;
 
-public class AdicionarElementoCommand implements ICommand {
+public class AdicionarElementoCommand extends AbstractCommand {
 
 
-    public AdicionarElementoCommand(IElemento elemento) {
-        super();
+    public AdicionarElementoCommand(Ecossistema ecossistema) {
+        super(ecossistema);
 // store parameters
     }
 

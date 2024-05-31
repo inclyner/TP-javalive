@@ -1,7 +1,15 @@
 package pt.isec.pa.javalife.model.command;
 
-public class CommandManager {
+import java.util.ArrayDeque;
+import java.util.Deque;
 
+public class CommandManager {
+    private Deque<ICommand> history; //private Stack<ICommand> history;
+    private Deque<ICommand> redoCmds; //private Stack<ICommand> redoCmds;
+    public CommandManager() {
+        history = new ArrayDeque<>(); //history = new Stack<>();
+        redoCmds = new ArrayDeque<>(); //redoCmds = new Stack<>();
+    }
 
     public static void undo() {
         // undo

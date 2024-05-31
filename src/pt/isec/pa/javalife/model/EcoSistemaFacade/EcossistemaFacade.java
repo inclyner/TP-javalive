@@ -39,7 +39,7 @@ public class EcossistemaFacade {
         //ICommand command = new AdicionarElementoCommand(ecossistema, element);
         //commandManager.execute(command);
         support.firePropertyChange("adicionarElemento", null, string);
-        //cm.invokeCommand(new AdicionarElementoCommand(elemento));
+        //cm.invokeCommand(new AdicionarElementoCommand(ecossistema));
     }
 
     public boolean removeElement(IElemento elemento) {

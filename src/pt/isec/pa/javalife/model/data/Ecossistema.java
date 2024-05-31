@@ -55,20 +55,19 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
-        /*synchronized (elementos){
+        synchronized (elementos){
             /*verificarElementoMorre();*/
-            /*for(IElemento elemento : elementos) {
+            for(IElemento elemento : elementos) {
                 if(elemento instanceof Inanimado)
                     continue;
                 if (elemento instanceof Flora flora) {
                     evolveFlora(flora);
-                    System.out.println(flora);
-                }*/
+                }
                 /*else if (elemento instanceof Fauna fauna) {
                     evolveFauna(fauna);
                 }*/
-            //}
-        //}*/
+            }
+        }
     }
 
     private void evolveFlora(Flora flora) {
@@ -181,7 +180,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         synchronized (elementos) {
             elementos.add(temp);
         }
-        ecossistemaFacade.AdicionarElemento(temp.toString());
+        Platform.runLater(()->ecossistemaFacade.AdicionarElemento(temp.toString()));
     }
 
     public void removeElemento(IElemento elemento) {
