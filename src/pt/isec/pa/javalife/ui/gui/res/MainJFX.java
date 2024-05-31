@@ -288,7 +288,32 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void eliminarElemento() {
         // Lógica para eliminar um elemento
+        int id;
 
+        Dialog<Elemento> dialog = new Dialog<>();
+        dialog.setTitle("Eliminar Elemento");
+        dialog.setHeaderText("Insira o id do elemento ");
+
+        // Definir os botões do diálogo
+        ButtonType adicionarButtonType = new ButtonType("Remover", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(adicionarButtonType, ButtonType.CANCEL);
+
+        // Criar os campos de entrada
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+
+        TextField x = new TextField();
+        x.setPromptText("id:");
+
+        grid.add(new Label("id:"), 0, 1);
+        grid.add(x, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        ecossistemaFacade.removerElementoCommand(Integer.parseInt(x.getText()));
 
     }
 

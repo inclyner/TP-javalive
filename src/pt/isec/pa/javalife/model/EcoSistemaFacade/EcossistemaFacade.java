@@ -1,23 +1,17 @@
 package pt.isec.pa.javalife.model.EcoSistemaFacade;
 
 
-import javafx.scene.control.TextField;
 import pt.isec.pa.javalife.model.command.AdicionarElementoCommand;
 import pt.isec.pa.javalife.model.command.CommandManager;
 import pt.isec.pa.javalife.model.command.RemoverElementoCommand;
-import pt.isec.pa.javalife.model.data.Area;
 import pt.isec.pa.javalife.model.data.Ecossistema;
-import pt.isec.pa.javalife.model.data.Fauna;
 import pt.isec.pa.javalife.model.data.IElemento;
-import pt.isec.pa.javalife.model.factory.ElementFactory;
 import pt.isec.pa.javalife.model.gameengine.GameEngine;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 
-import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.List;
 
 public class EcossistemaFacade {
 
@@ -52,7 +46,7 @@ public class EcossistemaFacade {
 
         support.firePropertyChange("ecossistema", null, ecossistema);
 
-        return cm.invokeCommand(new RemoverElementoCommand(elemento));
+        return cm.invokeCommand(new RemoverElementoCommand(ecossistema,elemento.getId()));
     }
 
 
@@ -110,5 +104,7 @@ public class EcossistemaFacade {
     }
 
 
-
+    public void removerElementoCommand(int id) {
+        cm.invokeCommand(new RemoverElementoCommand(this.ecossistema,id));
+    }
 }

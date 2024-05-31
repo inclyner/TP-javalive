@@ -6,7 +6,7 @@ import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.data.IElemento;
 import pt.isec.pa.javalife.model.factory.ElementFactory;
 
-public class AdicionarElementoCommand extends AbstractCommand {
+public class AdicionarElementoCommand extends AbstractCommand implements ICommand{
 
     Ecossistema ecossistema;
     String tipo;

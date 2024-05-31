@@ -228,8 +228,16 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         ecossistemaFacade.AdicionarElemento(temp.toString());
     }
 
-    public void removeElemento(IElemento elemento) {
-        elementos.remove(elemento);
+    public boolean removeElemento(int id) {
+        IElemento elemento = null;
+        for (IElemento e :elementos) {
+            if (e.getId() == id) {
+                elemento=e;
+                break;
+            }
+        }
+
+        return elementos.remove(elemento);
     }
 
     public void verificarElementoMorre() {
