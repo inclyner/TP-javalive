@@ -14,7 +14,6 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     private final boolean estadoProcuraComida = false;
     private final float forcaMovimentacao = 0.5f;
     private IElemento elemetoPerseguir;
-
     private final double forcaReproducao = 25;
     private int unidTempo = 0;
     private static int proxid = 1;
@@ -23,7 +22,6 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     public Fauna(Area area) {
         super(area);
         this.id = proxid;
-        setForca(50);
         setState(FaunaState.NAO_PROCURA_COMIDA);
         proxid++;
 

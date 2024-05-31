@@ -47,7 +47,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
     public void start(Stage primaryStage) {
         this.primaryStage=primaryStage;
         primaryStage.setTitle("Simulação de Ecossistema");
-
         // Menu Ficheiro
         Menu menuFicheiro = new Menu("Ficheiro");
         MenuItem criarItem = new MenuItem("Criar");
@@ -57,7 +56,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         MenuItem importarItem = new MenuItem("Importar");
         MenuItem sairItem = new MenuItem("Sair");
         menuFicheiro.getItems().addAll(criarItem, abrirItem, gravarItem, new SeparatorMenuItem(), exportarItem, importarItem, new SeparatorMenuItem(), sairItem);
-
         // Menu Ecossistema
         Menu menuEcossistema = new Menu("Ecossistema");
         MenuItem configGeraisItem = new MenuItem("Configurações gerais do ecossistema");
@@ -69,7 +67,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         MenuItem undoItem = new MenuItem("Undo");
         MenuItem redoItem = new MenuItem("Redo");
         menuEcossistema.getItems().addAll(configGeraisItem, adicionarInanimadoItem, adicionarFloraItem, adicionarFaunaItem, editarElementoItem, eliminarElementoItem, new SeparatorMenuItem(), undoItem, redoItem);
-
         // Menu Simulação
         Menu menuSimulacao = new Menu("Simulação");
         MenuItem configSimulacaoItem = new MenuItem("Configuração da simulação");
@@ -78,7 +75,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         MenuItem gravarSnapshotItem = new MenuItem("Gravar snapshot");
         MenuItem restaurarSnapshotItem = new MenuItem("Restaurar snapshot");
         menuSimulacao.getItems().addAll(configSimulacaoItem, executarPararItem, pausarContinuarItem, new SeparatorMenuItem(), gravarSnapshotItem, restaurarSnapshotItem);
-
         // Menu Eventos
         Menu menuEventos = new Menu("Eventos");
         MenuItem aplicarSolItem = new MenuItem("Aplicar Sol");
@@ -407,44 +403,32 @@ public class MainJFX extends Application implements PropertyChangeListener {
         dimensionSlider.setMinorTickCount(4);
         dimensionSlider.setBlockIncrement(1);
         GridPane.setConstraints(dimensionSlider, 1, 1);
-        //Label dimensionLabel = new Label("Dimensao do Ecossistema:");
-        //GridPane.setConstraints(dimensionLabel, 0, 1);
-        //TextField dimensionInput = new TextField("1000");
-        //GridPane.setConstraints(dimensionInput, 1, 1);
         if(!permiteAlteracoes) {
             dimensionSlider.setDisable(false);
         }
-
         Label timeUnitLabel = new Label("Unidade de Tempo(ms):");
         GridPane.setConstraints(timeUnitLabel, 0, 3);
         TextField timeUnitInput = new TextField("1000");
         GridPane.setConstraints(timeUnitInput, 1, 3);
-
         Label initialForceLabel = new Label("Valor Inicial da Força:");
         GridPane.setConstraints(initialForceLabel, 0, 4);
         TextField initialForceInput = new TextField("50");
         GridPane.setConstraints(initialForceInput, 1, 4);
-
         Label growthRateLabel = new Label("Valor de Crescimento da Flora:");
         GridPane.setConstraints(growthRateLabel, 0, 5);
         TextField growthRateInput = new TextField("0.5");
         GridPane.setConstraints(growthRateInput, 1, 5);
-
         Label overlapLossLabel = new Label("Valor de Perda por Sobreposição:");
         GridPane.setConstraints(overlapLossLabel, 0, 6);
         TextField overlapLossInput = new TextField("1");
         GridPane.setConstraints(overlapLossInput, 1, 6);
-
         Label movementRateLabel = new Label("Valor de Movimentação da Fauna:");
         GridPane.setConstraints(movementRateLabel, 0, 7);
         TextField movementRateInput = new TextField("0.5");
         GridPane.setConstraints(movementRateInput, 1, 7);
-
-
         // Create the enter button
         Button enterButton = new Button("Enter");
         GridPane.setConstraints(enterButton, 1, 8);
-
         enterButton.setOnAction(e -> {
             unidade_generica = (int)(dimensionSlider.getValue());
             timeUnit = Integer.parseInt(timeUnitInput.getText());
@@ -463,11 +447,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             }else {
                 ecossistemaFacade.changeEcossistema(timeUnit, initialForce, growthRate, overlapLoss, movementRate);
             }
-
-            //primaryStage.setWidth(scene.getWidth()+100);
-            //primaryStage.setHeight(scene.getHeight()+400);
-
-            // Print or use the collected values
+            //region Print or use the collected values
             System.out.println("Dimensão do Ecossistema: " + unidade_generica);
             System.out.println("Unidade de Tempo: " + timeUnit);
             System.out.println("Valor Inicial da Força: " + initialForce);
@@ -475,26 +455,19 @@ public class MainJFX extends Application implements PropertyChangeListener {
             System.out.println("Valor de Perda por Sobreposição: " + overlapLoss);
             System.out.println("Valor de Movimentação da Fauna: " + movementRate);
             System.out.println("escala = " + escala);
-
+            //endregion
             // Close the pop-up
             popupStage.close();
         });
-
-
         // Add all elements to the grid
         grid.getChildren().addAll(dimensionLabel, dimensionSlider,
                 timeUnitLabel, timeUnitInput, initialForceLabel, initialForceInput,
                 growthRateLabel, growthRateInput, overlapLossLabel, overlapLossInput,
                 movementRateLabel, movementRateInput, enterButton);
-
         // Set up the scene and stage for the pop-up
         Scene popupScene = new Scene(grid, 400, 300);
-
-
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
-
-
     }
 
 
@@ -540,14 +513,15 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 forcaLabel.setLayoutY(y*escala + height);
                 pane.getChildren().add(forcaLabel);
             }
-            button.setLayoutX(x*escala); // Posição X do botão no Pane
-            button.setLayoutY(y*escala);// Posição Y do botão no Pane
+            button.setLayoutY(x*escala); // Posição X do botão no Pane
+            button.setLayoutX(y*escala);// Posição Y do botão no Pane
             button.setMinWidth(width*escala);
             button.setPrefWidth(width*escala);
             button.setMaxWidth(width*escala);
             button.setMinHeight(height*escala);
             button.setPrefHeight(height*escala);
             button.setMaxHeight(height*escala);
+            System.out.println(button.getLayoutX()+ "," + button.getLayoutY() + "," + button.getWidth() + ", " + button.getHeight());
             if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)){
                 button.setOnAction(actionEvent -> {
                     finalButton = button;
@@ -574,11 +548,21 @@ public class MainJFX extends Application implements PropertyChangeListener {
         }
     }
 
+    private void createPopUPInfo(String context, String title){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        if(title!=null){
+            alert.setTitle(title);
+        }
+        alert.setContentText(context);
+        alert.showAndWait();
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println(evt.getNewValue());
         if(evt.getPropertyName().equals("adicionarElemento") || evt.getPropertyName().equals("atualiza"))
             createEatualizaElemento(evt.getNewValue().toString());
+        if(evt.getPropertyName().equals("adicionarPopUpAviso"))
+            createPopUPInfo(evt.getNewValue().toString(), null);
     }
 
 }

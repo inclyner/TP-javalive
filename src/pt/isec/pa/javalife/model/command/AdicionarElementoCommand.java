@@ -27,7 +27,6 @@ public class AdicionarElementoCommand extends AbstractCommand implements IComman
 
     @Override
     public boolean execute() {
-//! ainda nao esta a por forca
         Elemento elemento=null;
         Area a = new Area(x, y, altura, largura);
         if (tipo == "FAUNA") {
@@ -43,8 +42,6 @@ public class AdicionarElementoCommand extends AbstractCommand implements IComman
             ecossistema.addElemento(elemento,a,forca);
             return true;
         }
-
-
         return false;
     }
 

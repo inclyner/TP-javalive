@@ -67,14 +67,13 @@ public class EcossistemaFacade {
 
 
     public void createEcossistema(int dimension, double escala, int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) throws InterruptedException {
-        ecossistema = new Ecossistema(this, dimension,escala);
+        ecossistema = new Ecossistema(this, dimension, escala, initialForce, growthRate, overlapLoss, movementRate);
         gameEngine = new GameEngine();
         gameEngine.registerClient(ecossistema);
-        gameEngine.start(200);
+        gameEngine.start(timeUnit);
     }
 
     public void changeEcossistema(int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) {
-
 
     }
 
@@ -88,7 +87,18 @@ public class EcossistemaFacade {
     }
 
     public void adicionaElementoCommand(String tipo, double x, double y, double altura, double largura, double forca) {
-        cm.invokeCommand(new AdicionarElementoCommand(this.ecossistema,tipo,x,y,x+altura,y+largura,forca));
+        if(ecossistema!=null) {
+            if (cm.invokeCommand(new AdicionarElementoCommand(this.ecossistema, tipo, x, y, x + altura, y + largura, forca)))
+                adcionarPopUpAviso("Elemento adicionado com sucesso");
+            else
+                adcionarPopUpAviso("Elemento nao foi adicionado");
+        }else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
+
+    }
+
+    private void adcionarPopUpAviso(String string) {
+        support.firePropertyChange("adicionarPopUpAviso", null, string);
     }
 
     public void pause_unpause() {

@@ -16,13 +16,14 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private Area area;
 
     private double escala;
+    private int forcaInicial, taxaCrescimento, forcaSobreposicao, velocidade;
     private boolean contemPedra = false;
     private boolean oneTime = true;
     private EcossistemaFacade ecossistemaFacade;
     List<String> listStringElementos = new ArrayList<>();
 
     // set up inicial do ecossistema (criação e inserção de elementos)
-    public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao,double escala) {
+    public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao,double escala, int forcaInicial, double taxaCrescimento, int forcaSobreposicao, double velocidade) {
         this.ecossistemaFacade = ecossistemaFacade;
         //TODO alterar para meter as coordenadas pelas definições
         // definir as unidades (tipo 1000 pixeis de largura são 2 pixeis por unidade)
@@ -126,8 +127,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     private void addElementoNoEvolve(Elemento elemento, Area aux) {
-        Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
-        listStringElementos.add(elemento+":"+a);
+        listStringElementos.add(elemento+":"+aux.toString());
     }
 
     private void evolveFauna(Fauna fauna) {
@@ -296,16 +296,16 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         List<Area> areasAdjacentes = new ArrayList<>();
 
         //region verifica ajacentes
-        if (areaA.cima() - altura >= 0) {
+        if (areaA.cima() - area.cima() > altura) {
             areasAdjacentes.add(new Area(areaA.cima() - altura, areaA.esquerda(), areaA.baixo() - altura, areaA.direita()));
         }
-        if (areaA.baixo() + altura <= area.baixo()) {
+        if (area.baixo() - areaA.baixo() > altura) {
             areasAdjacentes.add(new Area(areaA.cima() + altura, areaA.esquerda(), areaA.baixo() + altura, areaA.direita()));
         }
-        if (areaA.esquerda() - largura >= 0) {
+        if (areaA.esquerda() - area.esquerda() > largura) {
             areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() - largura, areaA.baixo(), areaA.direita() - largura));
         }
-        if (areaA.direita() + largura <= area.direita()) {
+        if (area.direita() - areaA.direita() > largura) {
             areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() + largura, areaA.baixo(), areaA.direita() + largura));
         }
         //endregion
