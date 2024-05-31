@@ -8,7 +8,7 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     // Estado atual da Fauna
     private FaunaState state;
-    private int direcao;
+    private double direcao;
     private double velocidade = 1;
     private double forca;
     private final boolean estadoProcuraComida = false;
@@ -61,6 +61,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         //cima + velocidade * Math.cos(Math.toRadians(direcao));
         //esquerda + velocidade * Math.sin(Math.toRadians(direcao));
         //setForca(getForca() - forcaMovimentacao);
+
+
         return new Area(getArea().cima() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().esquerda() + velocidade * Math.sin(Math.toRadians(direcao)),
                 getArea().baixo() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().direita() + velocidade * Math.sin(Math.toRadians(direcao)));
     }
