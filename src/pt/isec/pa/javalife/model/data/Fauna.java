@@ -24,7 +24,7 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         super(area);
         this.id = proxid;
         setForca(50);
-        //setState(FaunaState.NAO_PROCURA_COMIDA);
+        setState(FaunaState.NAO_PROCURA_COMIDA);
         proxid++;
 
         //diracao varia de 0 a 360
@@ -112,9 +112,9 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     @Override
     public void setForca(double forca) {
         this.forca = Math.min(Math.max(forca, 0), 100);
-        if (forca < 35)
+        if (this.forca < 35)
             setState(FaunaState.PROCURA_COMIDA);
-        else if (forca >= 80)
+        else if (this.forca >= 80)
             setState(FaunaState.NAO_PROCURA_COMIDA);
     }
 

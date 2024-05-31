@@ -32,44 +32,43 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //preenche a cerca da area com pedras
         Area aux;
         // Adiciona pedras na borda superior e inferior
-        /*for (double i = area.esquerda(); i < area.direita(); i += 1) {
+        for (double i = area.cima(); i < area.baixo(); i += 1) {
             // Adiciona pedras na borda superior e inferior
-            aux = new Area(i, area.cima(), 1, 1);
+            aux = new Area(i, area.cima(), i+1, area.cima()+1);
             addElemento(Elemento.INANIMADO, aux);
-            aux = new Area( i, area.baixo(), 1, 1);
+            aux = new Area( i, area.baixo()-1, i+1, area.baixo());
             addElemento(Elemento.INANIMADO, aux);
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
         for (double j = area.cima() + 1; j < area.baixo()-1; j += 1) {
             // adiciona pedras na borda esquerda
-            aux = new Area(area.esquerda(), j, 1, 1);
+            aux = new Area(area.esquerda(), j, area.esquerda()+1, j+1);
             addElemento(Elemento.INANIMADO, aux);
             // adiciona pedras na borda direita
-            aux = new Area(area.direita(), j, 1, 1);
+            aux = new Area(area.direita()-1, j, area.direita(), j+1);
             addElemento(Elemento.INANIMADO, aux);
-        }*/
+        }
         addElemento(Elemento.FLORA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
         //addElemento(Elemento.FAUNA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
-
     }
 
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
-        synchronized (elementos){
+        /*synchronized (elementos){
             /*verificarElementoMorre();*/
-            for(IElemento elemento : elementos) {
+            /*for(IElemento elemento : elementos) {
                 if(elemento instanceof Inanimado)
                     continue;
                 if (elemento instanceof Flora flora) {
                     evolveFlora(flora);
                     System.out.println(flora);
-                }
+                }*/
                 /*else if (elemento instanceof Fauna fauna) {
                     evolveFauna(fauna);
                 }*/
-            }
-        }
+            //}
+        //}*/
     }
 
     private void evolveFlora(Flora flora) {
@@ -182,7 +181,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         synchronized (elementos) {
             elementos.add(temp);
         }
-        Platform.runLater(()->ecossistemaFacade.AdicionarElemento(temp.toString()));
+        ecossistemaFacade.AdicionarElemento(temp.toString());
     }
 
     public void removeElemento(IElemento elemento) {
@@ -328,11 +327,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     public int verificaSobreposicao(IElemento elemento) {
         Area area = elemento.getArea();
         int count = 0;
-        for(IElemento e : elementos){
-            if (e.getId() == elemento.getId() && e.getType() == elemento.getType())
-                continue;
-            if (e.getArea().compareTo(area))
-                count++;
+        synchronized (elementos) {
+            for (IElemento e : elementos) {
+                if (e.getId() != elemento.getId() && e.getType() != elemento.getType())
+                    if(area.compareTo(e.getArea()))
+                        count++;
+            }
         }
         return count;
     }

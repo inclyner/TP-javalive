@@ -1,7 +1,7 @@
 package pt.isec.pa.javalife.model.data;
 
 public record Area(double cima, double esquerda, double baixo, double direita) {
-    public boolean compareTo(Area area) {
+    public boolean compareTo(Area outra) {
         // area.compareTo(area)
         //  areaanimal.compareto(areaquequeroir)
 
@@ -11,11 +11,16 @@ public record Area(double cima, double esquerda, double baixo, double direita) {
         // P   AAA
         // P
         // A(1,2,2,3).compareto(0,2,1,3)
-        //(612.5,612.5,616.0,616.0)
-        //(608.0,612.5,611.5,616.0)
+        //A(0,0,10,10)
+        //P(0,0,1,1)
+        //P(0,1,1,2)
 
-        return (area.cima <= this.cima && area.cima >= this.baixo) || (area.baixo <= this.cima && area.baixo >= this.baixo)
-                || (area.direita >= this.esquerda && area.direita <= this.direita) || (area.esquerda >= this.esquerda && area.esquerda <= this.direita);
+        //F(1,1,2,2)
+
+        //1<=0 && 1>=1
+
+        return !(this.esquerda >= outra.direita || outra.esquerda >= this.direita ||
+                this.baixo >= outra.cima || outra.baixo >= this.cima);
     }
     public String toString() {
         return  "(" + cima +
