@@ -8,8 +8,9 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     // Estado atual da Fauna
     private FaunaState state;
-    private int velocidade, direcao;
-    private double forca = 50;
+    private int direcao;
+    private double velocidade = 1;
+    private double forca;
     private final boolean estadoProcuraComida = false;
     private final float forcaMovimentacao = 0.5f;
     private IElemento elemetoPerseguir;
@@ -22,7 +23,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     public Fauna(Area area) {
         super(area);
         this.id = proxid;
-        setState(FaunaState.NAO_PROCURA_COMIDA);
+        setForca(50);
+        //setState(FaunaState.NAO_PROCURA_COMIDA);
         proxid++;
 
         //diracao varia de 0 a 360
@@ -134,6 +136,6 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     @Override
     public String toString() {
-        return super.toString() + "forca" + forca;
+        return super.toString() + "forca:" + forca;
     }
 }

@@ -1,6 +1,7 @@
 package pt.isec.pa.javalife.model.data;
 
 
+import javafx.application.Platform;
 import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
 import pt.isec.pa.javalife.model.factory.ElementFactory;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
@@ -8,15 +9,12 @@ import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Ecossistema implements Serializable, IGameEngineEvolve {
-    private final Set<IElemento> elementos = new HashSet<>();
+    private Set<IElemento> elementos = new HashSet<>();
     private Area area;
-    
+
     private double escala;
     private boolean contemPedra = false;
     private boolean oneTime = true;
@@ -28,74 +26,50 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //TODO alterar para meter as coordenadas pelas definições
         // definir as unidades (tipo 1000 pixeis de largura são 2 pixeis por unidade)
         //region criação de pedras
-        Area area = new Area(0, 0, dimensao, dimensao);
+        area = new Area(0, 0, dimensao, dimensao);
         this.escala = escala;
         System.out.println("escala = " + escala);
         //preenche a cerca da area com pedras
         Area aux;
         // Adiciona pedras na borda superior e inferior
-        for (double i = area.esquerda(); i < area.direita()/escala; i += 1) {
+        /*for (double i = area.esquerda(); i < area.direita(); i += 1) {
             // Adiciona pedras na borda superior e inferior
             aux = new Area(i, area.cima(), 1, 1);
             addElemento(Elemento.INANIMADO, aux);
-            aux = new Area( i, area.baixo()/escala, 1, 1);
+            aux = new Area( i, area.baixo(), 1, 1);
             addElemento(Elemento.INANIMADO, aux);
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
-        for (double j = area.cima() + 1; j < area.baixo()/escala-1; j += 1) {
+        for (double j = area.cima() + 1; j < area.baixo()-1; j += 1) {
             // adiciona pedras na borda esquerda
             aux = new Area(area.esquerda(), j, 1, 1);
             addElemento(Elemento.INANIMADO, aux);
             // adiciona pedras na borda direita
-            aux = new Area(area.direita()/escala, j, 1, 1);
+            aux = new Area(area.direita(), j, 1, 1);
             addElemento(Elemento.INANIMADO, aux);
-        }
-
-        /*
-        //cria pedras de varios tamanhos
-        int quantidade = 10;
-        // Cria um objeto Random para gerar dimensões aleatórias
-        java.util.Random random = new java.util.Random();
-        for (int i = 0; i < quantidade; i++) {
-            // dimensões aleatórias (1x1, 1x2, 2x1 ou 2x2)
-            int largura = random.nextInt(2) + 1;
-            int altura = random.nextInt(2) + 1;
-
-            // posição aleatória dentro da área especificada
-            double x = random.nextDouble() * (area.direita() - 1) + area.esquerda() + 1; //gera valores entre 1 e 10 nao inclusive (para area 0 0 10 10)
-            double y = random.nextDouble() * (area.baixo() - 1) + area.cima() + 1;// gera valores entre 1 e 10 nao inclusive (para area 0 0 10 10)
-
-            // verifica se ha alguma elemento na posição gerada
-            for (IElemento e : elementos) {
-                // se houver um elemento no sitio, ou dentro dos limites deste nao o adiciona e retira 1 ao ciclo
-                if (e.getArea().esquerda() <= x && e.getArea().direita() >= x + largura && e.getArea().cima() <= y && e.getArea().baixo() >= y + altura) {
-                    i--;
-                    System.out.println("x = " + x + "Y =" + y);
-                    System.out.println("valor:" + (e.getArea().esquerda() <= x && e.getArea().direita() >= x + largura && e.getArea().cima() <= y && e.getArea().baixo() >= y + altura));
-                    break;
-                }
-            }
-
-            // considero o x e y cima e esquerda como a base do elemento e adiciono a altura e a largura
-            addElemento(Elemento.INANIMADO, new Area(x, y, x + altura, y + largura));
-        }
-
-
-         */
-        //endregion
+        }*/
+        addElemento(Elemento.FLORA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
+        //addElemento(Elemento.FAUNA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
 
     }
+
     @Override
     public void evolve(IGameEngine gameEngine, long currentTime) {
-        verificarElementoMorre();
-        for (IElemento elemento : elementos) {
-            if (elemento instanceof Flora flora)
-                evolveFlora(flora);
-            else if (elemento instanceof Fauna fauna)
-                evolveFauna(fauna);
+        synchronized (elementos){
+            /*verificarElementoMorre();*/
+            for(IElemento elemento : elementos) {
+                if(elemento instanceof Inanimado)
+                    continue;
+                if (elemento instanceof Flora flora) {
+                    evolveFlora(flora);
+                    System.out.println(flora);
+                }
+                /*else if (elemento instanceof Fauna fauna) {
+                    evolveFauna(fauna);
+                }*/
+            }
         }
-        //ecossistemaFacade.atualiza(getElementosLista());
     }
 
     private void evolveFlora(Flora flora) {
@@ -109,7 +83,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     addElemento(Elemento.FLORA, a);
             }
         }
-        //verifica se tem sobreposiçao e reduz a forca caso tenha
+        //verifica se tem sobreposiçao de elementos fauna e reduz a forca caso tenha
         for (int i = 0; i < verificaSobreposicao(flora); i++)
             flora.reduzirForcaSobreposicao();
     }
@@ -203,10 +177,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     public void addElemento(Elemento elemento, Area aux) {
-        Area a = new Area(aux.cima()*escala, aux.esquerda()*escala, aux.baixo()*escala, aux.direita()*escala);
+        Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
         IElemento temp = ElementFactory.createElement(elemento, a);
-        elementos.add(temp);
-        ecossistemaFacade.AdicionarElemento(temp.toString());
+        synchronized (elementos) {
+            elementos.add(temp);
+        }
+        Platform.runLater(()->ecossistemaFacade.AdicionarElemento(temp.toString()));
     }
 
     public void removeElemento(IElemento elemento) {
@@ -214,21 +190,32 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     public void verificarElementoMorre() {
-        for (IElemento elemento : elementos) {
-            if (elemento instanceof Fauna fauna) {
-                if (fauna.getForca() <= 0)
-                    removeElemento(fauna);
-            } else if (elemento instanceof Flora flora) {
-                if (flora.getForca() <= 0)
-                    removeElemento(flora);
+        synchronized (elementos) {
+            Iterator<IElemento> iterator = elementos.iterator();
+            while (iterator.hasNext()) {
+                IElemento elemento = iterator.next();
+                if (elemento instanceof Fauna fauna) {
+                    if (fauna.getForca() <= 0) {
+                        iterator.remove(); // Remove the current element using the iterator
+                        Platform.runLater(() -> ecossistemaFacade.atualiza(fauna.toString()));
+                    }
+                } else if (elemento instanceof Flora flora) {
+                    if (flora.getForca() <= 0) {
+                        iterator.remove(); // Remove the current element using the iterator
+                        Platform.runLater(() -> ecossistemaFacade.atualiza(flora.toString()));
+                    }
+                }
             }
         }
     }
 
+
     private boolean isAreaLivre(Area area) {
-        for (IElemento elemento : elementos) {
-            if (elemento.getArea().compareTo(area)) {
-                return false;
+        synchronized (elementos) {
+            for (IElemento elemento : elementos) {
+                if (elemento.getArea().compareTo(area)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -276,9 +263,11 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     private boolean isLivrePedraFauna(Area area) {
-        for (IElemento elemento : elementos) {
-            if (elemento.getArea().compareTo(area) && (elemento.getType() == Elemento.INANIMADO || elemento.getType() == Elemento.FAUNA)) {
-                return false;
+        synchronized (elementos) {
+            for (IElemento elemento : elementos) {
+                if (elemento.getArea().compareTo(area) && (elemento.getType() == Elemento.INANIMADO || elemento.getType() == Elemento.FAUNA)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -339,14 +328,15 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     public int verificaSobreposicao(IElemento elemento) {
         Area area = elemento.getArea();
         int count = 0;
-        for (IElemento e : elementos) {
+        for(IElemento e : elementos){
             if (e.getId() == elemento.getId() && e.getType() == elemento.getType())
                 continue;
-            if (elemento.getArea().compareTo(area))
+            if (e.getArea().compareTo(area))
                 count++;
         }
         return count;
     }
+
 
 
     //* novo a partir daqui
@@ -366,15 +356,4 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
         return false;
     }
-
-
-    public List<String> getElementosLista(){
-        List<String> list = new ArrayList<>();
-        for(IElemento elemento : elementos){
-            list.add(elemento.toString());
-        }
-        return list;
-    }
-
-
 }

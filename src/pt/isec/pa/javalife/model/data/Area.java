@@ -11,7 +11,8 @@ public record Area(double cima, double esquerda, double baixo, double direita) {
         // P   AAA
         // P
         // A(1,2,2,3).compareto(0,2,1,3)
-        //
+        //(612.5,612.5,616.0,616.0)
+        //(608.0,612.5,611.5,616.0)
 
         return (area.cima <= this.cima && area.cima >= this.baixo) || (area.baixo <= this.cima && area.baixo >= this.baixo)
                 || (area.direita >= this.esquerda && area.direita <= this.direita) || (area.esquerda >= this.esquerda && area.esquerda <= this.direita);

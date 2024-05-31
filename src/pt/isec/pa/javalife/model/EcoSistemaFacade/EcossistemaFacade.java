@@ -12,6 +12,7 @@ import pt.isec.pa.javalife.model.gameengine.GameEngine;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
@@ -34,14 +35,10 @@ public class EcossistemaFacade {
     // Adiciona um elemento ao ecossistema
     public void AdicionarElemento(String string) {
         //* fazer verificação se da para adicionar
-
-
         //boolean canAdd = ecossistema.verificaAdjacentes(element);
-
         //ICommand command = new AdicionarElementoCommand(ecossistema, element);
         //commandManager.execute(command);
-
-        support.firePropertyChange("ecossistema", null, string);
+        support.firePropertyChange("adicionarElemento", null, string);
         //cm.invokeCommand(new AdicionarElementoCommand(elemento));
     }
 
@@ -71,11 +68,10 @@ public class EcossistemaFacade {
 
 
     public void createEcossistema(int dimension, double escala, int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) throws InterruptedException {
-        gameEngine = new GameEngine();
         ecossistema = new Ecossistema(this, dimension,escala);
+        gameEngine = new GameEngine();
         gameEngine.registerClient(ecossistema);
-        gameEngine.start(1000);
-
+        gameEngine.start(200);
     }
 
     public void changeEcossistema(int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) {
@@ -88,8 +84,7 @@ public class EcossistemaFacade {
     }
 
 
-    public void atualiza(List<String> list){
-        for(String aux : list)
-            support.firePropertyChange("ecossistema", null, aux);
+    public void atualiza(String string){
+        support.firePropertyChange("atualiza", null, string);
     }
 }

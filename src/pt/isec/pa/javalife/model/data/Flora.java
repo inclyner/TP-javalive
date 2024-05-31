@@ -65,5 +65,9 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
         Flora.forcaSobreposicao = forcaSobreposicao;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "forca:" + forca;
+    }
     //endregion
 }

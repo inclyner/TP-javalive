@@ -4,34 +4,27 @@ package pt.isec.pa.javalife.ui.gui.res;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
-import pt.isec.pa.javalife.model.data.Area;
-import pt.isec.pa.javalife.model.data.Fauna;
+import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.lang.Math.round;
-
 
 public class MainJFX extends Application implements PropertyChangeListener {
 
     private int unidade_generica;
-
     private double escala; // dimensao da janela / unidades genericas
     private int timeUnit;
     private int initialForce;
@@ -40,10 +33,12 @@ public class MainJFX extends Application implements PropertyChangeListener {
     private double movementRate;
     private Scene scene;
     private BorderPane root;
-    private Canvas canvas;
     private Pane pane;
-
     private Stage primaryStage;
+    private Map<String, Button> listButtons = new HashMap<>();
+    private Map<String, Label> listLabels = new HashMap<>();
+    private Button finalButton;
+    private int valorReduzirJanela = 100;
 
 
     private static EcossistemaFacade ecossistemaFacade = new EcossistemaFacade();
@@ -138,7 +133,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         aplicarSolItem.setOnAction(event -> aplicarSol());
         aplicarHerbicidaItem.setOnAction(event -> aplicarHerbicida());
         injetarForcaItem.setOnAction(event -> injetarForca());
-
         ecossistemaFacade.addPropertyChangeListener(this);
     }
 
@@ -284,34 +278,25 @@ public class MainJFX extends Application implements PropertyChangeListener {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-
     */
 
 
     private void showParameterPopup(boolean permiteAlteracoes) {
-
-
         // Function to create and show the pop-up
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Ecosystem Parameter Collector");
-
         // Create the GridPane layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setVgap(8);
         grid.setHgap(10);
-
-
-
-
         // Create labels and text fields for each parameter
         Label dimensionLabel = new Label("Dimensao do Ecossistema:");
         GridPane.setConstraints(dimensionLabel, 0, 1);
         Slider dimensionSlider = new Slider();
         dimensionSlider.setMin(0);
-        dimensionSlider.setMax(scene.getWidth()); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
+        dimensionSlider.setMax(scene.getWidth()-valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
         dimensionSlider.setValue(scene.getWidth()/2); // Valor inicial
         dimensionSlider.setShowTickMarks(true);
         dimensionSlider.setShowTickLabels(true);
@@ -364,11 +349,11 @@ public class MainJFX extends Application implements PropertyChangeListener {
             growthRate = Double.parseDouble(growthRateInput.getText());
             overlapLoss = Integer.parseInt(overlapLossInput.getText());
             movementRate = Double.parseDouble(movementRateInput.getText());
-            escala= scene.getWidth()/unidade_generica;
+            escala= (scene.getWidth()-valorReduzirJanela)/unidade_generica;
             if (permiteAlteracoes) {
                 desenharEcossistema();
                 try {
-                    ecossistemaFacade.createEcossistema((int)scene.getWidth(), escala, timeUnit, initialForce, growthRate, overlapLoss, movementRate);
+                    ecossistemaFacade.createEcossistema(unidade_generica, escala, timeUnit, initialForce, growthRate, overlapLoss, movementRate);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -376,8 +361,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 ecossistemaFacade.changeEcossistema(timeUnit, initialForce, growthRate, overlapLoss, movementRate);
             }
 
-            primaryStage.setWidth(scene.getWidth()+100);
-            primaryStage.setHeight(scene.getHeight()+400);
+            //primaryStage.setWidth(scene.getWidth()+100);
+            //primaryStage.setHeight(scene.getHeight()+400);
 
             // Print or use the collected values
             System.out.println("Dimensão do Ecossistema: " + unidade_generica);
@@ -413,14 +398,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
     private void desenharEcossistema() {
         pane = new Pane();
         pane.setStyle("-fx-background-color: lightblue;");// Define a cor de fundo desejada
-        pane.setMaxSize(scene.getWidth(), scene.getWidth());
+        pane.setMaxSize(scene.getWidth()-valorReduzirJanela, scene.getWidth()-valorReduzirJanela);
         root.setCenter(pane);
-        //canvas = new Canvas(scene.getWidth(), scene.getWidth());
-        //GraphicsContext gc = canvas.getGraphicsContext2D();
-        //gc.setFill(Color.LIGHTBLUE); // Define a cor de fundo desejada
-        //gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        //pane.getChildren().add(canvas);
-        //root.setCenter(canvas);
     }
 
 
@@ -431,45 +410,73 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
 
 
-    private void createElemento(String string){
-        Pattern pattern = Pattern.compile("id:(\\d+)type:(\\w+)area:\\(([^)]+)\\)");
-        Matcher matcher = pattern.matcher(string);
-
-        if (matcher.find()) {
+    private void createEatualizaElemento(String string){
+        Pattern idPattern = Pattern.compile("id:(\\d+)");
+        Pattern typePattern = Pattern.compile("type:([A-Z]+)");
+        Pattern areaPattern = Pattern.compile("area:\\(([^)]+)\\)");
+        Pattern forcaPattern = Pattern.compile("forca:(\\d+)");
+        Matcher idMatcher = idPattern.matcher(string);
+        Matcher typeMatcher = typePattern.matcher(string);
+        Matcher areaMatcher = areaPattern.matcher(string);
+        Matcher forcaMatcher = forcaPattern.matcher(string);
+        if (idMatcher.find() && typeMatcher.find() && areaMatcher.find()) {
+            Label forcaLabel = new Label();
+            Button button = new Button();
             // Extrair as informações
-            String id = matcher.group(1);
-            String type = matcher.group(2);
-            String area = matcher.group(3);
-
+            String id = idMatcher.group(1);
+            String type = typeMatcher.group(1);
+            String area = areaMatcher.group(1);
+            String forca = null;
             // Dividir e converter os valores da área
             String[] areaValues = area.split(",");
             double x = Double.parseDouble(areaValues[0]);
             double y = Double.parseDouble(areaValues[1]);
-            double width = Double.parseDouble(areaValues[2]);
-            double height = Double.parseDouble(areaValues[3]);
-
-
-            Button button = new Button();
-            button.setLayoutX(x); // Posição X do botão no Pane
-            button.setLayoutY(y); // Posição Y do botão no Pane
-            button.setPrefWidth(width); // Largura preferencial do botão
-            button.setPrefHeight(height); // Altura preferencial do botão
-
-            // Definir a cor de fundo do botão como verde
-            button.setStyle("-fx-background-color: #008000;");
-
+            double width = Double.parseDouble(areaValues[3]) - Double.parseDouble(areaValues[1]);
+            double height = Double.parseDouble(areaValues[2]) - Double.parseDouble(areaValues[0]);
+            if (forcaMatcher.find() && type.equals(Elemento.FAUNA.toString())) {
+                forca = forcaMatcher.group(1);
+                forcaLabel.setText(forca);
+                forcaLabel.setLayoutX(Double.parseDouble(areaValues[3])*escala+25/escala); // Posição X da label ao lado do botão
+                forcaLabel.setLayoutY(y*escala + height);
+                pane.getChildren().add(forcaLabel);
+            }
+            button.setLayoutX(x*escala); // Posição X do botão no Pane
+            button.setLayoutY(y*escala); // Posição Y do botão no Pane
+            button.setPrefWidth(width*escala); // Largura preferencial do botão
+            button.setPrefHeight(height*escala); // Altura preferencial do botão
+            if (x != 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica){
+                button.setOnAction(actionEvent -> {
+                    finalButton = button;
+                    for (Map.Entry<String, Button> entry : listButtons.entrySet()) {
+                        if (entry.getValue().equals(button)) {
+                            System.out.println(entry.getKey());
+                        }
+                    }
+                    System.out.println(id+type);
+                });
+            }
+            if (type.equals(Elemento.INANIMADO.toString())) {
+                button.setStyle("-fx-background-color: #505050;");// Definir a cor de fundo do botão como cinzento para tipo inanimado
+                listButtons.put(Elemento.INANIMADO + id, button);
+            } else if (type.equals(Elemento.FLORA.toString())) {
+                button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
+                listButtons.put(Elemento.FLORA + id, button);
+            } else if (type.equals(Elemento.FAUNA.toString())) {
+                button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
+                listButtons.put(Elemento.FAUNA + id, button);
+                listLabels.put(Elemento.FAUNA+id, forcaLabel);
+            }
             // Adicionar o botão ao Pane
             pane.getChildren().add(button);
-            //root.setCenter(button);
-
         }
-
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println(evt.getNewValue());
-        createElemento(evt.getNewValue().toString());
+        //System.out.println(evt.getNewValue());
+        if(evt.getPropertyName().equals("adicionarElemento") || evt.getPropertyName().equals("atualiza"))
+            createEatualizaElemento(evt.getNewValue().toString());
     }
+
 }
 
