@@ -509,9 +509,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
             if (forcaMatcher.find() && type.equals(Elemento.FAUNA.toString())) {
                 forca = forcaMatcher.group(1);
                 forcaLabel.setText(forca);
-                forcaLabel.setLayoutX(Double.parseDouble(areaValues[3])*escala+25/escala); // Posição X da label ao lado do botão
-                forcaLabel.setLayoutY(y*escala + height);
+                forcaLabel.layoutXProperty().bind(button.layoutXProperty().add(button.widthProperty()));
+                forcaLabel.layoutYProperty().bind(button.layoutYProperty());
                 pane.getChildren().add(forcaLabel);
+
             }
             button.setLayoutY(x*escala); // Posição X do botão no Pane
             button.setLayoutX(y*escala);// Posição Y do botão no Pane
@@ -539,6 +540,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
                 listButtons.put(Elemento.FLORA + id, button);
             } else if (type.equals(Elemento.FAUNA.toString())) {
+                if(listButtons.containsKey(Elemento.FAUNA + id) && listLabels.containsKey(Elemento.FAUNA +id)) {
+                    pane.getChildren().remove(listButtons.get(Elemento.FAUNA + id));
+                    pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
+                }
                 button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
                 listButtons.put(Elemento.FAUNA + id, button);
                 listLabels.put(Elemento.FAUNA+id, forcaLabel);
