@@ -88,9 +88,7 @@ public class EcossistemaFacade {
     }
 
     public void adicionaElementoCommand(String tipo, double x, double y, double altura, double largura, double forca) {
-        cm.invokeCommand(new AdicionarElementoCommand(this.ecossistema,tipo,x,y,altura,largura,forca));
-        System.out.println("adicionaelementocommand na facade");
-        System.out.println("tipo = " + tipo + ", x = " + x + ", y = " + y + ", altura = " + altura + ", largura = " + largura + ", forca = " + forca);
+        cm.invokeCommand(new AdicionarElementoCommand(this.ecossistema,tipo,x,y,x+altura,y+largura,forca));
     }
 
     public void pause_unpause() {

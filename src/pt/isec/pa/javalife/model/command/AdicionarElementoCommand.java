@@ -28,19 +28,19 @@ public class AdicionarElementoCommand extends AbstractCommand implements IComman
     @Override
     public boolean execute() {
 //! ainda nao esta a por forca
-        IElemento elemento = null;
+        Elemento elemento=null;
         Area a = new Area(x, y, altura, largura);
         if (tipo == "FAUNA") {
-            elemento = ElementFactory.createElement(Elemento.FAUNA, a);
+            elemento = Elemento.FAUNA;
         } else if (tipo == "INANIMADO") {
-            elemento = ElementFactory.createElement(Elemento.INANIMADO, a);
+            elemento = Elemento.INANIMADO;
         } else if (tipo == "FLORA") {
-            elemento = ElementFactory.createElement(Elemento.FLORA, a);
+            elemento = Elemento.FLORA;
         }
-        System.out.println("elemnento.to = " + elemento.toString());
-        if(ecossistema.verificaSobreposicao(elemento)==0)
+
+        if(ecossistema.isAreaLivre(a) && elemento!=null)
         {
-            ecossistema.addElemento(elemento.getType(),a);
+            ecossistema.addElemento(elemento,a,forca);
             return true;
         }
 

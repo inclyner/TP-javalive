@@ -36,22 +36,21 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         for (double i = area.cima(); i < area.baixo(); i += 1) {
             // Adiciona pedras na borda superior e inferior
             aux = new Area(i, area.cima(), i+1, area.cima()+1);
-            addElemento(Elemento.INANIMADO, aux);
+            addElemento(Elemento.INANIMADO, aux,0);
             aux = new Area( i, area.baixo()-1, i+1, area.baixo());
-            addElemento(Elemento.INANIMADO, aux);
+            addElemento(Elemento.INANIMADO, aux,0);
         }
 
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
         for (double j = area.cima() + 1; j < area.baixo()-1; j += 1) {
             // adiciona pedras na borda esquerda
             aux = new Area(area.esquerda(), j, area.esquerda()+1, j+1);
-            addElemento(Elemento.INANIMADO, aux);
+            addElemento(Elemento.INANIMADO, aux,0);
             // adiciona pedras na borda direita
             aux = new Area(area.direita()-1, j, area.direita(), j+1);
-            addElemento(Elemento.INANIMADO, aux);
+            addElemento(Elemento.INANIMADO, aux,0);
         }
-        addElemento(Elemento.FLORA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
-        //addElemento(Elemento.FAUNA, new Area(area.baixo() / 2, area.direita() / 2, area.baixo() / 2 + 2, area.direita() / 2 + 2));
+
     }
 
     @Override
@@ -212,16 +211,23 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     if (fauna.reproducao(verificarFaunaDistancia(fauna))) {
                         Area temp = verificaAdjacentes(fauna, true);
                         if(temp != null)
-                            addElemento(Elemento.FAUNA, temp);
+                            addElemento(Elemento.FAUNA, temp,0);
                     }
                 }
             }
         }
     }
 
-    public void addElemento(Elemento elemento, Area aux) {
+    public void addElemento(Elemento tipo, Area aux,double forca) {
+
         Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
-        IElemento temp = ElementFactory.createElement(elemento, a);
+        IElemento temp = ElementFactory.createElement(tipo, a);
+        if(forca != 0) {
+            if (temp instanceof Fauna fauna)
+                fauna.setForca(forca);
+            if (temp instanceof Flora flora)
+                flora.setForca(forca);
+        }
         synchronized (elementos) {
           elementos.add(temp);
         }
@@ -261,7 +267,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
 
-    private boolean isAreaLivre(Area area) {
+    public boolean isAreaLivre(Area area) {
         synchronized (elementos) {
             for (IElemento elemento : elementos) {
                 if (elemento.getArea().compareTo(area)) {
