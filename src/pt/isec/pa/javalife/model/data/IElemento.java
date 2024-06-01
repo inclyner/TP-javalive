@@ -12,4 +12,5 @@ public sealed interface IElemento
     Area getArea(); // retorna a área ocupada
 
 
+
 }

@@ -2,6 +2,9 @@ package pt.isec.pa.javalife.model.data;
 
 public sealed class Fauna extends ElementoBase implements IElementoComForca permits Animal {
 
+
+
+
     public enum FaunaState {
         PROCURA_COMIDA, NAO_PROCURA_COMIDA
     }
@@ -130,12 +133,21 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         return elemetoPerseguir;
     }
 
-    public boolean verificarAdjacente() {
-        return moverParaComida(area, false).compareTo(elemetoPerseguir.getArea());
+    public boolean verificarAdjacente(Area area) {
+        return moverParaComida(area, false).compareTo(elemetoPerseguir.getArea(),area);
     }
 
     @Override
     public String toString() {
         return super.toString() + "forca:" + forca;
+    }
+
+
+    public void setDirecao(double direcao) {
+        this.direcao = direcao;
+    }
+
+    public void setVelocidade(double velocidade) {
+        this.velocidade = velocidade;
     }
 }

@@ -3,6 +3,7 @@ package pt.isec.pa.javalife.model.EcoSistemaFacade;
 
 import pt.isec.pa.javalife.model.command.AdicionarElementoCommand;
 import pt.isec.pa.javalife.model.command.CommandManager;
+import pt.isec.pa.javalife.model.command.EditarElementoCommand;
 import pt.isec.pa.javalife.model.command.RemoverElementoCommand;
 import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.IElemento;
@@ -41,13 +42,7 @@ public class EcossistemaFacade {
         //cm.invokeCommand(new AdicionarElementoCommand(ecossistema));
     }
 
-    public boolean removeElement(IElemento elemento) {
 
-
-        support.firePropertyChange("ecossistema", null, ecossistema);
-
-        return cm.invokeCommand(new RemoverElementoCommand(ecossistema,elemento.getId()));
-    }
 
 
     public void undo() {
@@ -112,7 +107,19 @@ public class EcossistemaFacade {
     }
 
 
-    public void removerElementoCommand(int id) {
-        cm.invokeCommand(new RemoverElementoCommand(this.ecossistema,id));
+    public boolean removerElementoCommand(String tipo,int id) {
+        if(cm.invokeCommand(new RemoverElementoCommand(this.ecossistema,tipo, id))){
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean editarElementoCommand(String tipo,int id,double direcao,double velocidade, double forca) {
+        if(cm.invokeCommand(new EditarElementoCommand(this.ecossistema,tipo,id,direcao,velocidade, forca))){
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
+        }
+        return false;
     }
 }
