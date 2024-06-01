@@ -488,23 +488,32 @@ public class MainJFX extends Application implements PropertyChangeListener {
             button.setMinHeight(height * escala);
             button.setPrefHeight(height * escala);
             button.setMaxHeight(height * escala);
-            System.out.println(button.getLayoutX() + "," + button.getLayoutY() + "," + button.getWidth() + ", " + button.getHeight());
-            if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)) {
+           if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)) {
                 button.setOnAction(actionEvent -> {
                     // chama funcao que abre pagina do elemento
                     PaginaElemento(Elemento.valueOf(type), Integer.parseInt(id));
                 });
             }
             if (type.equals(Elemento.INANIMADO.toString())) {
+                if (listButtons.containsKey(Elemento.INANIMADO + id)) {
+                    pane.getChildren().remove(listButtons.get(Elemento.INANIMADO + id));
+                    listButtons.remove(type+id);
+                }
                 button.setStyle("-fx-background-color: #505050;");// Definir a cor de fundo do botão como cinzento para tipo inanimado
                 listButtons.put(Elemento.INANIMADO + id, button);
             } else if (type.equals(Elemento.FLORA.toString())) {
+                if (listButtons.containsKey(Elemento.FLORA + id)) {
+                    pane.getChildren().remove(listButtons.get(Elemento.FLORA + id));
+                    listButtons.remove(type+id);
+                }
                 button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
                 listButtons.put(Elemento.FLORA + id, button);
             } else if (type.equals(Elemento.FAUNA.toString())) {
                 if (listButtons.containsKey(Elemento.FAUNA + id) && listLabels.containsKey(Elemento.FAUNA + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.FAUNA + id));
                     pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
+                    listButtons.remove(type+id);
+                    listLabels.remove(type+id);
                 }
                 button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
                 listButtons.put(Elemento.FAUNA + id, button);
@@ -514,12 +523,11 @@ public class MainJFX extends Application implements PropertyChangeListener {
             pane.getChildren().add(button);
             if(forca!=null)
                 if(Double.parseDouble(forca)<=0) {
-                    System.out.println("\n\n" + type+id+ ", " + forca);
                     pane.getChildren().remove(listButtons.get(type + id));
                     listButtons.remove(type+id);
                     if(type.equals(Elemento.FAUNA.toString())) {
                         pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
-                        listButtons.remove(type+id);
+
                     }
                 }
 
@@ -575,6 +583,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 if (success) {
                     createPopUPInfo("O elemento com o ID " + id + " foi removido com sucesso.", "Elemento Removido");
                     pane.getChildren().remove(listButtons.get(elemento.toString() + id));
+                    if(elemento.toString().equalsIgnoreCase(Elemento.FAUNA.toString()))
+                        pane.getChildren().remove(listLabels.get(elemento.toString() + id));
                 } else {
                     createPopUPInfo("O elemento com o ID " + id + " não pôde ser removido.", "Erro ao Remover");
                 }
@@ -694,7 +704,5 @@ public class MainJFX extends Application implements PropertyChangeListener {
             createeAtualizaElemento(evt.getNewValue().toString());
         if (evt.getPropertyName().equals("adicionarPopUpAviso")) createPopUPInfo(evt.getNewValue().toString(), null);
     }
-
-
 }
 

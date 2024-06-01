@@ -16,11 +16,12 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     private double forca;
     private final boolean estadoProcuraComida = false;
     private final float forcaMovimentacao = 0.5f;
-    private IElemento elemetoPerseguir;
+    private IElemento elemetoPerseguir = null;
     private final double forcaReproducao = 25;
     private int unidTempo = 0;
     private static int proxid = 1;
     private final int id;
+    private boolean escolherElementoPerseguir = true;
 
     public Fauna(Area area) {
         super(area);
@@ -124,7 +125,9 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     }
 
     public boolean verificarAdjacente(Area area) {
-        return moverParaComida(area, false).compareTo(elemetoPerseguir.getArea(),area);
+        if (elemetoPerseguir != null)
+            return moverParaComida(area, false).compareTo(elemetoPerseguir.getArea(), area);
+        return false;
     }
 
     @Override
@@ -139,5 +142,13 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     public void setVelocidade(double velocidade) {
         this.velocidade = velocidade;
+    }
+
+    public boolean isEscolherElementoPerseguir() {
+        return escolherElementoPerseguir;
+    }
+
+    public void setEscolherElementoPerseguir(boolean escolherElementoPerseguir) {
+        this.escolherElementoPerseguir = escolherElementoPerseguir;
     }
 }
