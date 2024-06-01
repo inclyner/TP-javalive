@@ -64,11 +64,9 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     continue;
                 if (elemento instanceof Flora flora) {
                     evolveFlora(flora);
-                    System.out.println(flora);
                 } else if (elemento instanceof Fauna fauna) {
                     evolveFauna(fauna);
                     Platform.runLater(() -> ecossistemaFacade.atualiza(fauna.toString()));
-                    System.out.println(fauna);
                 }
             }
         }
@@ -83,7 +81,6 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     private void addElementoPorString() {
         for (String aux : listStringElementos) {
-            System.out.println(aux);
             String[] partes = aux.split(":");
             if (Elemento.FLORA.toString().equals(partes[0])) {
                 IElemento temp = ElementFactory.createElement(Elemento.FLORA, converterStringParaArea(partes[1]));
@@ -519,9 +516,10 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     writer.write(String.valueOf(elemento.getArea())); // Escrever area
                     writer.write(","); // Separador de coluna
 
-
+                if(elemento instanceof Inanimado) {
                     writer.write("0"); // Escrever forca
                     writer.newLine(); // Nova linha
+                }
                 if(elemento instanceof Fauna fauna) {
                     writer.write(String.valueOf(((Fauna) elemento).getForca())); // Escrever forca
                     writer.newLine(); // Nova linha
@@ -536,7 +534,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     public void importaSimulacao(File selectedFile) {
-        //TODO falta testar isto
+        //! o check verifica element nao funciona
         try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
             String line;
             reader.readLine();
@@ -558,6 +556,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                         // Se o elemento passar nas verificações, cria e adiciona
 
                         addElemento(Elemento.valueOf(tipo), temp, forca);
+                        System.out.println("ELEMENTO ADICIONADO temp = " + temp);
 
                     }
                     else {
@@ -578,11 +577,11 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private boolean verificaElementoArea(Area temp, String tipo) {
         //! a logica ainda nao foi imensamente pensada
         for (IElemento elemento : elementos) {
-            if (elemento.getArea().compareTo(temp, areaBoard) && tipo.equalsIgnoreCase(elemento.getType().toString())) {
-                return true;
+            if (temp.compareTo(elemento.getArea(), areaBoard) && tipo.equalsIgnoreCase(elemento.getType().toString())) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
 }

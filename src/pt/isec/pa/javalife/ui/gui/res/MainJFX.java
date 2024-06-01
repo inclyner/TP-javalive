@@ -259,7 +259,9 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     double posY = Double.parseDouble(x.getText());
                     double alt = Double.parseDouble(altura.getText());
                     double larg = Double.parseDouble(largura.getText());
-                    double forcaInicial = Double.parseDouble(forca.getText());
+                    double forcaInicial=0;
+                    if(!tipo.equalsIgnoreCase("inanimado"))
+                        forcaInicial = Double.parseDouble(forca.getText());
 
                     // Adicionar o elemento ao ecossistema
                     ecossistemaFacade.adicionaElementoCommand(tipo, posX, posY, alt, larg, forcaInicial);
@@ -488,7 +490,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
             button.setMinHeight(height * escala);
             button.setPrefHeight(height * escala);
             button.setMaxHeight(height * escala);
-            System.out.println(button.getLayoutX() + "," + button.getLayoutY() + "," + button.getWidth() + ", " + button.getHeight());
             if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)) {
                 button.setOnAction(actionEvent -> {
                     // chama funcao que abre pagina do elemento
@@ -514,7 +515,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
             pane.getChildren().add(button);
             if(forca!=null)
                 if(Double.parseDouble(forca)<=0) {
-                    System.out.println("\n\n" + type+id+ ", " + forca);
                     pane.getChildren().remove(listButtons.get(type + id));
                     listButtons.remove(type+id);
                     if(type.equals(Elemento.FAUNA.toString())) {
