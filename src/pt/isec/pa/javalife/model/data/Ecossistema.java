@@ -63,11 +63,9 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                 if (elemento instanceof Flora flora) {
                     evolveFlora(flora);
                     Platform.runLater(() -> ecossistemaFacade.atualiza(flora.toString()));
-                    System.out.println(flora);
                 } else if (elemento instanceof Fauna fauna) {
                     evolveFauna(fauna);
                     Platform.runLater(() -> ecossistemaFacade.atualiza(fauna.toString()));
-                    System.out.println(fauna);
                 }
             }
         }
