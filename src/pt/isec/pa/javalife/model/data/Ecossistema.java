@@ -148,7 +148,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             if (fauna.getState() == Fauna.FaunaState.PROCURA_COMIDA) {
                 if (existeFlora()) {
                     //region procura elemento flora mais perto atualiza area e forca
-                    do {
+                    do{
                         areaParaOndeVai = fauna.moverParaComida(checkElementoMaisPerto(fauna.getArea()), contemPedra);
                         contemPedra = verificaPedraouFauna(areaParaOndeVai);
                     } while (!contemPedra);
@@ -231,7 +231,6 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     public void addElemento(Elemento tipo, Area aux, double forca) {
-
         Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
         IElemento temp = ElementFactory.createElement(tipo, a);
         if (forca != 0) {
@@ -282,7 +281,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     public boolean isAreaLivre(Area area) {
         synchronized (elementos) {
             for (IElemento elemento : elementos) {
-                if (elemento.getArea().compareTo(area,this.areaBoard)) {
+                if (area.compareTo(elemento.getArea(),this.areaBoard)) {
                     return false;
                 }
             }
@@ -342,11 +341,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private boolean verificaPedraouFauna(Area area) {
         synchronized (elementos) {
             for (IElemento elemento : elementos) {
-                if (area.compareTo(elemento.getArea(),this.areaBoard)
-                        //elemento.getArea().compareTo(area,this.areaBoard)
-                ){
-                    System.out.println("elemento = " + elemento);
-                    System.out.println("DEU TRUE CARALHO");
+                if (area.compareTo(elemento.getArea(),this.areaBoard)){
                     if(elemento.getType() == Elemento.INANIMADO || elemento.getType() == Elemento.FAUNA)
                         return true;
                 }
@@ -433,7 +428,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         synchronized (elementos) {
             for (IElemento e : elementos) {
                 if (e.getId() == elemento.getId() && e.getType() == elemento.getType()) continue;
-                if (e.getArea().compareTo(area,this.areaBoard) && e.getType() == Elemento.FLORA) count++;
+                if (area.compareTo(e.getArea(),this.areaBoard) && e.getType() == Elemento.FLORA) count++;
             }
         }
         return count;

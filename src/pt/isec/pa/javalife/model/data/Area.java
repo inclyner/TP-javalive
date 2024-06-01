@@ -5,7 +5,6 @@ public record Area(double cima, double esquerda, double baixo, double direita) {
         //
         //(64.0,66.0,66.0,68.0)
         if ((outra.direita >= board.direita || outra.esquerda <= board.esquerda || outra.baixo >= board.baixo || outra.cima <= board.cima)) { // se estiver dentro da board
-
             System.out.println("outra = " + outra + " board = " + board);
             if (this.cima == outra.cima && this.esquerda == outra.esquerda && this.baixo == outra.baixo && this.direita == outra.direita)
                 return true;
