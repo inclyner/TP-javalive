@@ -71,6 +71,7 @@ public class EcossistemaFacade {
 
     public void changeEcossistema(int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) {
 
+
     }
 
     public GameEngineState checkGameState(){
