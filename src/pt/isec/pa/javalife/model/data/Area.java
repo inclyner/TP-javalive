@@ -28,9 +28,9 @@ public record Area(double cima, double esquerda, double baixo, double direita) {
 
     public String toString() {
         return "(" + cima +
-                "," + esquerda +
-                "," + baixo +
-                "," + direita +
+                ";" + esquerda +
+                ";" + baixo +
+                ";" + direita +
                 ')';
     }
 }

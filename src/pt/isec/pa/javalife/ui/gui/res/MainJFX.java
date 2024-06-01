@@ -168,7 +168,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File file = fileChooser.showSaveDialog(stage);
         if (file != null) {
-            //Funçao que exporta os elementos
+            // Função que exporta os elementos
+            ecossistemaFacade.exportasimulação(file);
         }
     }
 
@@ -179,6 +180,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             //Funcao que le o ficheiro mas apenas coloca os elementos(sem ser os sobrepostos)
+            ecossistemaFacade.importasimulação(selectedFile);
         }
     }
 
@@ -232,7 +234,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         TextField largura = new TextField();
         largura.setPromptText("Largura");
         TextField forca = new TextField();
-        largura.setPromptText("Forca Inicial");
+        forca.setPromptText("Forca Inicial");
 
 
         grid.add(new Label("Posição X:"), 0, 1);
@@ -243,16 +245,18 @@ public class MainJFX extends Application implements PropertyChangeListener {
         grid.add(altura, 1, 3);
         grid.add(new Label("Largura:"), 0, 4);
         grid.add(largura, 1, 4);
-        grid.add(new Label("Forca Inicial:"), 0, 5);
-        grid.add(forca, 1, 5);
-
+        if(!tipo.equalsIgnoreCase("inanimado") ) {
+            grid.add(new Label("Forca Inicial:"), 0, 5);
+            grid.add(forca, 1, 5);
+        }
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == adicionarButtonType) {
                 try {
-                    double posX = Double.parseDouble(x.getText());
-                    double posY = Double.parseDouble(y.getText());
+                    //trocado porque assim funciona
+                    double posX = Double.parseDouble(y.getText());
+                    double posY = Double.parseDouble(x.getText());
                     double alt = Double.parseDouble(altura.getText());
                     double larg = Double.parseDouble(largura.getText());
                     double forcaInicial = Double.parseDouble(forca.getText());
@@ -462,7 +466,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             String area = areaMatcher.group(1);
             String forca = null;
             // Dividir e converter os valores da área
-            String[] areaValues = area.split(",");
+            String[] areaValues = area.split(";");
             double x = Double.parseDouble(areaValues[0]);
             double y = Double.parseDouble(areaValues[1]);
             double width = Double.parseDouble(areaValues[3]) - Double.parseDouble(areaValues[1]);
