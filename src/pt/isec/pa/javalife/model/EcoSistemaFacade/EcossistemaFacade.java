@@ -21,6 +21,7 @@ public class EcossistemaFacade {
     private Ecossistema ecossistema;
     private IGameEngine gameEngine;
     private final CommandManager cm;
+    private int timeUnit;
 
 
     public EcossistemaFacade() {
@@ -66,7 +67,7 @@ public class EcossistemaFacade {
         ecossistema = new Ecossistema(this, dimension, escala, initialForce, growthRate, overlapLoss, movementRate);
         gameEngine = new GameEngine();
         gameEngine.registerClient(ecossistema);
-        gameEngine.start(timeUnit);
+        this.timeUnit = timeUnit;
     }
 
     public void changeEcossistema(int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) {
@@ -97,14 +98,31 @@ public class EcossistemaFacade {
         support.firePropertyChange("adicionarPopUpAviso", null, string);
     }
 
-    public void pause_unpause() {
-        if(gameEngine.getCurrentState()== GameEngineState.RUNNING){
-            gameEngine.pause();
-        }
-        else if(gameEngine.getCurrentState()== GameEngineState.PAUSED){
-            gameEngine.resume();
-        }
+    public String pause_unpause() {
+        if (ecossistema != null) {
+            if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
+                gameEngine.pause();
+                return "Simulação de Ecossistema (paused)";
+            } else if (gameEngine.getCurrentState() == GameEngineState.PAUSED) {
+                gameEngine.resume();
+                return "Simulação de Ecossistema (running)";
+            } else if (gameEngine.getCurrentState() == GameEngineState.READY) {
+                adcionarPopUpAviso("Ecossistema ainda não foi iniciado");
+            }
+        }else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
+        return null;
+    }
 
+    public void execute_stop(){
+        if(ecossistema!=null) {
+            if (gameEngine.getCurrentState() == GameEngineState.READY)
+                gameEngine.start(timeUnit);
+            else if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
+                gameEngine.stop();
+            }
+        }else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
     }
 
 

@@ -199,13 +199,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void configurarEcossistema() {
         // Lógica para configurar o ecossistema
-        if (ecossistemaFacade.checkGameState() == GameEngineState.PAUSED) showParameterPopup(false);
+        if (ecossistemaFacade.checkGameState() == GameEngineState.READY)
+            showParameterPopup(false);
         else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game Status");
-            alert.setHeaderText(null);
-            alert.setContentText("O jogo não está em pausa.");
-            alert.showAndWait();
+            createPopUPInfo("O jogo não está em parado","Game Status");
         }
     }
 
@@ -298,19 +295,14 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void executarPararSimulacao() {
-        //???? nao sei qual é a diferença entre pausar e parar
+        ecossistemaFacade.execute_stop();
     }
 
     private void pausarContinuarSimulacao() {
-        if (ecossistemaFacade.checkGameState() == GameEngineState.RUNNING) {
-            ecossistemaFacade.pause_unpause();
-            primaryStage.setTitle("Simulação de Ecossistema (paused)");
-        } else if (ecossistemaFacade.checkGameState() == GameEngineState.PAUSED) {
-            ecossistemaFacade.pause_unpause();
-            primaryStage.setTitle("Simulação de Ecossistema (running)");
+        String string = ecossistemaFacade.pause_unpause();
+        if (string != null){
+            primaryStage.setTitle(string);
         }
-
-
     }
 
     private void gravarSnapshot() {
