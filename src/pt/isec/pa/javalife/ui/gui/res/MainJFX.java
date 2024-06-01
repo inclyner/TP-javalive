@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -451,6 +452,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void createeAtualizaElemento(String string) {
+
         Pattern idPattern = Pattern.compile("id:(\\d+)");
         Pattern typePattern = Pattern.compile("type:([A-Z]+)");
         Pattern areaPattern = Pattern.compile("area:\\(([^)]+)\\)");
@@ -500,7 +502,11 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 button.setStyle("-fx-background-color: #505050;");// Definir a cor de fundo do botão como cinzento para tipo inanimado
                 listButtons.put(Elemento.INANIMADO + id, button);
             } else if (type.equals(Elemento.FLORA.toString())) {
-                button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
+                int intensidade =255- Integer.parseInt(forca);
+                Color cor = Color.rgb(0, 128, 0,intensidade/255.0);
+                // Converte a cor para uma string em formato hexadecimal
+                String corRgba = String.format("rgba(0, 128, 0, %.2f)", intensidade/255.0);
+                button.setStyle("-fx-background-color: " + corRgba + ";");
                 listButtons.put(Elemento.FLORA + id, button);
             } else if (type.equals(Elemento.FAUNA.toString())) {
                 if (listButtons.containsKey(Elemento.FAUNA + id) && listLabels.containsKey(Elemento.FAUNA + id)) {
