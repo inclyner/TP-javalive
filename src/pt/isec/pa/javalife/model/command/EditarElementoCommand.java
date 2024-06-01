@@ -26,7 +26,7 @@ String tipo;
 
     @Override
     public boolean execute() {
-
+        System.out.println("EDITAR ELEMENTO: " + tipo + " " + id + " " + direcao + " " + velocidade + " " + forca);
          return ecossistema.editElemento(tipo,id,direcao,velocidade,forca);
     }
 
