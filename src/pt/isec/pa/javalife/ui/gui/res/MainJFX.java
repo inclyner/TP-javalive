@@ -639,13 +639,14 @@ public class MainJFX extends Application implements PropertyChangeListener {
             double y = Double.parseDouble(areaValues[1]);
             double width = Double.parseDouble(areaValues[3]) - Double.parseDouble(areaValues[1]);
             double height = Double.parseDouble(areaValues[2]) - Double.parseDouble(areaValues[0]);
-            if (forcaMatcher.find() && type.equals(Elemento.FAUNA.toString())) {
+            if (forcaMatcher.find()) {
                 forca = forcaMatcher.group(1);
-                forcaLabel.setText(forca);
-                forcaLabel.layoutXProperty().bind(button.layoutXProperty().add(button.widthProperty()));
-                forcaLabel.layoutYProperty().bind(button.layoutYProperty());
-                pane.getChildren().add(forcaLabel);
-
+                if(type.equals(Elemento.FAUNA.toString())) {
+                    forcaLabel.setText(forca);
+                    forcaLabel.layoutXProperty().bind(button.layoutXProperty().add(button.widthProperty()));
+                    forcaLabel.layoutYProperty().bind(button.layoutYProperty());
+                    pane.getChildren().add(forcaLabel);
+                }
             }
             button.setLayoutY(x * escala); // Posição X do botão no Pane
             button.setLayoutX(y * escala);// Posição Y do botão no Pane
@@ -683,6 +684,17 @@ public class MainJFX extends Application implements PropertyChangeListener {
             }
             // Adicionar o botão ao Pane
             pane.getChildren().add(button);
+            if(forca!=null)
+                if(Double.parseDouble(forca)<=0) {
+                    System.out.println("\n\n" + type+id+ ", " + forca);
+                    pane.getChildren().remove(listButtons.get(type + id));
+                    listButtons.remove(type+id);
+                    if(type.equals(Elemento.FAUNA.toString())) {
+                        pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
+                        listButtons.remove(type+id);
+                    }
+                }
+
         }
     }
 

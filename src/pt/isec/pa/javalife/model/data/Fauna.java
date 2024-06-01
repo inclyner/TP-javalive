@@ -59,36 +59,26 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
 
     public Area movimentacao() {
         direcao = (int) (Math.random() * 359);
-        //cima + velocidade * Math.cos(Math.toRadians(direcao));
-        //esquerda + velocidade * Math.sin(Math.toRadians(direcao));
-        //setForca(getForca() - forcaMovimentacao);
-
-
         return new Area(getArea().cima() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().esquerda() + velocidade * Math.sin(Math.toRadians(direcao)),
                 getArea().baixo() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().direita() + velocidade * Math.sin(Math.toRadians(direcao)));
     }
 
     public Area moverParaComida(Area area, boolean existePedra) {
-        if (!existePedra) {
             double deltaX = area.esquerda() - this.getArea().esquerda();
             double deltaY = area.cima() - this.getArea().cima();
-
             // Calcula o ângulo em radianos entre a posição atual e a posição de destino
             double angulo = Math.atan2(deltaY, deltaX);
-
-            double passo = 1;
-
             // Calcula o deslocamento em X e Y baseado no ângulo e no passo
-            double deslocamentoX = passo * Math.cos(angulo);
-            double deslocamentoY = passo * Math.sin(angulo);
-
-            return new Area(this.getArea().cima() + deslocamentoY,
+            double deslocamentoX = velocidade * Math.cos(angulo);
+            double deslocamentoY = velocidade * Math.sin(angulo);
+            if (existePedra) {
+                return new Area(this.getArea().cima() + deslocamentoY,
                     this.getArea().esquerda() + deslocamentoX,
                     this.getArea().baixo() + deslocamentoY,
                     this.getArea().direita() + deslocamentoX);
-        } else {
-            return movimentacao();
-        }
+            } else {
+                return movimentacao();
+            }
     }
 
     @Override
