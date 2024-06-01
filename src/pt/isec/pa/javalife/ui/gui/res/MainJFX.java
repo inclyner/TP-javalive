@@ -3,11 +3,14 @@ package pt.isec.pa.javalife.ui.gui.res;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,6 +29,7 @@ import java.util.regex.Pattern;
 
 public class MainJFX extends Application implements PropertyChangeListener {
 
+    private static EcossistemaFacade ecossistemaFacade = new EcossistemaFacade();
     private int unidade_generica;
     private double escala; // dimensao da janela / unidades genericas
     private int timeUnit;
@@ -41,9 +45,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
     private Map<String, Label> listLabels = new HashMap<>();
     private Button finalButton;
     private int valorReduzirJanela = 100;
-
-
-    private static EcossistemaFacade ecossistemaFacade = new EcossistemaFacade();
 
     @Override
     public void start(Stage primaryStage) {
@@ -64,11 +65,11 @@ public class MainJFX extends Application implements PropertyChangeListener {
         MenuItem adicionarInanimadoItem = new MenuItem("Adicionar elemento inanimado");
         MenuItem adicionarFloraItem = new MenuItem("Adicionar elemento flora");
         MenuItem adicionarFaunaItem = new MenuItem("Adicionar elemento fauna");
-        MenuItem editarElementoItem = new MenuItem("Editar elemento");
-        MenuItem eliminarElementoItem = new MenuItem("Eliminar elemento");
+        //MenuItem editarElementoItem = new MenuItem("Editar elemento");
+        //MenuItem eliminarElementoItem = new MenuItem("Eliminar elemento");
         MenuItem undoItem = new MenuItem("Undo");
         MenuItem redoItem = new MenuItem("Redo");
-        menuEcossistema.getItems().addAll(configGeraisItem, adicionarInanimadoItem, adicionarFloraItem, adicionarFaunaItem, editarElementoItem, eliminarElementoItem, new SeparatorMenuItem(), undoItem, redoItem);
+        menuEcossistema.getItems().addAll(configGeraisItem, adicionarInanimadoItem, adicionarFloraItem, adicionarFaunaItem, new SeparatorMenuItem(), undoItem, redoItem);
         // Menu Simulação
         Menu menuSimulacao = new Menu("Simulação");
         MenuItem configSimulacaoItem = new MenuItem("Configuração da simulação");
@@ -117,8 +118,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
         adicionarInanimadoItem.setOnAction(event -> adicionarElemento("INANIMADO"));
         adicionarFloraItem.setOnAction(event -> adicionarElemento("FLORA"));
         adicionarFaunaItem.setOnAction(event -> adicionarElemento("FAUNA"));
-        editarElementoItem.setOnAction(event -> editarElemento());
-        eliminarElementoItem.setOnAction(event -> eliminarElemento());
+        //editarElementoItem.setOnAction(event -> editarElemento());
+        //eliminarElementoItem.setOnAction(event -> eliminarElemento());
         undoItem.setOnAction(event -> undo());
         redoItem.setOnAction(event -> redo());
 
@@ -167,7 +168,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File file = fileChooser.showSaveDialog(stage);
         if (file != null) {
-            //Funçao que exporta os elementos
+            // Função que exporta os elementos
+            ecossistemaFacade.exportasimulação(file);
         }
     }
 
@@ -178,6 +180,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             //Funcao que le o ficheiro mas apenas coloca os elementos(sem ser os sobrepostos)
+            ecossistemaFacade.importasimulação(selectedFile);
         }
     }
 
@@ -231,7 +234,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         TextField largura = new TextField();
         largura.setPromptText("Largura");
         TextField forca = new TextField();
-        largura.setPromptText("Forca Inicial");
+        forca.setPromptText("Forca Inicial");
 
 
         grid.add(new Label("Posição X:"), 0, 1);
@@ -242,16 +245,18 @@ public class MainJFX extends Application implements PropertyChangeListener {
         grid.add(altura, 1, 3);
         grid.add(new Label("Largura:"), 0, 4);
         grid.add(largura, 1, 4);
-        grid.add(new Label("Forca Inicial:"), 0, 5);
-        grid.add(forca, 1, 5);
-
+        if(!tipo.equalsIgnoreCase("inanimado") ) {
+            grid.add(new Label("Forca Inicial:"), 0, 5);
+            grid.add(forca, 1, 5);
+        }
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == adicionarButtonType) {
                 try {
-                    double posX = Double.parseDouble(x.getText());
-                    double posY = Double.parseDouble(y.getText());
+                    //trocado porque assim funciona
+                    double posX = Double.parseDouble(y.getText());
+                    double posY = Double.parseDouble(x.getText());
                     double alt = Double.parseDouble(altura.getText());
                     double larg = Double.parseDouble(largura.getText());
                     double forcaInicial = Double.parseDouble(forca.getText());
@@ -276,179 +281,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
 
     }
-
-    private void editarElemento() {
-
-        // Lógica para editar um elemento
-        Dialog<Map<String, Object>> dialog = new Dialog<>();
-        dialog.setTitle("Editar Elemento");
-        dialog.setHeaderText("Insira os novos valores para o elemento");
-
-        // Definir os botões do diálogo
-        ButtonType editarButtonType = new ButtonType("Editar", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(editarButtonType, ButtonType.CANCEL);
-
-        // Criar os campos de entrada
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        // Dropdown box para selecionar o tipo (fauna ou flora)
-        ComboBox<String> tipoComboBox = new ComboBox<>();
-        tipoComboBox.getItems().addAll("fauna", "flora");
-        tipoComboBox.setPromptText("Tipo");
-
-        TextField idField = new TextField();
-        idField.setPromptText("ID");
-
-        TextField direcaoField = new TextField();
-        direcaoField.setPromptText("Direção");
-
-        TextField velocidadeField = new TextField();
-        velocidadeField.setPromptText("Velocidade");
-
-        TextField forcaField = new TextField();
-        forcaField.setPromptText("Força");
-
-        grid.add(new Label("Tipo:"), 0, 0);
-        grid.add(tipoComboBox, 1, 0);
-        grid.add(new Label("ID:"), 0, 1);
-        grid.add(idField, 1, 1);
-        grid.add(new Label("Direção:"), 0, 2);
-        grid.add(direcaoField, 1, 2);
-        grid.add(new Label("Velocidade:"), 0, 3);
-        grid.add(velocidadeField, 1, 3);
-        grid.add(new Label("Força:"), 0, 4);
-        grid.add(forcaField, 1, 4);
-
-        dialog.getDialogPane().setContent(grid);
-
-        // Converter o resultado quando o botão "Editar" é pressionado
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == editarButtonType) {
-                try {
-                    Map<String, Object> resultMap = new HashMap<>();
-                    resultMap.put("tipo", Double.parseDouble(tipoComboBox.getValue()));
-                    resultMap.put("id", Integer.parseInt(idField.getText()));
-                    resultMap.put("direcao", Double.parseDouble( direcaoField.getText()));
-                    resultMap.put("velocidade", Double.parseDouble(velocidadeField.getText()));
-                    resultMap.put("forca",  Double.parseDouble(forcaField.getText()));
-                    return resultMap;
-                } catch (NumberFormatException e) {
-                    // Tratar a exceção se algum valor inserido não for um número válido
-                    return null;
-                }
-            }
-            return null;
-        });
-
-        // Mostrar o diálogo e aguardar o resultado
-        Optional<Map<String, Object>> result = dialog.showAndWait();
-
-        result.ifPresent(values -> {
-            String tipo = (String) values.get("tipo");
-            int id = (int) values.get("id");
-            double direcao = (double) values.get("direcao");
-            double velocidade = (double) values.get("velocidade");
-            double forca = (double) values.get("forca");
-
-            // Verificar se o ID existe no ecossistema antes de tentar editá-lo
-            boolean success = ecossistemaFacade.editarElementoCommand(tipo, id, direcao, velocidade, forca);
-
-            // Mostrar o resultado da operação
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Resultado da Operação");
-
-            if (success) {
-                alert.setHeaderText("Elemento Editado");
-                alert.setContentText("O elemento com o ID " + id + " foi editado com sucesso.");
-            } else {
-                alert.setHeaderText("Erro ao Editar");
-                alert.setContentText("O elemento com o ID " + id + " não existe ou não pôde ser editado.");
-            }
-
-            alert.showAndWait();
-        });
-    }
-
-    private void eliminarElemento() {
-        // Lógica para eliminar um elemento
-        Dialog<Integer> dialog = new Dialog<>();
-        dialog.setTitle("Eliminar Elemento");
-        dialog.setHeaderText("Insira o id do elemento e selecione o tipo");
-
-        // Definir os botões do diálogo
-        ButtonType removerButtonType = new ButtonType("Remover", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(removerButtonType, ButtonType.CANCEL);
-
-        // Criar os campos de entrada
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        ComboBox<String> tipoComboBox = new ComboBox<>();
-        tipoComboBox.getItems().addAll("fauna", "flora");
-        tipoComboBox.setPromptText("Selecione o tipo");
-
-        TextField idField = new TextField();
-        idField.setPromptText("id:");
-
-        grid.add(new Label("Tipo:"), 0, 0);
-        grid.add(tipoComboBox, 1, 0);
-        grid.add(new Label("id:"), 0, 1);
-        grid.add(idField, 1, 1);
-
-        dialog.getDialogPane().setContent(grid);
-
-        // Converter o resultado quando o botão "Remover" é pressionado
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == removerButtonType) {
-                try {
-                    return Integer.parseInt(idField.getText());
-                } catch (NumberFormatException e) {
-                    // Tratar a exceção se o valor inserido não for um número válido
-                    return null;
-                }
-            }
-            return null;
-        });
-
-        // Mostrar o diálogo e aguardar o resultado
-        Optional<Integer> result = dialog.showAndWait();
-
-        result.ifPresent(id -> {
-            // Verificar se o tipo foi selecionado
-            String tipo = tipoComboBox.getValue();
-            if (tipo == null) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Erro");
-                alert.setHeaderText("Tipo não selecionado");
-                alert.setContentText("Por favor, selecione o tipo do elemento (fauna ou flora).");
-                alert.showAndWait();
-                return;
-            }
-
-            // Verificar se o ID existe no ecossistema antes de tentar removê-lo
-            boolean success = ecossistemaFacade.removerElementoCommand(tipo, id);
-
-            // Mostrar o resultado da operação
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Resultado da Operação");
-
-            if (success) {
-                alert.setHeaderText("Elemento Removido");
-                alert.setContentText("O elemento com o ID " + id + " foi removido com sucesso.");
-            } else {
-                alert.setHeaderText("Erro ao Remover");
-                alert.setContentText("O elemento com o ID " + id + " não existe ou não pôde ser removido.");
-            }
-
-            alert.showAndWait();
-        });
-    }
-
 
     private void undo() {
         // Lógica para desfazer a última ação
@@ -616,7 +448,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         launch(args);
     }
 
-    private void createEatualizaElemento(String string) {
+    private void createeAtualizaElemento(String string) {
         Pattern idPattern = Pattern.compile("id:(\\d+)");
         Pattern typePattern = Pattern.compile("type:([A-Z]+)");
         Pattern areaPattern = Pattern.compile("area:\\(([^)]+)\\)");
@@ -634,7 +466,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             String area = areaMatcher.group(1);
             String forca = null;
             // Dividir e converter os valores da área
-            String[] areaValues = area.split(",");
+            String[] areaValues = area.split(";");
             double x = Double.parseDouble(areaValues[0]);
             double y = Double.parseDouble(areaValues[1]);
             double width = Double.parseDouble(areaValues[3]) - Double.parseDouble(areaValues[1]);
@@ -659,12 +491,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
             System.out.println(button.getLayoutX() + "," + button.getLayoutY() + "," + button.getWidth() + ", " + button.getHeight());
             if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)) {
                 button.setOnAction(actionEvent -> {
-                    finalButton = button;
-                    for (Map.Entry<String, Button> entry : listButtons.entrySet()) {
-                        if (entry.getValue().equals(button)) {
-                            System.out.println(entry.getKey());
-                        }
-                    }
+                    // chama funcao que abre pagina do elemento
+                    PaginaElemento(Elemento.valueOf(type), Integer.parseInt(id));
                 });
             }
             if (type.equals(Elemento.INANIMADO.toString())) {
@@ -707,12 +535,166 @@ public class MainJFX extends Application implements PropertyChangeListener {
         alert.showAndWait();
     }
 
+
+    public void PaginaElemento(Elemento elemento, int id) {
+        Stage stage = new Stage();
+        stage.setTitle("Página do Elemento");
+
+        // Título estilizado
+        Label titleLabel = new Label("Página do Elemento");
+        titleLabel.setFont(new Font("Arial", 24));
+        titleLabel.setPadding(new Insets(10, 0, 20, 0));
+
+        // Informações do elemento
+        Label label = new Label("Elemento: " + elemento + ", ID: " + id);
+        label.setFont(new Font("Arial", 18));
+        label.setPadding(new Insets(0, 0, 10, 0));
+
+        // Botão de eliminar
+        Button eliminarButton = new Button("Eliminar");
+        eliminarButton.setFont(new Font("Arial", 14));
+        eliminarButton.setStyle("-fx-background-color: #ff4c4c; -fx-text-fill: white;");
+        eliminarButton.setOnAction(e -> {
+            // Lógica de eliminação
+            Dialog<Integer> dialog = new Dialog<>();
+            dialog.setTitle("Eliminar Elemento");
+            dialog.setHeaderText("Tem a certeza que quer eliminar o elemento " + elemento + ", ID: " + id + " ?");
+            ButtonType removerButtonType = new ButtonType("Remover", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(removerButtonType, ButtonType.CANCEL);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == removerButtonType) {
+                    return id;
+                }
+                return null;
+            });
+
+            Optional<Integer> result = dialog.showAndWait();
+            result.ifPresent(value -> {
+                boolean success = ecossistemaFacade.removerElementoCommand(elemento.toString(), value);
+                if (success) {
+                    createPopUPInfo("O elemento com o ID " + id + " foi removido com sucesso.", "Elemento Removido");
+                    pane.getChildren().remove(listButtons.get(elemento.toString() + id));
+                } else {
+                    createPopUPInfo("O elemento com o ID " + id + " não pôde ser removido.", "Erro ao Remover");
+                }
+                stage.close();
+            });
+        });
+
+        // Botão de editar
+        Button editarButton = new Button("Editar");
+        editarButton.setFont(new Font("Arial", 14));
+        editarButton.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white;");
+        editarButton.setOnAction(e -> {
+            // Lógica de edição
+            Dialog<Map<String, Object>> dialog = new Dialog<>();
+            dialog.setTitle("Editar Elemento");
+            dialog.setHeaderText("Insira os novos valores para o elemento");
+
+            ButtonType editarButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(editarButtonType, ButtonType.CANCEL);
+
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 150, 10, 10));
+
+            TextField direcaoField = new TextField();
+            direcaoField.setPromptText("Direção");
+
+            TextField velocidadeField = new TextField();
+            velocidadeField.setPromptText("Velocidade");
+
+            TextField forcaField = new TextField();
+            forcaField.setPromptText("Força");
+
+            if (elemento.toString().equalsIgnoreCase("fauna")) {
+                grid.add(new Label("Direção:"), 0, 0);
+                grid.add(direcaoField, 1, 0);
+                grid.add(new Label("Velocidade:"), 0, 1);
+                grid.add(velocidadeField, 1, 1);
+                grid.add(new Label("Força:"), 0, 2);
+                grid.add(forcaField, 1, 2);
+            } else if (elemento.toString().equalsIgnoreCase("flora")) {
+                grid.add(new Label("Força:"), 0, 0);
+                grid.add(forcaField, 1, 0);
+            }
+
+            dialog.getDialogPane().setContent(grid);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == editarButtonType) {
+                    try {
+                        Map<String, Object> resultMap = new HashMap<>();
+                        if (elemento.toString().equalsIgnoreCase("fauna")) {
+                            resultMap.put("direcao", Double.parseDouble(direcaoField.getText()));
+                            resultMap.put("velocidade", Double.parseDouble(velocidadeField.getText()));
+                            resultMap.put("forca", Double.parseDouble(forcaField.getText()));
+                        } else if (elemento.toString().equalsIgnoreCase("flora")) {
+                            resultMap.put("forca", Double.parseDouble(forcaField.getText()));
+                        }
+                        return resultMap;
+                    } catch (NumberFormatException e3) {
+                        return null;
+                    }
+                }
+                return null;
+            });
+
+            Optional<Map<String, Object>> result = dialog.showAndWait();
+            result.ifPresent(values -> {
+                boolean success = false;
+                if (elemento.toString().equalsIgnoreCase("fauna")) {
+                    double direcao = (double) values.get("direcao");
+                    double velocidade = (double) values.get("velocidade");
+                    double forca = (double) values.get("forca");
+                    success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, direcao, velocidade, forca);
+                } else if (elemento.toString().equalsIgnoreCase("flora")) {
+                    double forca = (double) values.get("forca");
+                    success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, 0, 0, forca);
+                }
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Resultado da Operação");
+
+                if (success) {
+                    alert.setHeaderText("Elemento Editado");
+                    alert.setContentText("O elemento com o ID " + id + " foi editado com sucesso.");
+                } else {
+                    alert.setHeaderText("Erro ao Editar");
+                    alert.setContentText("O elemento com o ID " + id + " não existe ou não pôde ser editado.");
+                }
+
+                alert.showAndWait();
+                stage.close();
+            });
+        });
+
+        if (elemento.toString().equalsIgnoreCase("inanimado")) {
+            editarButton.setDisable(true);
+        }
+
+        // Layout com VBox
+        VBox layout = new VBox(20); // Espaçamento entre elementos
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        layout.getChildren().addAll(titleLabel, label, eliminarButton, editarButton);
+
+        Scene scene = new Scene(layout, 400, 300);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("adicionarElemento") || evt.getPropertyName().equals("atualiza"))
-            createEatualizaElemento(evt.getNewValue().toString());
+            createeAtualizaElemento(evt.getNewValue().toString());
         if (evt.getPropertyName().equals("adicionarPopUpAviso")) createPopUPInfo(evt.getNewValue().toString(), null);
     }
+
 
 }
 

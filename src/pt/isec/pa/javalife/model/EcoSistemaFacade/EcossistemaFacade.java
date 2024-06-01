@@ -13,6 +13,7 @@ import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.*;
 
 public class EcossistemaFacade {
 
@@ -121,5 +122,15 @@ public class EcossistemaFacade {
             return true;
         }
         return false;
+    }
+
+    public void exportasimulação(File file) {
+
+        ecossistema.exportaSimulacao(file);
+    }
+
+
+    public void importasimulação(File selectedFile) {
+        ecossistema.importaSimulacao(selectedFile);
     }
 }

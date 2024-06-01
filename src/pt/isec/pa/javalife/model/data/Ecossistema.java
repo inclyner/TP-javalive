@@ -2,25 +2,25 @@ package pt.isec.pa.javalife.model.data;
 
 
 import javafx.application.Platform;
+import org.w3c.dom.ls.LSOutput;
 import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
 import pt.isec.pa.javalife.model.factory.ElementFactory;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 public class Ecossistema implements Serializable, IGameEngineEvolve {
+    List<String> listStringElementos = new ArrayList<>();
     private Set<IElemento> elementos = new HashSet<>();
     private Area area;
     private Area areaBoard;
-
     private double escala;
     private int forcaInicial, taxaCrescimento, forcaSobreposicao, velocidade;
     private boolean contemPedra = false;
     private boolean oneTime = true;
     private EcossistemaFacade ecossistemaFacade;
-    List<String> listStringElementos = new ArrayList<>();
 
     // set up inicial do ecossistema (criação e inserção de elementos)
     public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao, double escala, int forcaInicial, double taxaCrescimento, int forcaSobreposicao, double velocidade) {
@@ -98,7 +98,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     private Area converterStringParaArea(String areaString) {
         areaString = areaString.replace("(", "").replace(")", "");
-        String[] valores = areaString.split(",");
+        String[] valores = areaString.split(";");
         if (valores.length != 4) {
             throw new IllegalArgumentException("A string deve conter exatamente 4 valores separados por ','");
         }
@@ -207,7 +207,6 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                 if (fauna.getForca() > 50) {
                     aux = procuraFaunaComMaisForca(fauna);
                     if (aux != null) {
-                        System.out.println(aux.toString());
                         do {
                             contemPedra = verificaPedraouFauna(aux.getArea(), fauna);
                             areaParaOndeVai = fauna.moverParaComida(aux.getArea(), contemPedra);
@@ -241,6 +240,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     public void addElemento(Elemento tipo, Area aux, double forca) {
+
         Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
         IElemento temp = ElementFactory.createElement(tipo, a);
         if (forca != 0) {
@@ -255,7 +255,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         ecossistemaFacade.AdicionarElemento(temp.toString());
     }
 
-    public boolean removeElemento(String tipo,int id) {
+    public boolean removeElemento(String tipo, int id) {
         IElemento elemento = null;
         for (IElemento e : elementos) {
             if (e.getId() == id && e.getType().toString().equals(tipo)) {
@@ -291,7 +291,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     public boolean isAreaLivre(Area area) {
         synchronized (elementos) {
             for (IElemento elemento : elementos) {
-                if (area.compareTo(elemento.getArea(),this.areaBoard)) {
+                if (area.compareTo(elemento.getArea(), this.areaBoard)) {
                     return false;
                 }
             }
@@ -300,7 +300,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             if (!listStringElementos.isEmpty())
                 for (String string : listStringElementos) {
                     String[] partes = string.split(":");
-                    if (converterStringParaArea(partes[1]).compareTo(area,this.areaBoard)) {
+                    if (converterStringParaArea(partes[1]).compareTo(area, this.areaBoard)) {
                         return false;
                     }
                 }
@@ -428,7 +428,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         synchronized (elementos) {
             for (IElemento e : elementos) {
                 if (e.getId() == elemento.getId() && e.getType() == elemento.getType()) continue;
-                if (e.getArea().compareTo(area,this.areaBoard)) count++;
+                if (e.getArea().compareTo(area, this.areaBoard)) count++;
             }
         }
         return count;
@@ -440,12 +440,11 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         synchronized (elementos) {
             for (IElemento e : elementos) {
                 if (e.getId() == elemento.getId() && e.getType() == elemento.getType()) continue;
-                if (area.compareTo(e.getArea(),this.areaBoard) && e.getType() == Elemento.FLORA) count++;
+                if (area.compareTo(e.getArea(), this.areaBoard) && e.getType() == Elemento.FLORA) count++;
             }
         }
         return count;
     }
-
 
 
     public boolean verificarFaunaDistancia(IElemento elemento) {
@@ -471,18 +470,18 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                 if (e.getType() == Elemento.FAUNA) {
                     return Elemento.FAUNA;
                 }
-                if(e.getType() == Elemento.INANIMADO) {
+                if (e.getType() == Elemento.INANIMADO) {
                     return Elemento.INANIMADO;
                 }
-                if(e.getType() == Elemento.FLORA) {
+                if (e.getType() == Elemento.FLORA) {
                     return Elemento.FLORA;
                 }
             }
         }
-       return null;
+        return null;
     }
 
-    public boolean editElemento(String tipo,int id, double direcao, double velocidade, double forca) {
+    public boolean editElemento(String tipo, int id, double direcao, double velocidade, double forca) {
         synchronized (elementos) {
             for (IElemento e : elementos) {
                 if (e instanceof Fauna fauna && e.getId() == id && tipo.equals("FAUNA")) {
@@ -491,18 +490,102 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     fauna.setForca(forca);
                     return true;
                 }
-                if(e instanceof Flora flora && e.getId() == id && tipo.equals("FLORA")) {
+                if (e instanceof Flora flora && e.getId() == id && tipo.equals("FLORA")) {
                     flora.setForca(forca);
                     return true;
                 }
+            }
+
+        }
+
+        return false;
+    }
+
+    public void exportaSimulacao(File file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            // Escrever cabeçalho do CSV
+            writer.write("id,type,area,forca");
+            writer.newLine();
+
+            // Escrever dados dos elementos
+            for (IElemento elemento : elementos) {
+
+                    writer.write(String.valueOf(elemento.getId())); // Escrever id
+                    writer.write(","); // Separador de coluna
+
+                    writer.write(elemento.getType().toString()); // Escrever type
+                    writer.write(","); // Separador de coluna
+
+                    writer.write(String.valueOf(elemento.getArea())); // Escrever area
+                    writer.write(","); // Separador de coluna
+
+
+                    writer.write("0"); // Escrever forca
+                    writer.newLine(); // Nova linha
+                if(elemento instanceof Fauna fauna) {
+                    writer.write(String.valueOf(((Fauna) elemento).getForca())); // Escrever forca
+                    writer.newLine(); // Nova linha
+                }else if(elemento instanceof Flora flora) {
+                    writer.write(String.valueOf(((Flora) elemento).getForca())); // Escrever forca
+                    writer.newLine(); // Nova linha
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void importaSimulacao(File selectedFile) {
+        //TODO falta testar isto
+        try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
+            String line;
+            reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(","); // Separar os elementos por tabulação
+                String tipo = parts[1].trim(); // Extrair o tipo removendo espaços em branco
+                String areaStr = parts[2].trim(); // Extrair a área removendo espaços em branco
+                double forca = Double.parseDouble(parts[3].trim());
+                // Remove parênteses da string da área
+                areaStr = areaStr.substring(1, areaStr.length() - 1);
+                // Separa os valores da área
+                String[] areaParts = areaStr.split(";");
+
+                Area temp = new Area(Double.parseDouble(areaParts[0]), Double.parseDouble(areaParts[1]), Double.parseDouble(areaParts[2]), Double.parseDouble(areaParts[3]));
+
+                if (temp.compareTo(temp, areaBoard)) {
+                    // Verifica se o elemento se sobrepõe a algum existente
+                    if (verificaElementoArea(temp, tipo)) {
+                        // Se o elemento passar nas verificações, cria e adiciona
+
+                        addElemento(Elemento.valueOf(tipo), temp, forca);
+
+                    }
+                    else {
+                        // Se o elemento não passar nas verificações, cria e adiciona
+                        System.out.println("ELEMENTO NAO FOI ADICIONADO");
+                    }
                 }
 
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-            return false;
-        }
-
-    public Area getAreaBoard() {
-        return areaBoard;
     }
+
+    private boolean verificaElementoArea(Area temp, String tipo) {
+        //! a logica ainda nao foi imensamente pensada
+        for (IElemento elemento : elementos) {
+            if (elemento.getArea().compareTo(temp, areaBoard) && tipo.equalsIgnoreCase(elemento.getType().toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
+
+
+
