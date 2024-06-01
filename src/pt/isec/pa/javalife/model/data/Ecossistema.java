@@ -231,6 +231,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     }
 
     public void addElemento(Elemento tipo, Area aux, double forca) {
+
         Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
         IElemento temp = ElementFactory.createElement(tipo, a);
         if (forca != 0) {
