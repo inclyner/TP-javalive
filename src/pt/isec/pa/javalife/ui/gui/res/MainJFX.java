@@ -139,16 +139,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
     //region fucções menu
     private void criarSimulacao() {
         // Lógica para criar uma nova simulação
-        if(!listButtons.isEmpty()) {
-            for (Button button : listButtons.values()) {
-                pane.getChildren().removeAll(button);
-            }
-            listButtons.clear();
-            for(Label label : listLabels.values()) {
-                pane.getChildren().removeAll(label);
-            }
-            listLabels.clear();
-        }
         showParameterPopup(true);
     }
 
@@ -297,10 +287,11 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void undo() {
         // Lógica para desfazer a última ação
+        ecossistemaFacade.undo();
     }
 
     private void redo() {
-
+        ecossistemaFacade.redo();
     }
 
     private void configurarSimulacao() {
@@ -414,6 +405,16 @@ public class MainJFX extends Application implements PropertyChangeListener {
         Button enterButton = new Button("Enter");
         GridPane.setConstraints(enterButton, 1, 8);
         enterButton.setOnAction(e -> {
+            if(!listButtons.isEmpty()) {
+                for (Button button : listButtons.values()) {
+                    pane.getChildren().removeAll(button);
+                }
+                listButtons.clear();
+                for(Label label : listLabels.values()) {
+                    pane.getChildren().removeAll(label);
+                }
+                listLabels.clear();
+            }
             unidade_generica = (int) (dimensionSlider.getValue());
             timeUnit = Integer.parseInt(timeUnitInput.getText());
             initialForce = Integer.parseInt(initialForceInput.getText());
@@ -517,10 +518,12 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     PaginaElemento(Elemento.valueOf(type), Integer.parseInt(id));
                 });
             }
+           boolean elimina=false;
             if (type.equals(Elemento.INANIMADO.toString())) {
                 if (listButtons.containsKey(Elemento.INANIMADO + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.INANIMADO + id));
                     listButtons.remove(type+id);
+                    elimina=true;
                 }
                 button.setStyle("-fx-background-color: #505050;");// Definir a cor de fundo do botão como cinzento para tipo inanimado
                 listButtons.put(Elemento.INANIMADO + id, button);
@@ -533,6 +536,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 if (listButtons.containsKey(Elemento.FLORA + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.FLORA + id));
                     listButtons.remove(type+id);
+                    elimina = true;
                 }
                 button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
                 listButtons.put(Elemento.FLORA + id, button);
@@ -542,13 +546,15 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
                     listButtons.remove(type+id);
                     listLabels.remove(type+id);
+                    elimina = true;
                 }
                 button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
                 listButtons.put(Elemento.FAUNA + id, button);
                 listLabels.put(Elemento.FAUNA + id, forcaLabel);
             }
             // Adicionar o botão ao Pane
-            pane.getChildren().add(button);
+            if(!elimina)
+                pane.getChildren().add(button);
             if(forca!=null)
                 if(Double.parseDouble(forca)<=0) {
                     pane.getChildren().remove(listButtons.get(type + id));

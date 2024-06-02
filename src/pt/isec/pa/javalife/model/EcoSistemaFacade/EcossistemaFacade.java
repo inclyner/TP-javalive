@@ -27,21 +27,12 @@ public class EcossistemaFacade {
     public EcossistemaFacade() {
         this.cm = new CommandManager();
         this.support = new PropertyChangeSupport(this);
-        //gameEngine.waitForTheEnd();
     }
 
 
     // Adiciona um elemento ao ecossistema
     public void AdicionarElemento(String string) {
-        //* fazer verificação se da para adicionar
-        //boolean canAdd = ecossistema.verificaAdjacentes(element);
-        //ICommand command = new AdicionarElementoCommand(ecossistema, element);
-        //commandManager.execute(command);
         support.firePropertyChange("adicionarElemento", null, string);
-
-
-        //cm.invokeCommand(new AdicionarElementoCommand(elemento));
-        //cm.invokeCommand(new AdicionarElementoCommand(ecossistema));
     }
 
     public boolean verificaEcossitemaNull() {
@@ -51,8 +42,17 @@ public class EcossistemaFacade {
 
 
     public void undo() {
-        CommandManager.undo();
-        support.firePropertyChange("ecosystem", null, ecossistema);
+        if(cm.undo())
+            adcionarPopUpAviso("Undo Feito");
+        else
+            adcionarPopUpAviso("Nao foi possivel fazer undo");
+    }
+
+    public void redo(){
+        if(cm.redo())
+            adcionarPopUpAviso("Redo Feito");
+        else
+            adcionarPopUpAviso("Nao foi possivel fazer redo");
     }
 
 

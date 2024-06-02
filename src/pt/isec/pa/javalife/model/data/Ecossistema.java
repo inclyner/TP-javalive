@@ -33,7 +33,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //preenche a cerca da area com pedras
         Area aux;
         // Adiciona pedras na borda superior e inferior
-        for (double i = area.cima(); i < area.baixo(); i += 1) {
+        /*for (double i = area.cima(); i < area.baixo(); i += 1) {
             // Adiciona pedras na borda superior e inferior
             aux = new Area(i, area.cima(), i + 1, area.cima() + 1);
             addElemento(Elemento.INANIMADO, aux, 0);
@@ -48,7 +48,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             // adiciona pedras na borda direita
             aux = new Area(area.direita() - 1, j, area.direita(), j + 1);
             addElemento(Elemento.INANIMADO, aux, 0);
-        }
+        }*/
 
     }
 
@@ -287,6 +287,23 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             }
         }
         return elementos.remove(elemento);
+    }
+
+    public boolean removeElementoPelaArea(String tipo, Area aux) {
+        IElemento elemento = null;
+        String finalElementoString=null;
+        for (IElemento e : elementos) {
+            if (e.getArea().iguais(aux) && e.getType().toString().equals(tipo)) {
+                elemento = e;
+                finalElementoString = e.toString();
+                break;
+            }
+        }
+        if(elementos.remove(elemento)){
+            ecossistemaFacade.atualiza(finalElementoString);
+            return true;
+        }
+        return false;
     }
 
     public void verificarElementoMorre() {
