@@ -2,14 +2,20 @@ package pt.isec.pa.javalife.ui.gui.res;
 
 
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -17,10 +23,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
 import pt.isec.pa.javalife.model.data.Area;
-import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -209,13 +216,14 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void gravarSimulacao(Stage stage) throws IOException {
         if (!ecossistemaFacade.verificaEcossitemaNull()) {// Lógica para gravar o estado atual da simulação
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        File file = fileChooser.showSaveDialog(stage);
-        if (file != null) {
-            //Funçao que guarda o ficheiro
-            ecossistemaFacade.salvarJogo(file);
-        }} else
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                //Funçao que guarda o ficheiro
+                ecossistemaFacade.salvarJogo(file);
+            }
+        } else
             createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
@@ -378,7 +386,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void gravarSnapshot() throws IOException {
-        if(!ecossistemaFacade.verificaEcossitemaNull())
+        if (!ecossistemaFacade.verificaEcossitemaNull())
             ecossistemaFacade.saveSnapShot();
         else
             createPopUPInfo("Nao existe ecossistema criado", "Games Status");
@@ -393,7 +401,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void aplicarSol() {
-        if(!ecossistemaFacade.verificaEcossitemaNull())
+        if (!ecossistemaFacade.verificaEcossitemaNull())
             ecossistemaFacade.aplicarSol();
         else
             createPopUPInfo("Nao existe ecossistema criado", "Games Status");
@@ -425,10 +433,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
         Label dimensionLabel = new Label("Dimensao do Ecossistema:");
         GridPane.setConstraints(dimensionLabel, 0, 1);
         Slider dimensionSlider = new Slider();
-        dimensionSlider.setMin(0);
+        dimensionSlider.setMin(4);
         if (scene.getWidth() < scene.getHeight())
             dimensionSlider.setMax(scene.getWidth());
-        else if(scene.getWidth()>scene.getHeight())
+        else if (scene.getWidth() > scene.getHeight())
             dimensionSlider.setMax(scene.getHeight());
         dimensionSlider.setShowTickMarks(true);
         dimensionSlider.setShowTickLabels(true);
@@ -607,8 +615,35 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     listButtons.remove(type + id);
                     listLabels.remove(type + id);
                 }
+
+                //region imagemanager
+                // Carregar a imagem
+                ImageManager.loadImage("faunaImage", "Z:\\User\\Desktop\\Programacao Distribuida\\TP\\TP-javalive\\bear.png");
+
+                // Obter a imagem carregada
+                java.awt.Image awtFaunaImage = ImageManager.getInstance("faunaImage");
+
+                // Converter a imagem para javafx.scene.image.Image
+                javafx.scene.image.Image fxFaunaImage = ImageConverter.convertToFxImage(awtFaunaImage);
+
+                // Verificar se a conversão foi bem-sucedida antes de continuar
+                if (fxFaunaImage != null) {
+                    // Criar o BackgroundImage a partir da Image
+                    BackgroundImage backgroundImage = new BackgroundImage(fxFaunaImage,
+                            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                            BackgroundPosition.CENTER,
+                            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, false));
+
+                    // Criar o Background a partir do BackgroundImage
+                    Background background = new Background(backgroundImage);
+
+                    // Aplicar o Background ao botão
+                    button.setBackground(background);
+                }
+
+                //endregion
                 if (Double.parseDouble(forca) > 0) {
-                    button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
+                    button.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-border-style: solid;");// Definir a cor de fundo do botão como vermelho para tipo fauna
                     listButtons.put(Elemento.FAUNA + id, button);
                     listLabels.put(Elemento.FAUNA + id, forcaLabel);
                     pane.getChildren().add(button);
@@ -871,9 +906,19 @@ public class MainJFX extends Application implements PropertyChangeListener {
         if (evt.getPropertyName().equals("adicionarElemento") || evt.getPropertyName().equals("atualiza"))
             createeAtualizaElemento(evt.getNewValue().toString());
         if (evt.getPropertyName().equals("adicionarPopUpAviso")) createPopUPInfo(evt.getNewValue().toString(), null);
-        if(evt.getPropertyName().equalsIgnoreCase("createPane")) {
+        if (evt.getPropertyName().equalsIgnoreCase("createPane")) {
             unidade_generica = Integer.parseInt(evt.getNewValue().toString());
             desenharEcossistema();
+        }
+    }
+
+    public class ImageConverter {
+        public static WritableImage convertToFxImage(Image awtImage) {
+            if (awtImage instanceof BufferedImage) {
+                BufferedImage bufferedImage = (BufferedImage) awtImage;
+                return SwingFXUtils.toFXImage(bufferedImage, null);
+            }
+            return null;
         }
     }
 }
