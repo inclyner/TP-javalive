@@ -178,13 +178,16 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void gravarSimulacao(Stage stage) {
-        // Lógica para gravar o estado atual da simulação
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        File file = fileChooser.showSaveDialog(stage);
-        if (file != null) {
-            //Funçao que guarda o ficheiro
-        }
+        if (!ecossistemaFacade.verificaEcossitemaNull()) {
+            // Lógica para gravar o estado atual da simulação
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                //Funçao que guarda o ficheiro
+            }
+        } else
+            createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
     private void exportarSimulacao(Stage stage) {
