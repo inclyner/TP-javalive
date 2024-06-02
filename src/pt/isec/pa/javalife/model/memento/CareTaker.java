@@ -26,11 +26,12 @@ public class CareTaker implements Serializable {
         history.push(originator.save());
     }
 
-    public void undo() throws IOException {
+    public boolean undo() throws IOException {
         if (history.isEmpty())
-            return;
+            return false;
         redoStack.push(originator.save());
         originator.restore(history.pop());
+        return true;
     }
 
     public void redo() throws IOException {

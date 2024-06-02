@@ -340,7 +340,11 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void restaurarSnapshot() throws IOException {
-        ecossistemaFacade.loadSnapShotAnterior();
+        if(ecossistemaFacade.loadSnapShotAnterior()){
+            listButtons.clear();
+            listLabels.clear();
+            ecossistemaFacade.atualiza();
+        }
     }
 
     private void aplicarSol() {
@@ -544,15 +548,15 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     PaginaElemento(Elemento.valueOf(type), Integer.parseInt(id));
                 });
             }
-           boolean elimina=false;
             if (type.equals(Elemento.INANIMADO.toString())) {
                 if (listButtons.containsKey(Elemento.INANIMADO + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.INANIMADO + id));
                     listButtons.remove(type+id);
-                    elimina=true;
+                }else {
+                    button.setStyle("-fx-background-color: #505050;");// Definir a cor de fundo do botão como cinzento para tipo inanimado
+                    listButtons.put(Elemento.INANIMADO + id, button);
+                    pane.getChildren().add(button);
                 }
-                button.setStyle("-fx-background-color: #505050;");// Definir a cor de fundo do botão como cinzento para tipo inanimado
-                listButtons.put(Elemento.INANIMADO + id, button);
             } else if (type.equals(Elemento.FLORA.toString())) {
                 int intensidade =100- (100 -Integer.parseInt(forca)) ;
                 Color cor = Color.rgb(0, 128, 0,intensidade/100.0);
@@ -562,35 +566,26 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 if (listButtons.containsKey(Elemento.FLORA + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.FLORA + id));
                     listButtons.remove(type+id);
-                    elimina = true;
                 }
-                button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
-                listButtons.put(Elemento.FLORA + id, button);
+                if(Double.parseDouble(forca)>0) {
+                    button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
+                    listButtons.put(Elemento.FLORA + id, button);
+                    pane.getChildren().add(button);
+                }
             } else if (type.equals(Elemento.FAUNA.toString())) {
                 if (listButtons.containsKey(Elemento.FAUNA + id) && listLabels.containsKey(Elemento.FAUNA + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.FAUNA + id));
                     pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
                     listButtons.remove(type+id);
                     listLabels.remove(type+id);
-                    elimina = true;
                 }
-                button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
-                listButtons.put(Elemento.FAUNA + id, button);
-                listLabels.put(Elemento.FAUNA + id, forcaLabel);
+                if(Double.parseDouble(forca)>0) {
+                    button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
+                    listButtons.put(Elemento.FAUNA + id, button);
+                    listLabels.put(Elemento.FAUNA + id, forcaLabel);
+                    pane.getChildren().add(button);
+                }
             }
-            // Adicionar o botão ao Pane
-            if(!elimina)
-                pane.getChildren().add(button);
-            if(forca!=null)
-                if(Double.parseDouble(forca)<=0) {
-                    pane.getChildren().remove(listButtons.get(type + id));
-                    listButtons.remove(type+id);
-                    if(type.equals(Elemento.FAUNA.toString())) {
-                        pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
-                        listLabels.remove(type+id);
-                    }
-                }
-
         }
     }
 

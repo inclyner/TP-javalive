@@ -12,7 +12,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
 
-public class EcossistemaFacade  {
+public class EcossistemaFacade{
 
     private final PropertyChangeSupport support;
     private Ecossistema ecossistema;
@@ -164,14 +164,23 @@ public class EcossistemaFacade  {
         }
 
     public void saveSnapShot() throws IOException {
-        //originator.state = this.ecossistema;
-        //careTaker.save();
-        cm.invokeCommand(new GravarSnapshot(ecossistema,cm.getOriginator(),cm.getCareTaker()));
+        if (!cm.invokeCommand(new GravarSnapshot(ecossistema,cm.getOriginator(),cm.getCareTaker())))
+            adcionarPopUpAviso("Nao foi possivel guardar snapshot");
     }
 
-    public void loadSnapShotAnterior() throws IOException {
+    public boolean loadSnapShotAnterior() throws IOException {
         //
-        cm.invokeCommand(new CarregarSnapshotCommand(ecossistema,cm.getOriginator(),cm.getCareTaker()));
+        if(cm.invokeCommand(new CarregarSnapshotCommand(ecossistema,cm.getOriginator(),cm.getCareTaker()))) {
+            ecossistema.setElementos(cm.getOriginator().state);
+            return true;
+        }else {
+            adcionarPopUpAviso("Nao existe snapshot criado");
+            return false;
+        }
+    }
+
+    public void atualiza(){
+        ecossistema.atualiza();
     }
 
 }

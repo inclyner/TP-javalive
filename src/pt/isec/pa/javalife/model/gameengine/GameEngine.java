@@ -1,10 +1,11 @@
 package pt.isec.pa.javalife.model.gameengine;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public final class GameEngine implements IGameEngine {
+public final class GameEngine implements IGameEngine{
     private GameEngineState state;
     private GameEngineThread controlThread;
     private final Set<IGameEngineEvolve> clients;

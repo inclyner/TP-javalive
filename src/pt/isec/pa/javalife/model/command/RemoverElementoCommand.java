@@ -5,7 +5,9 @@ import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.data.IElemento;
 
-public class RemoverElementoCommand extends AbstractCommand implements ICommand {
+import java.io.Serializable;
+
+public class RemoverElementoCommand extends AbstractCommand implements ICommand{
     Ecossistema ecossistema;
     String tipo;
     int id;
@@ -23,7 +25,11 @@ public class RemoverElementoCommand extends AbstractCommand implements ICommand 
 
     @Override
     public boolean execute() {
-        return ecossistema.removeElementoPelaArea(tipo,a);
+        if (ecossistema.removeElemento(tipo,id))
+            return true;
+        else if(ecossistema.removeElementoPelaArea(tipo, a))
+            return true;
+        return false;
     }
 
     @Override

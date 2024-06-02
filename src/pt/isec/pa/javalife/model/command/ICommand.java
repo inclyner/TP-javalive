@@ -5,6 +5,7 @@ import pt.isec.pa.javalife.model.memento.CareTaker;
 import pt.isec.pa.javalife.model.memento.Originator;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 public interface ICommand {
     boolean execute() throws IOException;

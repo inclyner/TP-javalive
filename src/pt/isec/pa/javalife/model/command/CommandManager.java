@@ -4,6 +4,7 @@ import pt.isec.pa.javalife.model.memento.CareTaker;
 import pt.isec.pa.javalife.model.memento.Originator;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 

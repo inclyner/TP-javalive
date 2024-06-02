@@ -5,6 +5,8 @@ import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.data.Fauna;
 
+import java.io.Serializable;
+
 public class EditarElementoCommand  extends AbstractCommand implements ICommand{
 
     private Ecossistema ecossistema;
