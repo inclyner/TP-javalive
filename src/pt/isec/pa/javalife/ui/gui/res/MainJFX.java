@@ -227,7 +227,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
                 // Função que exporta os elementos
-                ecossistemaFacade.exportasimulação(file);
+                ecossistemaFacade.exportasimulacao(file);
             }
         } else
             createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
@@ -241,7 +241,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             File selectedFile = fileChooser.showOpenDialog(stage);
             if (selectedFile != null) {
                 //Funcao que le o ficheiro mas apenas coloca os elementos(sem ser os sobrepostos)
-                ecossistemaFacade.importasimulação(selectedFile);
+                ecossistemaFacade.importasimulacao(selectedFile);
             }
         } else
             createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
@@ -388,7 +388,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         if (ecossistemaFacade.loadSnapShotAnterior()) {
             listButtons.clear();
             listLabels.clear();
-            ecossistemaFacade.atualiza();
+            ecossistemaFacade.atualizaEcossistema();
         }
     }
 
@@ -426,13 +426,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
         GridPane.setConstraints(dimensionLabel, 0, 1);
         Slider dimensionSlider = new Slider();
         dimensionSlider.setMin(0);
-        if (scene.getWidth() < scene.getHeight()) {
-            dimensionSlider.setMax(scene.getWidth() - valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
-            dimensionSlider.setValue(scene.getWidth() / 2);
-        } else {
-            dimensionSlider.setMax(scene.getHeight() - valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
-            dimensionSlider.setValue(scene.getHeight() / 2);
-        }
+        if (scene.getWidth() < scene.getHeight())
+            dimensionSlider.setMax(scene.getWidth());
+        else if(scene.getWidth()>scene.getHeight())
+            dimensionSlider.setMax(scene.getHeight());
         dimensionSlider.setShowTickMarks(true);
         dimensionSlider.setShowTickLabels(true);
         dimensionSlider.setMajorTickUnit(200);
@@ -473,10 +470,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
             growthRate = Double.parseDouble(growthRateInput.getText());
             overlapLoss = Integer.parseInt(overlapLossInput.getText());
             movementRate = Double.parseDouble(movementRateInput.getText());
-            if (scene.getWidth() < scene.getHeight())
-                escala = (scene.getWidth() - valorReduzirJanela) / unidade_generica;
-            else
-                escala = (scene.getHeight() - valorReduzirJanela) / unidade_generica;
             if (permiteAlteracoes) {
                 if (!listButtons.isEmpty()) {
                     for (Button button : listButtons.values()) {
@@ -519,6 +512,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
 
     private void desenharEcossistema() {
+        if (scene.getWidth() < scene.getHeight())
+            escala = (scene.getWidth() - valorReduzirJanela) / unidade_generica;
+        else
+            escala = (scene.getHeight() - valorReduzirJanela) / unidade_generica;
         pane = new Pane();
         pane.setStyle("-fx-background-color: lightblue;");// Define a cor de fundo desejada
         if (scene.getWidth() < scene.getHeight())
@@ -874,6 +871,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
         if (evt.getPropertyName().equals("adicionarElemento") || evt.getPropertyName().equals("atualiza"))
             createeAtualizaElemento(evt.getNewValue().toString());
         if (evt.getPropertyName().equals("adicionarPopUpAviso")) createPopUPInfo(evt.getNewValue().toString(), null);
+        if(evt.getPropertyName().equalsIgnoreCase("createPane")) {
+            unidade_generica = Integer.parseInt(evt.getNewValue().toString());
+            desenharEcossistema();
+        }
     }
 }
 

@@ -317,8 +317,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
     }
 
-    public void addElemento(Elemento tipo, Area aux, double forca) {
-        Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
+    public void addElemento(Elemento tipo, Area a, double forca) {
         IElemento temp = null;
         if (tipo == Elemento.FLORA)
             temp = ElementFactory.createElement(tipo, a, forcaInicial, taxaCrescimento, forcaSobreposicao);
@@ -332,6 +331,21 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             if (temp != null) elementos.add(temp);
         }
         ecossistemaFacade.AdicionarElemento(temp.toString());
+    }
+
+    public void addElementoAbrir(Elemento tipo, Area a, double forca) {
+        IElemento temp = null;
+        if (tipo == Elemento.FLORA)
+            temp = ElementFactory.createElement(tipo, a, forcaInicial, taxaCrescimento, forcaSobreposicao);
+        else if (tipo == Elemento.FAUNA) temp = ElementFactory.createElement(tipo, a, forcaInicial, velocidade);
+        else if (tipo == Elemento.INANIMADO) temp = ElementFactory.createElement(tipo, a);
+        if (forca != 0) {
+            if (temp instanceof Fauna fauna) fauna.setForca(forca);
+            if (temp instanceof Flora flora) flora.setForca(forca);
+        }
+        synchronized (elementos) {
+            if (temp != null) elementos.add(temp);
+        }
     }
 
     public boolean removeElemento(String tipo, int id) {
@@ -685,7 +699,10 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     // Verifica se o elemento se sobrepõe a algum existente
                     if (verificaElementoArea(temp, tipo)) {
                         // Se o elemento passar nas verificações, cria e adiciona
-                        addElemento(Elemento.valueOf(tipo), temp, forca);
+                        if(abrir)
+                            addElementoAbrir(Elemento.valueOf(tipo), temp, forca);
+                        else
+                            addElemento(Elemento.valueOf(tipo), temp, forca);
                         System.out.println("ELEMENTO ADICIONADO temp = " + temp);
 
                     } else {
@@ -699,9 +716,10 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
 
-        return false;
     }
 
     private boolean verificaElementoArea(Area temp, String tipo) {
@@ -754,6 +772,10 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     public int getTimeUnit() {
         return timeUnit;
+    }
+
+    public int getDimensao(){
+        return (int)(areaBoard.direita() - areaBoard.esquerda());
     }
 }
 

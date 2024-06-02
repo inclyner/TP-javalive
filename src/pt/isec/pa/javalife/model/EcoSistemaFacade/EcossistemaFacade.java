@@ -180,7 +180,7 @@ public class EcossistemaFacade {
         }
     }
 
-    public void atualiza() {
+    public void atualizaEcossistema() {
         ecossistema.atualiza();
     }
 
@@ -220,8 +220,8 @@ public class EcossistemaFacade {
             gameEngine = new GameEngine();
             gameEngine.registerClient(ecossistema);
             timeUnit = ecossistema.getTimeUnit();
-            support.firePropertyChange("atualiza", null, ecossistema);
-            support.firePropertyChange("atualiza", null, ecossistema);
+            support.firePropertyChange("createPane", null, ecossistema.getDimensao());
+            atualizaEcossistema();
             return true;
         }
         return false;
