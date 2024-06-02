@@ -23,7 +23,7 @@ public class RemoverElementoCommand extends AbstractCommand implements ICommand 
 
     @Override
     public boolean execute() {
-        return ecossistema.removeElemento(tipo,id);
+        return ecossistema.removeElementoPelaArea(tipo,a);
     }
 
     @Override

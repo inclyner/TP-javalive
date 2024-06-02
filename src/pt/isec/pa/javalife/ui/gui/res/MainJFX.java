@@ -617,7 +617,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             Optional<Integer> result = dialog.showAndWait();
             result.ifPresent(value -> {
                 Button button = listButtons.get(elemento.toString()+id);
-                Area a = new Area(button.getLayoutY(), button.getLayoutX(), button.getLayoutY()+ button.getHeight(), button.getLayoutX()+button.getWidth());
+                Area a = new Area(button.getLayoutY()/escala, button.getLayoutX()/escala, (button.getLayoutY()+ button.getHeight())/escala, (button.getLayoutX()+button.getWidth())/escala);
                 double forca=0;
                 if(listLabels.containsKey(elemento.toString()+id))
                     forca = Double.parseDouble(listLabels.get(elemento.toString()+id).getText());

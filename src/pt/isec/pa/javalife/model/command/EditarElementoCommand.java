@@ -7,10 +7,10 @@ import pt.isec.pa.javalife.model.data.Fauna;
 
 public class EditarElementoCommand  extends AbstractCommand implements ICommand{
 
-    Ecossistema ecossistema;
-int id;
-String tipo;
-    double direcao, velocidade, forca;
+    private Ecossistema ecossistema;
+    private int id;
+    private String tipo;
+    private double direcao, velocidade, forca;
 
     public EditarElementoCommand(Ecossistema ecossistema, String tipo,int id,double direcao,double velocidade, double forca) {
         super(ecossistema);
