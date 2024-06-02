@@ -680,20 +680,33 @@ public class MainJFX extends Application implements PropertyChangeListener {
             }
 
             dialog.getDialogPane().setContent(grid);
-            final double[] velocidade = {-2};
-            final double[] forca = {-2};
+            //final double[] velocidade = {-2};
+            //final double[] forca = {-2};
+            double[] velocidade = {-2};
+            double[] forca = {-2};
 
 
             dialog.setResultConverter(dialogButton -> {
                 if (dialogButton == editarButtonType) {
                     try {
                         Map<String, Object> resultMap = new HashMap<>();
-                        if (elemento.toString().equalsIgnoreCase("fauna")) {
-                            resultMap.put("velocidade", Double.parseDouble(velocidadeField.getText()));
-                            resultMap.put("forca", Double.parseDouble(forcaField.getText()));
-                        } else if (elemento.toString().equalsIgnoreCase("flora")) {
-                            resultMap.put("forca", Double.parseDouble(forcaField.getText()));
+                        velocidade[0] = -1;
+                        forca[0] = -1;
+                        if (!velocidadeField.getText().isEmpty()) {
+                            velocidade[0] = Double.parseDouble(velocidadeField.getText());
                         }
+                        if (!forcaField.getText().isEmpty()) {
+                            forca[0] = Double.parseDouble(forcaField.getText());
+                        }
+
+
+                        if (elemento.toString().equalsIgnoreCase("fauna")) {
+                            if (velocidade[0] != -1) resultMap.put("velocidade", velocidade[0]);
+                            if (forca[0] != -1) resultMap.put("forca", forca[0]);
+                        } else if (elemento.toString().equalsIgnoreCase("flora")) {
+                            if (forca[0] != -1) resultMap.put("forca", forca[0]);
+                        }
+
                         return resultMap;
                     } catch (NumberFormatException e3) {
                         return null;
@@ -703,46 +716,24 @@ public class MainJFX extends Application implements PropertyChangeListener {
             });
 
             Optional<Map<String, Object>> result = dialog.showAndWait();
-
             result.ifPresent(values -> {
                 boolean success = false;
                 if (elemento.toString().equalsIgnoreCase("fauna")) {
-                    if(values.get ("velocidade") == null)
-                        velocidade[0] = -2;
-                    else
-                        velocidade[0] = (double) values.get("velocidade");
-                    if(values.get ("forca") == null)
-                        forca[0] = -2;
-                    else
-                        forca[0] = (double) values.get("forca");
+                    velocidade[0] = values.containsKey("velocidade") ? (double) values.get("velocidade") : -2;
+                    forca[0] = values.containsKey("forca") ? (double) values.get("forca") : -2;
                     try {
                         success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, velocidade[0], forca[0]);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 } else if (elemento.toString().equalsIgnoreCase("flora")) {
-                    forca[0] = (double) values.get("forca");
+                    forca[0] = values.containsKey("forca") ? (double) values.get("forca") : -2;
                     try {
-                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id,  0, forca[0]);
+                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, 0, forca[0]);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
-
-                System.out.println("velocidade[0] = " + velocidade[0] + " forca[0] = " + forca[0]);
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Resultado da Operação");
-
-                if (success) {
-                    alert.setHeaderText("Elemento Editado");
-                    alert.setContentText("O elemento com o ID " + id + " foi editado com sucesso.");
-                } else {
-                    alert.setHeaderText("Erro ao Editar");
-                    alert.setContentText("O elemento com o ID " + id + " não existe ou não pôde ser editado.");
-                }
-
-                alert.showAndWait();
-                stage.close();
             });
         });
 
