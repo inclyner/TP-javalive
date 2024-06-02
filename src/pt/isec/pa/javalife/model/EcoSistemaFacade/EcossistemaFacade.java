@@ -5,6 +5,7 @@ import pt.isec.pa.javalife.model.command.AdicionarElementoCommand;
 import pt.isec.pa.javalife.model.command.CommandManager;
 import pt.isec.pa.javalife.model.command.EditarElementoCommand;
 import pt.isec.pa.javalife.model.command.RemoverElementoCommand;
+import pt.isec.pa.javalife.model.data.Area;
 import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.IElemento;
 import pt.isec.pa.javalife.model.gameengine.GameEngine;
@@ -129,8 +130,8 @@ public class EcossistemaFacade {
     }
 
 
-    public boolean removerElementoCommand(String tipo,int id) {
-        if(cm.invokeCommand(new RemoverElementoCommand(this.ecossistema,tipo, id))){
+    public boolean removerElementoCommand(String tipo,int id, Area a, double forca) {
+        if(cm.invokeCommand(new RemoverElementoCommand(this.ecossistema,tipo, id, a, forca))){
             support.firePropertyChange("atualiza", null, ecossistema);
             return true;
         }

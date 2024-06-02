@@ -36,7 +36,6 @@ public class AdicionarElementoCommand extends AbstractCommand implements IComman
         } else if (tipo == "FLORA") {
             elemento = Elemento.FLORA;
         }
-
         if(ecossistema.isAreaLivre(a) && elemento!=null)
         {
             ecossistema.addElemento(elemento,a,forca);

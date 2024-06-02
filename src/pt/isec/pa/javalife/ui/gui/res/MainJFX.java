@@ -16,6 +16,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
+import pt.isec.pa.javalife.model.data.Area;
 import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 
@@ -613,7 +614,12 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
             Optional<Integer> result = dialog.showAndWait();
             result.ifPresent(value -> {
-                boolean success = ecossistemaFacade.removerElementoCommand(elemento.toString(), value);
+                Button button = listButtons.get(elemento.toString()+id);
+                Area a = new Area(button.getLayoutY(), button.getLayoutX(), button.getLayoutY()+ button.getHeight(), button.getLayoutX()+button.getWidth());
+                double forca=0;
+                if(listLabels.containsKey(elemento.toString()+id))
+                    forca = Double.parseDouble(listLabels.get(elemento.toString()+id).getText());
+                boolean success = ecossistemaFacade.removerElementoCommand(elemento.toString(), value, a, forca);
                 if (success) {
                     createPopUPInfo("O elemento com o ID " + id + " foi removido com sucesso.", "Elemento Removido");
                     pane.getChildren().remove(listButtons.get(elemento.toString() + id));
