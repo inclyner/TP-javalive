@@ -111,16 +111,26 @@ public class MainJFX extends Application implements PropertyChangeListener {
         criarItem.setOnAction(event -> criarSimulacao());
         abrirItem.setOnAction(event -> abrirSimulacao(primaryStage));
         gravarItem.setOnAction(event -> gravarSimulacao(primaryStage));
-        exportarItem.setOnAction(event -> exportarSimulacao(primaryStage));
-        importarItem.setOnAction(event -> importarSimulacao(primaryStage));
+        exportarItem.setOnAction(event -> {
+            try {
+                exportarSimulacao(primaryStage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        importarItem.setOnAction(event -> {
+            try {
+                importarSimulacao(primaryStage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         sairItem.setOnAction(event -> sairSimulacao(primaryStage));
 
         configGeraisItem.setOnAction(event -> configurarEcossistema());
         adicionarInanimadoItem.setOnAction(event -> adicionarElemento("INANIMADO"));
         adicionarFloraItem.setOnAction(event -> adicionarElemento("FLORA"));
         adicionarFaunaItem.setOnAction(event -> adicionarElemento("FAUNA"));
-        //editarElementoItem.setOnAction(event -> editarElemento());
-        //eliminarElementoItem.setOnAction(event -> eliminarElemento());
         undoItem.setOnAction(event -> undo());
         redoItem.setOnAction(event -> {
             try {
@@ -187,25 +197,25 @@ public class MainJFX extends Application implements PropertyChangeListener {
         }
     }
 
-    private void exportarSimulacao(Stage stage) {
+    private void exportarSimulacao(Stage stage) throws IOException {
         // Lógica para exportar a simulação para um ficheiro CSV
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File file = fileChooser.showSaveDialog(stage);
         if (file != null) {
             // Função que exporta os elementos
-            ecossistemaFacade.exportasimulação(file);
+            ecossistemaFacade.exportasimulacao(file);
         }
     }
 
-    private void importarSimulacao(Stage stage) {
+    private void importarSimulacao(Stage stage) throws IOException {
         // Lógica para importar uma simulação de um ficheiro CSV
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             //Funcao que le o ficheiro mas apenas coloca os elementos(sem ser os sobrepostos)
-            ecossistemaFacade.importasimulação(selectedFile);
+            ecossistemaFacade.importasimulacao(selectedFile);
         }
     }
 

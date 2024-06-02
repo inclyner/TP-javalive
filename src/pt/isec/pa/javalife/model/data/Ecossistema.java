@@ -600,7 +600,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return false;
     }
 
-    public void exportaSimulacao(File file) {
+    public boolean exportaSimulacao(File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             // Escrever cabeçalho do CSV
             writer.write("id,type,area,forca");
@@ -632,10 +632,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public void importaSimulacao(File selectedFile) {
+    public boolean importaSimulacao(File selectedFile) {
         //! o check verifica element nao funciona
         try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
             String line;
@@ -673,6 +675,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             e.printStackTrace();
         }
 
+        return false;
     }
 
     private boolean verificaElementoArea(Area temp, String tipo) {
