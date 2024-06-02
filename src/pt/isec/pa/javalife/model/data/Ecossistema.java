@@ -1,6 +1,4 @@
 package pt.isec.pa.javalife.model.data;
-
-
 import javafx.application.Platform;
 import org.w3c.dom.ls.LSOutput;
 import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
@@ -16,20 +14,22 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private Set<IElemento> elementos = new HashSet<>();
     private Area area;
     private Area areaBoard;
-    private double escala;
-    private int forcaInicial, taxaCrescimento, forcaSobreposicao, velocidade;
+    private int forcaInicial, forcaSobreposicao;
+    private double taxaCrescimento, velocidade;
     private EcossistemaFacade ecossistemaFacade;
 
     // set up inicial do ecossistema (criação e inserção de elementos)
-    public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao, double escala, int forcaInicial, double taxaCrescimento, int forcaSobreposicao, double velocidade) {
+    public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao, int forcaInicial, double taxaCrescimento, int forcaSobreposicao, double velocidade) {
         this.ecossistemaFacade = ecossistemaFacade;
         //TODO alterar para meter as coordenadas pelas definições
         // definir as unidades (tipo 1000 pixeis de largura são 2 pixeis por unidade)
         //region criação de pedras
         area = new Area(0, 0, dimensao, dimensao);
         areaBoard = area;
-        this.escala = escala;
-        System.out.println("escala = " + escala);
+        this.forcaInicial = forcaInicial;
+        this.taxaCrescimento = taxaCrescimento;
+        this.forcaSobreposicao = forcaSobreposicao;
+        this.velocidade = velocidade;
         //preenche a cerca da area com pedras
         Area aux;
         // Adiciona pedras na borda superior e inferior
@@ -40,7 +40,6 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             aux = new Area(i, area.baixo() - 1, i + 1, area.baixo());
             addElemento(Elemento.INANIMADO, aux, 0);
         }
-
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
         for (double j = area.cima() + 1; j < area.baixo() - 1; j += 1) {
             // adiciona pedras na borda esquerda
@@ -51,6 +50,22 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
             addElemento(Elemento.INANIMADO, aux, 0);
         }
 
+    }
+
+    public int getForcaInicial() {
+        return forcaInicial;
+    }
+
+    public int getForcaSobreposicao() {
+        return forcaSobreposicao;
+    }
+
+    public double getTaxaCrescimento() {
+        return taxaCrescimento;
+    }
+
+    public double getVelocidade() {
+        return velocidade;
     }
 
     @Override
@@ -82,7 +97,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         for (String aux : listStringElementos) {
             String[] partes = aux.split(":");
             if (Elemento.FLORA.toString().equals(partes[0])) {
-                IElemento temp = ElementFactory.createElement(Elemento.FLORA, converterStringParaArea(partes[1]));
+                IElemento temp = ElementFactory.createElement(Elemento.FLORA, converterStringParaArea(partes[1]), forcaInicial, taxaCrescimento, forcaSobreposicao);
                 synchronized (elementos) {
                     elementos.add(temp);
                     Platform.runLater(() -> ecossistemaFacade.AdicionarElemento(temp.toString()));
@@ -243,7 +258,13 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     public void addElemento(Elemento tipo, Area aux, double forca) {
         Area a = new Area(aux.cima(), aux.esquerda(), aux.baixo(), aux.direita());
-        IElemento temp = ElementFactory.createElement(tipo, a);
+        IElemento temp=null;
+        if(tipo==Elemento.FLORA)
+            temp = ElementFactory.createElement(tipo, a, forcaInicial, taxaCrescimento, forcaSobreposicao);
+        else if(tipo== Elemento.FAUNA)
+            temp = ElementFactory.createElement(tipo, a, forcaInicial, velocidade);
+        else if(tipo==Elemento.INANIMADO)
+            temp = ElementFactory.createElement(tipo, a);
         if (forca != 0) {
             if (temp instanceof Fauna fauna)
                 fauna.setForca(forca);
@@ -251,7 +272,8 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                 flora.setForca(forca);
         }
         synchronized (elementos) {
-            elementos.add(temp);
+            if(temp!=null)
+                elementos.add(temp);
         }
         ecossistemaFacade.AdicionarElemento(temp.toString());
     }

@@ -14,14 +14,14 @@ public class ElementFactory {
                     throw new IllegalArgumentException("Argumentos inválidos para Pedra");
                 }
             case FLORA:
-                if (args.length == 1 && args[0] instanceof Area) {
-                    return new Erva((Area) args[0]);
+                if (args.length == 4 && args[0] instanceof Area) {
+                    return new Erva((Area) args[0], Double.parseDouble(args[1].toString()), Float.parseFloat(args[2].toString()), Float.parseFloat(args[3].toString()));
                 } else {
                     throw new IllegalArgumentException("Argumentos inválidos para Pedra");
                 }
             case FAUNA:
-                if (args.length == 1 && args[0] instanceof Area) {
-                    return new Animal((Area) args[0]);
+                if (args.length == 3 && args[0] instanceof Area) {
+                    return new Animal((Area) args[0], Double.parseDouble(args[1].toString()), Double.parseDouble(args[2].toString()));
                 } else {
                     throw new IllegalArgumentException("Argumentos inválidos para Pedra");
                 }

@@ -139,6 +139,16 @@ public class MainJFX extends Application implements PropertyChangeListener {
     //region fucções menu
     private void criarSimulacao() {
         // Lógica para criar uma nova simulação
+        if(!listButtons.isEmpty()) {
+            for (Button button : listButtons.values()) {
+                pane.getChildren().removeAll(button);
+            }
+            listButtons.clear();
+            for(Label label : listLabels.values()) {
+                pane.getChildren().removeAll(label);
+            }
+            listLabels.clear();
+        }
         showParameterPopup(true);
     }
 
@@ -199,11 +209,14 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void configurarEcossistema() {
         // Lógica para configurar o ecossistema
-        if (ecossistemaFacade.checkGameState() == GameEngineState.READY)
-            showParameterPopup(false);
-        else {
-            createPopUPInfo("O jogo não está em parado","Game Status");
-        }
+        if(!ecossistemaFacade.verificaEcossitemaNull()) {
+            if (ecossistemaFacade.checkGameState() == GameEngineState.READY)
+                showParameterPopup(false);
+            else {
+                createPopUPInfo("O jogo não está em parado", "Game Status");
+            }
+        }else
+            createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
     private void adicionarElemento(String tipo) {
@@ -295,7 +308,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void executarPararSimulacao() {
-        ecossistemaFacade.execute_stop();
+        if(!ecossistemaFacade.verificaEcossitemaNull())
+            ecossistemaFacade.execute_stop();
+        else
+            createPopUPInfo("Nao existe ecossitema criado", "Game Status");
     }
 
     private void pausarContinuarSimulacao() {
@@ -367,7 +383,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         dimensionSlider.setBlockIncrement(1);
         GridPane.setConstraints(dimensionSlider, 1, 1);
         if (!permiteAlteracoes) {
-            dimensionSlider.setDisable(false);
+            dimensionSlider.setDisable(true);
         }
         Label timeUnitLabel = new Label("Unidade de Tempo(ms):");
         GridPane.setConstraints(timeUnitLabel, 0, 3);

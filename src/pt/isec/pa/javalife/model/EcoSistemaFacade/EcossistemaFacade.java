@@ -44,6 +44,9 @@ public class EcossistemaFacade {
         //cm.invokeCommand(new AdicionarElementoCommand(ecossistema));
     }
 
+    public boolean verificaEcossitemaNull() {
+        return ecossistema == null;
+    }
 
 
 
@@ -64,7 +67,7 @@ public class EcossistemaFacade {
 
 
     public void createEcossistema(int dimension, double escala, int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) throws InterruptedException {
-        ecossistema = new Ecossistema(this, dimension, escala, initialForce, growthRate, overlapLoss, movementRate);
+        ecossistema = new Ecossistema(this, dimension, initialForce, growthRate, overlapLoss, movementRate);
         gameEngine = new GameEngine();
         gameEngine.registerClient(ecossistema);
         this.timeUnit = timeUnit;
