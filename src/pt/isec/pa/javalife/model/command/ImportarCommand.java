@@ -17,7 +17,7 @@ public class ImportarCommand extends AbstractCommand implements ICommand {
 
     @Override
     public boolean execute() throws IOException {
-        return ecossistema.importaSimulacao(selectedFile);
+        return ecossistema.importaSimulacao(selectedFile,false);
     }
 
     @Override

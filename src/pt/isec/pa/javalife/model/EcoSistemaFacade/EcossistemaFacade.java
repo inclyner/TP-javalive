@@ -11,16 +11,16 @@ import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
-public class EcossistemaFacade{
+public class EcossistemaFacade {
 
     private final PropertyChangeSupport support;
+    private final CommandManager cm;
     private Ecossistema ecossistema;
     private IGameEngine gameEngine;
-    private final CommandManager cm;
     private int timeUnit;
-
 
 
     //memento
@@ -87,110 +87,105 @@ public class EcossistemaFacade{
         ecossistema.setVelocidade(movementRate);
     }
 
-        public GameEngineState checkGameState () {
-            return gameEngine.getCurrentState();
-        }
+    public GameEngineState checkGameState() {
+        return gameEngine.getCurrentState();
+    }
 
 
-        public void atualiza (String string){
-            support.firePropertyChange("atualiza", null, string);
-        }
+    public void atualiza(String string) {
+        support.firePropertyChange("atualiza", null, string);
+    }
 
-        public void adicionaElementoCommand (String tipo,double x, double y, double altura, double largura, double forca) throws IOException {
-            if (ecossistema != null) {
-                if (cm.invokeCommand(new AdicionarElementoCommand(this.ecossistema, tipo, x, y, x + altura, y + largura, forca)))
-                    adcionarPopUpAviso("Elemento adicionado com sucesso");
-                else
-                    adcionarPopUpAviso("Elemento nao foi adicionado");
-            } else
-                adcionarPopUpAviso("Ecossistema ainda não foi criado");
+    public void adicionaElementoCommand(String tipo, double x, double y, double altura, double largura, double forca) throws IOException {
+        if (ecossistema != null) {
+            if (cm.invokeCommand(new AdicionarElementoCommand(this.ecossistema, tipo, x, y, x + altura, y + largura, forca)))
+                adcionarPopUpAviso("Elemento adicionado com sucesso");
+            else
+                adcionarPopUpAviso("Elemento nao foi adicionado");
+        } else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
 
-        }
+    }
 
-        private void adcionarPopUpAviso (String string){
-            support.firePropertyChange("adicionarPopUpAviso", null, string);
-        }
+    private void adcionarPopUpAviso(String string) {
+        support.firePropertyChange("adicionarPopUpAviso", null, string);
+    }
 
-        public String pause_unpause () {
-            if (ecossistema != null) {
-                if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
-                    gameEngine.pause();
-                    return "Simulação de Ecossistema (paused)";
-                } else if (gameEngine.getCurrentState() == GameEngineState.PAUSED) {
-                    gameEngine.resume();
-                    return "Simulação de Ecossistema (running)";
-                } else if (gameEngine.getCurrentState() == GameEngineState.READY) {
-                    adcionarPopUpAviso("Ecossistema ainda não foi iniciado");
-                }
-            } else
-                adcionarPopUpAviso("Ecossistema ainda não foi criado");
-            return null;
-        }
-
-        public void execute_stop () {
-            if (ecossistema != null) {
-                if (gameEngine.getCurrentState() == GameEngineState.READY)
-                    gameEngine.start(timeUnit);
-                else if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
-                    gameEngine.stop();
-                }
-            } else
-                adcionarPopUpAviso("Ecossistema ainda não foi criado");
-        }
-
-
-        public boolean removerElementoCommand (String tipo, int id, Area a, double forca) throws IOException {
-            if (cm.invokeCommand(new RemoverElementoCommand(this.ecossistema, tipo, id, a, forca))) {
-                support.firePropertyChange("atualiza", null, ecossistema);
-                return true;
+    public String pause_unpause() {
+        if (ecossistema != null) {
+            if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
+                gameEngine.pause();
+                return "Simulação de Ecossistema (paused)";
+            } else if (gameEngine.getCurrentState() == GameEngineState.PAUSED) {
+                gameEngine.resume();
+                return "Simulação de Ecossistema (running)";
+            } else if (gameEngine.getCurrentState() == GameEngineState.READY) {
+                adcionarPopUpAviso("Ecossistema ainda não foi iniciado");
             }
-            return false;
-        }
+        } else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
+        return null;
+    }
 
-        public boolean editarElementoCommand (String tipo,int id, double velocidade, double forca) throws IOException {
-            if (cm.invokeCommand(new EditarElementoCommand(this.ecossistema, tipo, id, velocidade, forca))) {
-                support.firePropertyChange("atualiza", null, ecossistema);
-                return true;
+    public void execute_stop() {
+        if (ecossistema != null) {
+            if (gameEngine.getCurrentState() == GameEngineState.READY)
+                gameEngine.start(timeUnit);
+            else if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
+                gameEngine.stop();
             }
-            return false;
-        }
+        } else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
+    }
 
-        public void exportasimulacao(File file) throws IOException {
-            if (cm.invokeCommand(new ExportarCommand(this.ecossistema, file))) {
-                ecossistema.exportaSimulacao(file);
-            }
-        }
 
-        public void importasimulacao (File selectedFile) throws IOException {
-
-            if (cm.invokeCommand(new ImportarCommand(this.ecossistema, selectedFile))) {
-                ecossistema.importaSimulacao(selectedFile);
-            }
+    public boolean removerElementoCommand(String tipo, int id, Area a, double forca) throws IOException {
+        if (cm.invokeCommand(new RemoverElementoCommand(this.ecossistema, tipo, id, a, forca))) {
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
         }
+        return false;
+    }
+
+    public boolean editarElementoCommand(String tipo, int id, double velocidade, double forca) throws IOException {
+        if (cm.invokeCommand(new EditarElementoCommand(this.ecossistema, tipo, id, velocidade, forca))) {
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
+        }
+        return false;
+    }
+
+    public void exportasimulacao(File file) throws IOException {
+        cm.invokeCommand(new ExportarCommand(this.ecossistema, file));
+    }
+
+    public void importasimulacao(File selectedFile) throws IOException {
+        cm.invokeCommand(new ImportarCommand(this.ecossistema, selectedFile));
+    }
 
 
     public void saveSnapShot() throws IOException {
-        if (!cm.invokeCommand(new GravarSnapshot(ecossistema,cm.getOriginator(),cm.getCareTaker())))
+        if (!cm.invokeCommand(new GravarSnapshot(ecossistema, cm.getOriginator(), cm.getCareTaker())))
             adcionarPopUpAviso("Nao foi possivel guardar snapshot");
     }
 
     public boolean loadSnapShotAnterior() throws IOException {
         //
-        if(cm.invokeCommand(new CarregarSnapshotCommand(ecossistema,cm.getOriginator(),cm.getCareTaker()))) {
+        if (cm.invokeCommand(new CarregarSnapshotCommand(ecossistema, cm.getOriginator(), cm.getCareTaker()))) {
             ecossistema.setElementos(cm.getOriginator().state);
             return true;
-        }else {
+        } else {
             adcionarPopUpAviso("Nao existe snapshot criado");
             return false;
         }
     }
 
-    public void atualiza(){
+    public void atualiza() {
         ecossistema.atualiza();
     }
 
     public boolean aplicarHerbicida(Elemento elemento, int id) throws IOException {
-        if (cm.invokeCommand(new AplicarHerbicidaCommand(ecossistema,elemento, id))) {
+        if (cm.invokeCommand(new AplicarHerbicidaCommand(ecossistema, elemento, id))) {
             support.firePropertyChange("atualiza", null, ecossistema);
             return true;
         }
@@ -198,7 +193,7 @@ public class EcossistemaFacade{
     }
 
     public boolean injetarForca(Elemento elemento, int id, double forca) throws IOException {
-        if (cm.invokeCommand(new injetarForcaCommand(ecossistema,elemento, id, forca))) {
+        if (cm.invokeCommand(new injetarForcaCommand(ecossistema, elemento, id, forca))) {
             support.firePropertyChange("atualiza", null, ecossistema);
             return true;
         }
@@ -208,5 +203,27 @@ public class EcossistemaFacade{
     public void aplicarSol() {
         ecossistema.aplicaSol();
 
+    }
+
+    public boolean salvarJogo(File file) throws IOException {
+
+        if (cm.invokeCommand(new SalvarJogoCommand(ecossistema, file, gameEngine.getInterval()))) {
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean abrirJogo(File selectedFile) throws IOException {
+        ecossistema = new Ecossistema(this);
+        if (cm.invokeCommand(new AbrirJogoCommand(ecossistema, selectedFile))) {
+            gameEngine = new GameEngine();
+            gameEngine.registerClient(ecossistema);
+            timeUnit = ecossistema.getTimeUnit();
+            support.firePropertyChange("atualiza", null, ecossistema);
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
+        }
+        return false;
     }
 }

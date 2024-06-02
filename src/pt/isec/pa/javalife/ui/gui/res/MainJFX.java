@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
 import pt.isec.pa.javalife.model.data.Area;
+import pt.isec.pa.javalife.model.data.Ecossistema;
 import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 
@@ -109,8 +110,20 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
         // Adicionar funcionalidade aos itens de menu
         criarItem.setOnAction(event -> criarSimulacao());
-        abrirItem.setOnAction(event -> abrirSimulacao(primaryStage));
-        gravarItem.setOnAction(event -> gravarSimulacao(primaryStage));
+        abrirItem.setOnAction(event -> {
+            try {
+                abrirSimulacao(primaryStage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        gravarItem.setOnAction(event -> {
+            try {
+                gravarSimulacao(primaryStage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         exportarItem.setOnAction(event -> {
             try {
                 exportarSimulacao(primaryStage);
@@ -125,7 +138,13 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 throw new RuntimeException(e);
             }
         });
-        sairItem.setOnAction(event -> sairSimulacao(primaryStage));
+        sairItem.setOnAction(event -> {
+            try {
+                sairSimulacao(primaryStage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         configGeraisItem.setOnAction(event -> configurarEcossistema());
         adicionarInanimadoItem.setOnAction(event -> adicionarElemento("INANIMADO"));
@@ -177,26 +196,26 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
 
-    private void abrirSimulacao(Stage stage) {
+    private void abrirSimulacao(Stage stage) throws IOException {
         // Lógica para abrir uma simulação existente
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             //Funcao que le o ficheiro
+            ecossistemaFacade.abrirJogo(selectedFile);
         }
     }
 
-    private void gravarSimulacao(Stage stage) {
-        if (!ecossistemaFacade.verificaEcossitemaNull()) {
-            // Lógica para gravar o estado atual da simulação
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-            File file = fileChooser.showSaveDialog(stage);
-            if (file != null) {
-                //Funçao que guarda o ficheiro
-            }
-        } else
+    private void gravarSimulacao(Stage stage) throws IOException {
+        if (!ecossistemaFacade.verificaEcossitemaNull()) {// Lógica para gravar o estado atual da simulação
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            //Funçao que guarda o ficheiro
+            ecossistemaFacade.salvarJogo(file);
+        }} else
             createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
@@ -228,7 +247,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
-    private void sairSimulacao(Stage stage) {
+    private void sairSimulacao(Stage stage) throws IOException {
         // Lógica para sair da simulação, perguntando se deseja gravar
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Deseja gravar antes de sair?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
         alert.showAndWait();

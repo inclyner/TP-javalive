@@ -5,20 +5,22 @@ import pt.isec.pa.javalife.model.data.Ecossistema;
 import java.io.File;
 import java.io.IOException;
 
-public class ExportarCommand extends AbstractCommand implements ICommand {
+public class AbrirJogoCommand extends AbstractCommand implements ICommand {
 
     private Ecossistema ecossistema;
-    private File file;
-    public ExportarCommand(Ecossistema ecossistema, File file) {
+    private File selectedFile;
+
+    public AbrirJogoCommand(Ecossistema ecossistema, File selectedFile) {
         super(ecossistema);
         this.ecossistema = ecossistema;
-        this.file = file;
-
+        this.selectedFile = selectedFile;
     }
 
     @Override
     public boolean execute() throws IOException {
-        return ecossistema.exportaSimulacao(file,false,0);    }
+        return ecossistema.importaSimulacao(selectedFile,true);
+
+    }
 
     @Override
     public boolean undo() {

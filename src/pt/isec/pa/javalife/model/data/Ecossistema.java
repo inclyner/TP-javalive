@@ -13,13 +13,14 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     List<String> listStringElementos = new ArrayList<>();
     int num_ticks = 0;
     List<String> listStringElementosRemove = new ArrayList<>();
+    boolean sol = false;
     private Set<IElemento> elementos = new HashSet<>();
-    private Area area;
     private Area areaBoard;
-    private int forcaInicial, forcaSobreposicao;
+    private int forcaInicial;
+    private double forcaSobreposicao;
     private double taxaCrescimento, velocidade;
     private EcossistemaFacade ecossistemaFacade;
-    boolean sol=false;
+    private int timeUnit;
 
 
     // set up inicial do ecossistema (criação e inserção de elementos)
@@ -28,8 +29,8 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //TODO alterar para meter as coordenadas pelas definições
         // definir as unidades (tipo 1000 pixeis de largura são 2 pixeis por unidade)
         //region criação de pedras
-        area = new Area(0, 0, dimensao, dimensao);
-        areaBoard = area;
+        areaBoard = new Area(0, 0, dimensao, dimensao);
+        areaBoard = areaBoard;
         this.forcaInicial = forcaInicial;
         this.taxaCrescimento = taxaCrescimento;
         this.forcaSobreposicao = forcaSobreposicao;
@@ -37,29 +38,35 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         //preenche a cerca da area com pedras
         Area aux;
         // Adiciona pedras na borda superior e inferior
-        for (double i = area.cima(); i < area.baixo(); i += 1) {
+        for (double i = areaBoard.cima(); i < areaBoard.baixo(); i += 1) {
             // Adiciona pedras na borda superior e inferior
-            aux = new Area(i, area.cima(), i + 1, area.cima() + 1);
+            aux = new Area(i, areaBoard.cima(), i + 1, areaBoard.cima() + 1);
             addElemento(Elemento.INANIMADO, aux, 0);
-            aux = new Area(i, area.baixo() - 1, i + 1, area.baixo());
+            aux = new Area(i, areaBoard.baixo() - 1, i + 1, areaBoard.baixo());
             addElemento(Elemento.INANIMADO, aux, 0);
         }
         // Adiciona pedras na borda esquerda e direita(exceto nos cantos)
-        for (double j = area.cima() + 1; j < area.baixo() - 1; j += 1) {
+        for (double j = areaBoard.cima() + 1; j < areaBoard.baixo() - 1; j += 1) {
             // adiciona pedras na borda esquerda
-            aux = new Area(area.esquerda(), j, area.esquerda() + 1, j + 1);
+            aux = new Area(areaBoard.esquerda(), j, areaBoard.esquerda() + 1, j + 1);
             addElemento(Elemento.INANIMADO, aux, 0);
             // adiciona pedras na borda direita
-            aux = new Area(area.direita() - 1, j, area.direita(), j + 1);
+            aux = new Area(areaBoard.direita() - 1, j, areaBoard.direita(), j + 1);
             addElemento(Elemento.INANIMADO, aux, 0);
         }
 
     }
 
+    //set up inicial do ecossistema (abrir jogo)
+    public Ecossistema(EcossistemaFacade ecossistemaFacade) {
+
+        this.ecossistemaFacade = ecossistemaFacade;
+    }
+
     public void aplicaSol() {
 
         num_ticks = 10;
-        sol=true;
+        sol = true;
         //adicionar no evolve, quando chamo a funcao ele fica a 10
         //no evolve ele vai aplicar a velocidade metade e o crescimento ao dobro
         // e retira 1 tick
@@ -69,7 +76,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         this.forcaInicial = forcaInicial;
     }
 
-    public void setForcaSobreposicao(int forcaSobreposicao) {
+    public void setForcaSobreposicao(double forcaSobreposicao) {
         this.forcaSobreposicao = forcaSobreposicao;
     }
 
@@ -89,19 +96,21 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                 if (elemento instanceof Inanimado) continue;
                 if (elemento instanceof Flora flora) {
                     //envia o boolean sol, para que quando haja sol faça os multiplicadores
-                    evolveFlora(flora,sol);
+                    evolveFlora(flora, sol);
                     Platform.runLater(() -> ecossistemaFacade.atualiza(flora.toString()));
                 } else if (elemento instanceof Fauna fauna) {
                     //envia o boolean sol, para que quando haja sol faça os multiplicadores
-                    evolveFauna(fauna,sol);
+                    evolveFauna(fauna, sol);
                     Platform.runLater(() -> ecossistemaFacade.atualiza(fauna.toString()));
                 }
 
 
-                if (num_ticks != 0) {num_ticks--;}
-                if(num_ticks==0) sol=false;
+                if (num_ticks != 0) {
+                    num_ticks--;
+                }
+                if (num_ticks == 0) sol = false;
             }
-            }
+        }
 
         synchronized (listStringElementos) {
             if (!listStringElementos.isEmpty()) {
@@ -118,12 +127,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private void removeElelementoPorString() {
         for (String aux : listStringElementosRemove) {
             String[] partes = aux.split(":");
-            if(partes.length==2){
-                synchronized (elementos){
-                    for(IElemento e: elementos){
-                        if(e.getType().toString().equals(partes[0]) && e.getId()==Integer.parseInt(partes[1])){
+            if (partes.length == 2) {
+                synchronized (elementos) {
+                    for (IElemento e : elementos) {
+                        if (e.getType().toString().equals(partes[0]) && e.getId() == Integer.parseInt(partes[1])) {
                             elementos.remove(e);
-                            Platform.runLater(()->ecossistemaFacade.AdicionarElemento(e.toString()));
+                            Platform.runLater(() -> ecossistemaFacade.AdicionarElemento(e.toString()));
                         }
                     }
                 }
@@ -154,8 +163,9 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private Area converterStringParaArea(String areaString) {
         areaString = areaString.replace("(", "").replace(")", "");
         String[] valores = areaString.split(";");
+        System.out.println("areaString = " + areaString);
         if (valores.length != 4) {
-            throw new IllegalArgumentException("A string deve conter exatamente 4 valores separados por ','");
+            throw new IllegalArgumentException("A string deve conter exatamente 4 valores separados por ';'");
         }
 
         try {
@@ -170,7 +180,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
     }
 
-    private void evolveFlora(Flora flora,boolean sol) {
+    private void evolveFlora(Flora flora, boolean sol) {
         //Aumenta a força e verifica se pode reproduzir, caso sim aumenta o numero de reproducao e verifica se tem espaço para o fazer
         //caso tenha adiciona elemento
         if (flora.evoluir(sol)) {
@@ -189,11 +199,11 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         listStringElementos.add(elemento + ":" + aux.toString());
     }
 
-    private void removeElementoNoEvolve(Elemento elemento, int id){
-        listStringElementosRemove.add(elemento+":"+id);
+    private void removeElementoNoEvolve(Elemento elemento, int id) {
+        listStringElementosRemove.add(elemento + ":" + id);
     }
 
-    private void evolveFauna(Fauna fauna,boolean sol) {
+    private void evolveFauna(Fauna fauna, boolean sol) {
         //! falta introduzir o boolean para metade da velocidade nos movimentos
         Area areaParaOndeVai;
         boolean mov = true;
@@ -211,18 +221,18 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                 if (existeFlora()) {
                     //region procura elemento flora mais perto atualiza area e forca
                     do {
-                        areaParaOndeVai = fauna.moverParaComida(checkElementoMaisPerto(fauna.getArea()), contemPedra,sol);
+                        areaParaOndeVai = fauna.moverParaComida(checkElementoMaisPerto(fauna.getArea()), contemPedra, sol);
                         contemPedra = verificaPedraouFauna(areaParaOndeVai, fauna);
                     } while (contemPedra);
                     fauna.setArea(areaParaOndeVai);
                     fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
                     //endregion
                 } else {
-                    if (fauna.getElemetoPerseguir()==null) {
+                    if (fauna.getElemetoPerseguir() == null) {
                         procuraFaunaComMenosForca(fauna);
                     }
-                    if (fauna.getElemetoPerseguir()!=null){
-                        if (fauna.verificarAdjacente(this.areaBoard,sol)) {
+                    if (fauna.getElemetoPerseguir() != null) {
+                        if (fauna.verificarAdjacente(this.areaBoard, sol)) {
                             for (IElemento aux : elementos) {
                                 if (fauna.getElemetoPerseguir().getId() == aux.getId() && Elemento.FAUNA == aux.getType() && aux instanceof Fauna f) {
                                     if (fauna.getForca() > 10) {
@@ -246,8 +256,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                                     }
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             //region perseguir elemento da fauna e atualizar area e forca
                             contemPedra = false;
                             do {
@@ -256,14 +265,13 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                                         fauna.setElemetoPerseguir(aux);
                                     }
                                 }
-                                areaParaOndeVai = fauna.moverParaComida(fauna.getElemetoPerseguir().getArea(), !contemPedra,sol);
+                                areaParaOndeVai = fauna.moverParaComida(fauna.getElemetoPerseguir().getArea(), !contemPedra, sol);
                                 contemPedra = verificaPedraouFauna(areaParaOndeVai, fauna);
                             } while (contemPedra);
                             fauna.setArea(areaParaOndeVai);
                             fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
                         }
-                    }else
-                        movimentacaoFauna(fauna,sol);
+                    } else movimentacaoFauna(fauna, sol);
                     //region verifica adjacentes e atualiza forca caso seja adjacente
                     //endregion
                 }
@@ -275,13 +283,13 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     if (aux != null) {
                         contemPedra = false;
                         do {
-                            areaParaOndeVai = fauna.moverParaComida(aux.getArea(), !contemPedra,sol);
+                            areaParaOndeVai = fauna.moverParaComida(aux.getArea(), !contemPedra, sol);
                             contemPedra = verificaPedraouFauna(areaParaOndeVai, fauna);
                         } while (contemPedra);
                         fauna.setArea(areaParaOndeVai);
                         fauna.setForca(fauna.getForca() - fauna.getForcaMovimentacao());
                     } else {
-                        movimentacaoFauna(fauna,sol);
+                        movimentacaoFauna(fauna, sol);
                     }
                     //endregion
                     if (fauna.reproducao(verificarFaunaDistancia(fauna))) {
@@ -291,14 +299,14 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                         }
                     }
                 } else {
-                    movimentacaoFauna(fauna,sol);
+                    movimentacaoFauna(fauna, sol);
                 }
 
             }
         }
     }
 
-    private void movimentacaoFauna(Fauna fauna,boolean sol) {
+    private void movimentacaoFauna(Fauna fauna, boolean sol) {
         Area areaParaOndeVai;
         boolean contemPedra = true;
         do {
@@ -402,16 +410,16 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         List<Area> areasAdjacentes = new ArrayList<>();
 
         //region verifica ajacentes
-        if (areaA.cima() - area.cima() > altura) {
+        if (areaA.cima() - areaBoard.cima() > altura) {
             areasAdjacentes.add(new Area(areaA.cima() - altura, areaA.esquerda(), areaA.baixo() - altura, areaA.direita()));
         }
-        if (area.baixo() - areaA.baixo() > altura) {
+        if (areaBoard.baixo() - areaA.baixo() > altura) {
             areasAdjacentes.add(new Area(areaA.cima() + altura, areaA.esquerda(), areaA.baixo() + altura, areaA.direita()));
         }
-        if (areaA.esquerda() - area.esquerda() > largura) {
+        if (areaA.esquerda() - areaBoard.esquerda() > largura) {
             areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() - largura, areaA.baixo(), areaA.direita() - largura));
         }
-        if (area.direita() - areaA.direita() > largura) {
+        if (areaBoard.direita() - areaA.direita() > largura) {
             areasAdjacentes.add(new Area(areaA.cima(), areaA.esquerda() + largura, areaA.baixo(), areaA.direita() + largura));
         }
         //endregion
@@ -447,7 +455,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     private Area checkElementoMaisPerto(Area a) {
         Area last = null;
-        double largura = this.area.direita() - this.area.esquerda();
+        double largura = this.areaBoard.direita() - this.areaBoard.esquerda();
         double dist = Math.sqrt(Math.pow(largura, 2) + Math.pow(largura, 2));
         synchronized (elementos) {
             for (IElemento e : elementos) {
@@ -574,7 +582,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return null;
     }
 
-    public boolean editElemento(String tipo, int id , double velocidade, double forca) {
+    public boolean editElemento(String tipo, int id, double velocidade, double forca) {
         synchronized (elementos) {
             for (IElemento e : elementos) {
                 if (e instanceof Fauna fauna && e.getId() == id && tipo.equals("FAUNA")) {
@@ -584,8 +592,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                         fauna.setForca(forca + ((Fauna) e).getForca());
                     } //a velocidade é -1 quando o edit elemento é chamado pelo injetarforcacommand
 
-                    if(forca>0)
-                        fauna.setForca(forca);
+                    if (forca > 0) fauna.setForca(forca);
 
                     return true;
                 }
@@ -600,8 +607,12 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return false;
     }
 
-    public boolean exportaSimulacao(File file) {
+    public boolean exportaSimulacao(File file, boolean salvar, double timeUnit) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            if (salvar) {
+                writer.write(areaBoard.toString() + "," + timeUnit + "," + forcaInicial + "," + taxaCrescimento + "," + forcaSobreposicao + "," + velocidade);
+                writer.newLine();
+            }
             // Escrever cabeçalho do CSV
             writer.write("id,type,area,forca");
             writer.newLine();
@@ -637,11 +648,27 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return true;
     }
 
-    public boolean importaSimulacao(File selectedFile) {
+    public boolean importaSimulacao(File selectedFile, boolean abrir) throws IOException {
         //! o check verifica element nao funciona
+
         try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
             String line;
+            if (abrir) { //areaBoard.toString()+","+timeUnit+","+forcaInicial+","+taxaCrescimento+","+forcaSobreposicao+","+velocidade
+                    line = reader.readLine();
+                    String[] parts = line.split(","); // Separar os elementos por tabulação
+                    String areaStr = parts[0];
+                    areaBoard = converterStringParaArea(areaStr);
+                    timeUnit = (int) Double.parseDouble(parts[1].trim());
+                    forcaInicial =(int) Double.parseDouble(parts[2].trim());
+                    taxaCrescimento = Double.parseDouble(parts[3].trim());
+                    forcaSobreposicao = Double.parseDouble(parts[4].trim());
+                    velocidade = Double.parseDouble(parts[5].trim());
+
+            }
+
             reader.readLine();
+
+
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(","); // Separar os elementos por tabulação
                 String tipo = parts[1].trim(); // Extrair o tipo removendo espaços em branco
@@ -704,7 +731,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     public boolean aplicarHerbicida(Elemento tipo, int id) {
 
         for (IElemento e : elementos) {
-            if (e instanceof Flora flora && e.getId() == id && tipo==Elemento.FLORA) {
+            if (e instanceof Flora flora && e.getId() == id && tipo == Elemento.FLORA) {
                 flora.setForca(0);
                 return true;
             }
@@ -714,21 +741,20 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     public double obtemValoresAntigos(String tipo, int id, String aux) {
         for (IElemento e : elementos) {
-            if(e.getType().toString().equalsIgnoreCase(tipo) && e.getId()==id){
-                if(aux.equalsIgnoreCase("Velocidade")) {
-                    if (e instanceof Fauna fauna)
-                        return fauna.getVelocidade();
-                }
-                else if(aux.equalsIgnoreCase("Forca"))
-                    if(e instanceof Fauna fauna)
-                        return fauna.getForca();
-                    else if (e instanceof Flora flora)
-                        return flora.getForca();
+            if (e.getType().toString().equalsIgnoreCase(tipo) && e.getId() == id) {
+                if (aux.equalsIgnoreCase("Velocidade")) {
+                    if (e instanceof Fauna fauna) return fauna.getVelocidade();
+                } else if (aux.equalsIgnoreCase("Forca")) if (e instanceof Fauna fauna) return fauna.getForca();
+                else if (e instanceof Flora flora) return flora.getForca();
             }
         }
         return 0;
     }
 
+
+    public int getTimeUnit() {
+        return timeUnit;
+    }
 }
 
 
