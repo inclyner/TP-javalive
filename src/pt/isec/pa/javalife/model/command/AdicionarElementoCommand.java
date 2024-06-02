@@ -8,9 +8,11 @@ import pt.isec.pa.javalife.model.factory.ElementFactory;
 
 public class AdicionarElementoCommand extends AbstractCommand implements ICommand{
 
-    Ecossistema ecossistema;
-    String tipo;
-    double x, y, altura, largura, forca;
+    private Ecossistema ecossistema;
+    private String tipo;
+    private double x, y, altura, largura, forca;
+
+
 
     public AdicionarElementoCommand(Ecossistema ecossistema, String tipo, double x, double y, double altura, double largura, double forca) {
         super(ecossistema);
@@ -21,8 +23,6 @@ public class AdicionarElementoCommand extends AbstractCommand implements IComman
         this.altura = altura;
         this.largura = largura;
         this.forca = forca;
-
-
     }
 
     @Override
@@ -36,7 +36,6 @@ public class AdicionarElementoCommand extends AbstractCommand implements IComman
         } else if (tipo == "FLORA") {
             elemento = Elemento.FLORA;
         }
-
         if(ecossistema.isAreaLivre(a) && elemento!=null)
         {
             ecossistema.addElemento(elemento,a,forca);
@@ -47,6 +46,9 @@ public class AdicionarElementoCommand extends AbstractCommand implements IComman
 
     @Override
     public boolean undo() {
+        Area a = new Area(x, y, altura, largura);
+        if(ecossistema.removeElementoPelaArea(tipo, a))
+            return true;
         return false;
     }
 }

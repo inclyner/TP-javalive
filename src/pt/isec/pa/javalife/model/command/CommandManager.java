@@ -11,19 +11,36 @@ public class CommandManager {
         redoCmds = new ArrayDeque<>(); //redoCmds = new Stack<>();
     }
 
-    public static void undo() {
-        // undo
-    }
-
     public boolean invokeCommand(ICommand cmd) {
-        return cmd.execute();
+        redoCmds.clear();
+        if (cmd.execute()) {
+            history.push(cmd);
+            return true;
+        }
+        history.clear();
+        return false;
     }
 
 
     public void execute(ICommand command) {
-
         command.execute();
-
     }
 
+    public boolean undo() {
+        if (history.isEmpty())
+            return false;
+        ICommand cmd = history.pop();
+        cmd.undo();
+        redoCmds.push(cmd);
+        return true;
+    }
+
+    public boolean redo() {
+        if (redoCmds.isEmpty())
+            return false;
+        ICommand cmd = redoCmds.pop();
+        cmd.execute();
+        history.push(cmd);
+        return true;
+    }
 }

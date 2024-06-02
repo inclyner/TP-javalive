@@ -17,6 +17,12 @@ public record Area(double cima, double esquerda, double baixo, double direita) {
         return false;
     }
 
+    public boolean iguais(Area outra){
+        if (this.cima == outra.cima && this.esquerda == outra.esquerda && this.baixo == outra.baixo && this.direita == outra.direita)
+            return true;
+        return false;
+    }
+
     //
     //(64.0,66.0,66.0,68.0)
         /*

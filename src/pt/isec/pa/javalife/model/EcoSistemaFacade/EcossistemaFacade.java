@@ -21,6 +21,7 @@ public class EcossistemaFacade {
     private Ecossistema ecossistema;
     private IGameEngine gameEngine;
     private final CommandManager cm;
+    private int timeUnit;
 
 
     public EcossistemaFacade() {
@@ -37,18 +38,27 @@ public class EcossistemaFacade {
         //ICommand command = new AdicionarElementoCommand(ecossistema, element);
         //commandManager.execute(command);
         support.firePropertyChange("adicionarElemento", null, string);
+    }
 
-
-        //cm.invokeCommand(new AdicionarElementoCommand(elemento));
-        //cm.invokeCommand(new AdicionarElementoCommand(ecossistema));
+    public boolean verificaEcossitemaNull() {
+        return ecossistema == null;
     }
 
 
 
 
     public void undo() {
-        CommandManager.undo();
-        support.firePropertyChange("ecosystem", null, ecossistema);
+        if(cm.undo())
+            adcionarPopUpAviso("Undo Feito");
+        else
+            adcionarPopUpAviso("Nao foi possivel fazer undo");
+    }
+
+    public void redo(){
+        if(cm.redo())
+            adcionarPopUpAviso("Redo Feito");
+        else
+            adcionarPopUpAviso("Nao foi possivel fazer redo");
     }
 
 
@@ -63,16 +73,19 @@ public class EcossistemaFacade {
 
 
     public void createEcossistema(int dimension, double escala, int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) throws InterruptedException {
-        ecossistema = new Ecossistema(this, dimension, escala, initialForce, growthRate, overlapLoss, movementRate);
+        ecossistema = new Ecossistema(this, dimension, initialForce, growthRate, overlapLoss, movementRate);
         gameEngine = new GameEngine();
         gameEngine.registerClient(ecossistema);
-        gameEngine.start(timeUnit);
+        this.timeUnit = timeUnit;
     }
 
-    public void changeEcossistema(int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) {
+    //!!!NAO se muda o tempo do jogo aqui e so nas definicoes da simulacao
+    public void changeEcossistema(int initialForce, double growthRate, int overlapLoss, double movementRate) {
+        ecossistema.setForcaInicial(initialForce);
+        ecossistema.setTaxaCrescimento(growthRate);
+        ecossistema.setForcaSobreposicao(overlapLoss);
+        ecossistema.setVelocidade(movementRate);
 
-
-    }
 
     public GameEngineState checkGameState(){
         return gameEngine.getCurrentState();
@@ -98,19 +111,36 @@ public class EcossistemaFacade {
         support.firePropertyChange("adicionarPopUpAviso", null, string);
     }
 
-    public void pause_unpause() {
-        if(gameEngine.getCurrentState()== GameEngineState.RUNNING){
-            gameEngine.pause();
-        }
-        else if(gameEngine.getCurrentState()== GameEngineState.PAUSED){
-            gameEngine.resume();
-        }
+    public String pause_unpause() {
+        if (ecossistema != null) {
+            if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
+                gameEngine.pause();
+                return "Simulação de Ecossistema (paused)";
+            } else if (gameEngine.getCurrentState() == GameEngineState.PAUSED) {
+                gameEngine.resume();
+                return "Simulação de Ecossistema (running)";
+            } else if (gameEngine.getCurrentState() == GameEngineState.READY) {
+                adcionarPopUpAviso("Ecossistema ainda não foi iniciado");
+            }
+        }else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
+        return null;
+    }
 
+    public void execute_stop(){
+        if(ecossistema!=null) {
+            if (gameEngine.getCurrentState() == GameEngineState.READY)
+                gameEngine.start(timeUnit);
+            else if (gameEngine.getCurrentState() == GameEngineState.RUNNING) {
+                gameEngine.stop();
+            }
+        }else
+            adcionarPopUpAviso("Ecossistema ainda não foi criado");
     }
 
 
-    public boolean removerElementoCommand(String tipo,int id) {
-        if(cm.invokeCommand(new RemoverElementoCommand(this.ecossistema,tipo, id))){
+    public boolean removerElementoCommand(String tipo,int id, Area a, double forca) {
+        if(cm.invokeCommand(new RemoverElementoCommand(this.ecossistema,tipo, id, a, forca))){
             support.firePropertyChange("atualiza", null, ecossistema);
             return true;
         }
