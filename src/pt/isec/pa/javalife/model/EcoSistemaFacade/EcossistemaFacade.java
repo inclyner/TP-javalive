@@ -226,4 +226,13 @@ public class EcossistemaFacade {
         }
         return false;
     }
+
+    public boolean configurarUnitime(double unitime) {
+        if(gameEngine.getCurrentState() == GameEngineState.RUNNING)
+            return false;
+        this.timeUnit = (int) unitime;
+        if (gameEngine.getCurrentState() == GameEngineState.READY)
+            gameEngine.setInterval((long) unitime);
+        return true;
+    }
 }

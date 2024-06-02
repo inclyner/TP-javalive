@@ -368,8 +368,62 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void configurarSimulacao() {
+            // Criar um diálogo para configurar a simulação
+            Dialog<Double> dialog = new Dialog<>();
+            dialog.setTitle("Configurar Simulação");
+            dialog.setHeaderText("Insira o tempo de unidade para a simulação");
 
-    }
+            // Definir os botões do diálogo
+            ButtonType configurarButtonType = new ButtonType("Configurar", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(configurarButtonType, ButtonType.CANCEL);
+
+            // Criar os campos de entrada
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 150, 10, 10));
+
+            TextField unitimeField = new TextField();
+            unitimeField.setPromptText("Tempo de Unidade");
+
+            grid.add(new Label("Tempo de Unidade:"), 0, 1);
+            grid.add(unitimeField, 1, 1);
+
+            dialog.getDialogPane().setContent(grid);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == configurarButtonType) {
+                    try {
+                        double unitime = Double.parseDouble(unitimeField.getText());
+
+                        if(!ecossistemaFacade.configurarUnitime(unitime)) {
+                            createPopUPInfo("O jogo não está parado.", "Configuracao");
+                            return null;
+                        }
+
+
+
+                    } catch (NumberFormatException e) {
+                        // Tratar erro de formatação
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Erro de Formatação");
+                        alert.setHeaderText("Valores Inválidos");
+                        alert.setContentText("Por favor, insira um valor numérico válido.");
+                        alert.showAndWait();
+                    }
+                }
+                return null;
+            });
+
+            // Mostrar o diálogo e esperar pela resposta do utilizador
+            dialog.showAndWait();
+        }
+
+
+
+
+
+
 
     private void executarPararSimulacao() {
         if (!ecossistemaFacade.verificaEcossitemaNull())
