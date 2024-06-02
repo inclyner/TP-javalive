@@ -24,7 +24,7 @@ public class injetarForcaCommand extends AbstractCommand implements ICommand {
     public boolean execute() throws IOException {
         int direcao = -1;
         int velocidade = -1;
-        return ecossistema.editElemento(tipo,id,direcao,velocidade,forca);
+        return ecossistema.editElemento(tipo,id,velocidade,forca);
     }
 
     @Override

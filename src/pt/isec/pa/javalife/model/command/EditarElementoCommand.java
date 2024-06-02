@@ -12,14 +12,13 @@ public class EditarElementoCommand  extends AbstractCommand implements ICommand{
     private Ecossistema ecossistema;
     private int id;
     private String tipo;
-    private double direcao, velocidade, forca;
+    private double velocidade, forca;
 
-    public EditarElementoCommand(Ecossistema ecossistema, String tipo,int id,double direcao,double velocidade, double forca) {
+    public EditarElementoCommand(Ecossistema ecossistema, String tipo,int id,double velocidade, double forca) {
         super(ecossistema);
         this.ecossistema = ecossistema;
         this.tipo = tipo;
         this.id = id;
-        this.direcao = direcao;
         this.velocidade = velocidade;
         this.forca = forca;
 
@@ -28,8 +27,7 @@ public class EditarElementoCommand  extends AbstractCommand implements ICommand{
 
     @Override
     public boolean execute() {
-        System.out.println("EDITAR ELEMENTO: " + tipo + " " + id + " " + direcao + " " + velocidade + " " + forca);
-         return ecossistema.editElemento(tipo,id,direcao,velocidade,forca);
+         return ecossistema.editElemento(tipo,id,velocidade,forca);
     }
 
     @Override

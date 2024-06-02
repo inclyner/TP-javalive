@@ -155,10 +155,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
     //region fucções menu
     private void criarSimulacao() {
         // Lógica para criar uma nova simulação
-        if(ecossistemaFacade.verificaEcossitemaNull())
+        if (ecossistemaFacade.verificaEcossitemaNull())
             showParameterPopup(true);
-        else{
-            if(GameEngineState.READY==ecossistemaFacade.checkGameState())
+        else {
+            if (GameEngineState.READY == ecossistemaFacade.checkGameState())
                 showParameterPopup(true);
             else
                 createPopUPInfo("Jogo nao esta parado", "Game Status");
@@ -223,92 +223,92 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void configurarEcossistema() {
         // Lógica para configurar o ecossistema
-        if(!ecossistemaFacade.verificaEcossitemaNull()) {
+        if (!ecossistemaFacade.verificaEcossitemaNull()) {
             if (ecossistemaFacade.checkGameState() == GameEngineState.READY)
                 showParameterPopup(false);
             else {
                 createPopUPInfo("O jogo não está em parado", "Game Status");
             }
-        }else
+        } else
             createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
     private void adicionarElemento(String tipo) {
         // Criar um diálogo para adicionar um elemento
-        if(!ecossistemaFacade.verificaEcossitemaNull()) {
-        Dialog<Elemento> dialog = new Dialog<>();
-        dialog.setTitle("Adicionar Elemento " + tipo);
-        dialog.setHeaderText("Insira os detalhes do novo elemento " + tipo);
+        if (!ecossistemaFacade.verificaEcossitemaNull()) {
+            Dialog<Elemento> dialog = new Dialog<>();
+            dialog.setTitle("Adicionar Elemento " + tipo);
+            dialog.setHeaderText("Insira os detalhes do novo elemento " + tipo);
 
-        // Definir os botões do diálogo
-        ButtonType adicionarButtonType = new ButtonType("Adicionar", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(adicionarButtonType, ButtonType.CANCEL);
+            // Definir os botões do diálogo
+            ButtonType adicionarButtonType = new ButtonType("Adicionar", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(adicionarButtonType, ButtonType.CANCEL);
 
-        // Criar os campos de entrada
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-
-        TextField x = new TextField();
-        x.setPromptText("Posição X");
-        TextField y = new TextField();
-        y.setPromptText("Posição Y");
-        TextField altura = new TextField();
-        altura.setPromptText("Altura");
-        TextField largura = new TextField();
-        largura.setPromptText("Largura");
-        TextField forca = new TextField();
-        forca.setPromptText("Forca Inicial");
+            // Criar os campos de entrada
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 150, 10, 10));
 
 
-        grid.add(new Label("Posição X:"), 0, 1);
-        grid.add(x, 1, 1);
-        grid.add(new Label("Posição Y:"), 0, 2);
-        grid.add(y, 1, 2);
-        grid.add(new Label("Altura:"), 0, 3);
-        grid.add(altura, 1, 3);
-        grid.add(new Label("Largura:"), 0, 4);
-        grid.add(largura, 1, 4);
-        if(!tipo.equalsIgnoreCase("inanimado") ) {
-            grid.add(new Label("Forca Inicial:"), 0, 5);
-            grid.add(forca, 1, 5);
-        }
-        dialog.getDialogPane().setContent(grid);
+            TextField x = new TextField();
+            x.setPromptText("Posição X");
+            TextField y = new TextField();
+            y.setPromptText("Posição Y");
+            TextField altura = new TextField();
+            altura.setPromptText("Altura");
+            TextField largura = new TextField();
+            largura.setPromptText("Largura");
+            TextField forca = new TextField();
+            forca.setPromptText("Forca Inicial");
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == adicionarButtonType) {
-                try {
-                    //trocado porque assim funciona
-                    double posX = Double.parseDouble(y.getText());
-                    double posY = Double.parseDouble(x.getText());
-                    double alt = Double.parseDouble(altura.getText());
-                    double larg = Double.parseDouble(largura.getText());
-                    double forcaInicial=0;
-                    if(!tipo.equalsIgnoreCase("inanimado"))
-                        forcaInicial = Double.parseDouble(forca.getText());
 
-                    // Adicionar o elemento ao ecossistema
-                    ecossistemaFacade.adicionaElementoCommand(tipo, posX, posY, alt, larg, forcaInicial);
-
-                } catch (NumberFormatException e) {
-                    // Tratar erro de formatação
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Erro de Formatação");
-                    alert.setHeaderText("Valores Inválidos");
-                    alert.setContentText("Por favor, insira valores numéricos válidos.");
-                    alert.showAndWait();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            grid.add(new Label("Posição X:"), 0, 1);
+            grid.add(x, 1, 1);
+            grid.add(new Label("Posição Y:"), 0, 2);
+            grid.add(y, 1, 2);
+            grid.add(new Label("Altura:"), 0, 3);
+            grid.add(altura, 1, 3);
+            grid.add(new Label("Largura:"), 0, 4);
+            grid.add(largura, 1, 4);
+            if (!tipo.equalsIgnoreCase("inanimado")) {
+                grid.add(new Label("Forca Inicial:"), 0, 5);
+                grid.add(forca, 1, 5);
             }
-            return null;
-        });
+            dialog.getDialogPane().setContent(grid);
 
-        // Mostrar o diálogo e esperar pela resposta do utilizador
-        dialog.showAndWait();
-        }else
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == adicionarButtonType) {
+                    try {
+                        //trocado porque assim funciona
+                        double posX = Double.parseDouble(y.getText());
+                        double posY = Double.parseDouble(x.getText());
+                        double alt = Double.parseDouble(altura.getText());
+                        double larg = Double.parseDouble(largura.getText());
+                        double forcaInicial = 0;
+                        if (!tipo.equalsIgnoreCase("inanimado"))
+                            forcaInicial = Double.parseDouble(forca.getText());
+
+                        // Adicionar o elemento ao ecossistema
+                        ecossistemaFacade.adicionaElementoCommand(tipo, posX, posY, alt, larg, forcaInicial);
+
+                    } catch (NumberFormatException e) {
+                        // Tratar erro de formatação
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Erro de Formatação");
+                        alert.setHeaderText("Valores Inválidos");
+                        alert.setContentText("Por favor, insira valores numéricos válidos.");
+                        alert.showAndWait();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                return null;
+            });
+
+            // Mostrar o diálogo e esperar pela resposta do utilizador
+            dialog.showAndWait();
+        } else
             createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
@@ -326,7 +326,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void executarPararSimulacao() {
-        if(!ecossistemaFacade.verificaEcossitemaNull())
+        if (!ecossistemaFacade.verificaEcossitemaNull())
             ecossistemaFacade.execute_stop();
         else
             createPopUPInfo("Nao existe ecossitema criado", "Game Status");
@@ -334,7 +334,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void pausarContinuarSimulacao() {
         String string = ecossistemaFacade.pause_unpause();
-        if (string != null){
+        if (string != null) {
             primaryStage.setTitle(string);
         }
     }
@@ -344,7 +344,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void restaurarSnapshot() throws IOException {
-        if(ecossistemaFacade.loadSnapShotAnterior()){
+        if (ecossistemaFacade.loadSnapShotAnterior()) {
             listButtons.clear();
             listLabels.clear();
             ecossistemaFacade.atualiza();
@@ -361,11 +361,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
 
     private boolean injetarForca(Elemento elemento, int id, double forca) throws IOException {
-               return ecossistemaFacade.injetarForca(elemento, id,forca);
+        return ecossistemaFacade.injetarForca(elemento, id, forca);
     }
 
     //endregion
-
 
 
     private void showParameterPopup(boolean permiteAlteracoes) {
@@ -383,10 +382,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
         GridPane.setConstraints(dimensionLabel, 0, 1);
         Slider dimensionSlider = new Slider();
         dimensionSlider.setMin(0);
-        if(scene.getWidth()<scene.getHeight()) {
+        if (scene.getWidth() < scene.getHeight()) {
             dimensionSlider.setMax(scene.getWidth() - valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
             dimensionSlider.setValue(scene.getWidth() / 2);
-        }else{
+        } else {
             dimensionSlider.setMax(scene.getHeight() - valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
             dimensionSlider.setValue(scene.getHeight() / 2);
         }
@@ -430,17 +429,17 @@ public class MainJFX extends Application implements PropertyChangeListener {
             growthRate = Double.parseDouble(growthRateInput.getText());
             overlapLoss = Integer.parseInt(overlapLossInput.getText());
             movementRate = Double.parseDouble(movementRateInput.getText());
-            if(scene.getWidth()<scene.getHeight())
+            if (scene.getWidth() < scene.getHeight())
                 escala = (scene.getWidth() - valorReduzirJanela) / unidade_generica;
             else
                 escala = (scene.getHeight() - valorReduzirJanela) / unidade_generica;
             if (permiteAlteracoes) {
-                if(!listButtons.isEmpty()) {
+                if (!listButtons.isEmpty()) {
                     for (Button button : listButtons.values()) {
                         pane.getChildren().removeAll(button);
                     }
                     listButtons.clear();
-                    for(Label label : listLabels.values()) {
+                    for (Label label : listLabels.values()) {
                         pane.getChildren().removeAll(label);
                     }
                     listLabels.clear();
@@ -478,10 +477,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
     private void desenharEcossistema() {
         pane = new Pane();
         pane.setStyle("-fx-background-color: lightblue;");// Define a cor de fundo desejada
-        if(scene.getWidth()<scene.getHeight())
+        if (scene.getWidth() < scene.getHeight())
             pane.setMaxSize(scene.getWidth() - valorReduzirJanela, scene.getWidth() - valorReduzirJanela);
         else
-            pane.setMaxSize(scene.getHeight() - valorReduzirJanela, scene.getHeight()-valorReduzirJanela);
+            pane.setMaxSize(scene.getHeight() - valorReduzirJanela, scene.getHeight() - valorReduzirJanela);
         root.setCenter(pane);
     }
 
@@ -516,7 +515,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             double height = Double.parseDouble(areaValues[2]) - Double.parseDouble(areaValues[0]);
             if (forcaMatcher.find()) {
                 forca = forcaMatcher.group(1);
-                if(type.equals(Elemento.FAUNA.toString())) {
+                if (type.equals(Elemento.FAUNA.toString())) {
                     forcaLabel.setText(forca);
                     forcaLabel.layoutXProperty().bind(button.layoutXProperty().add(button.widthProperty()));
                     forcaLabel.layoutYProperty().bind(button.layoutYProperty());
@@ -530,7 +529,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
             button.setMinHeight(height * escala);
             button.setPrefHeight(height * escala);
             button.setMaxHeight(height * escala);
-           if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)) {
+            if (!(x == 0 || y == 0 || Double.parseDouble(areaValues[2]) == unidade_generica || Double.parseDouble(areaValues[3]) == unidade_generica)) {
                 button.setOnAction(actionEvent -> {
                     // chama funcao que abre pagina do elemento
                     PaginaElemento(Elemento.valueOf(type), Integer.parseInt(id));
@@ -539,23 +538,23 @@ public class MainJFX extends Application implements PropertyChangeListener {
             if (type.equals(Elemento.INANIMADO.toString())) {
                 if (listButtons.containsKey(Elemento.INANIMADO + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.INANIMADO + id));
-                    listButtons.remove(type+id);
-                }else {
+                    listButtons.remove(type + id);
+                } else {
                     button.setStyle("-fx-background-color: #505050;");// Definir a cor de fundo do botão como cinzento para tipo inanimado
                     listButtons.put(Elemento.INANIMADO + id, button);
                     pane.getChildren().add(button);
                 }
             } else if (type.equals(Elemento.FLORA.toString())) {
-                int intensidade =100- (100 -Integer.parseInt(forca)) ;
-                Color cor = Color.rgb(0, 128, 0,intensidade/100.0);
+                int intensidade = 100 - (100 - Integer.parseInt(forca));
+                Color cor = Color.rgb(0, 128, 0, intensidade / 100.0);
                 // Converte a cor para uma string em formato hexadecimal
-                String corRgba = String.format("rgba(0, 128, 0, %.2f)", intensidade/100.0);
+                String corRgba = String.format("rgba(0, 128, 0, %.2f)", intensidade / 100.0);
                 button.setStyle("-fx-background-color: " + corRgba + ";");
                 if (listButtons.containsKey(Elemento.FLORA + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.FLORA + id));
-                    listButtons.remove(type+id);
+                    listButtons.remove(type + id);
                 }
-                if(Double.parseDouble(forca)>0) {
+                if (Double.parseDouble(forca) > 0) {
                     button.setStyle("-fx-background-color: #008000;");// Definir a cor de fundo do botão como verde para tipo flora
                     listButtons.put(Elemento.FLORA + id, button);
                     pane.getChildren().add(button);
@@ -564,10 +563,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 if (listButtons.containsKey(Elemento.FAUNA + id) && listLabels.containsKey(Elemento.FAUNA + id)) {
                     pane.getChildren().remove(listButtons.get(Elemento.FAUNA + id));
                     pane.getChildren().remove(listLabels.get(Elemento.FAUNA + id));
-                    listButtons.remove(type+id);
-                    listLabels.remove(type+id);
+                    listButtons.remove(type + id);
+                    listLabels.remove(type + id);
                 }
-                if(Double.parseDouble(forca)>0) {
+                if (Double.parseDouble(forca) > 0) {
                     button.setStyle("-fx-background-color: #800000;");// Definir a cor de fundo do botão como vermelho para tipo fauna
                     listButtons.put(Elemento.FAUNA + id, button);
                     listLabels.put(Elemento.FAUNA + id, forcaLabel);
@@ -664,9 +663,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
             grid.setVgap(10);
             grid.setPadding(new Insets(20, 150, 10, 10));
 
-            TextField direcaoField = new TextField();
-            direcaoField.setPromptText("Direção");
-
             TextField velocidadeField = new TextField();
             velocidadeField.setPromptText("Velocidade");
 
@@ -674,8 +670,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
             forcaField.setPromptText("Força");
 
             if (elemento.toString().equalsIgnoreCase("fauna")) {
-                grid.add(new Label("Direção:"), 0, 0);
-                grid.add(direcaoField, 1, 0);
                 grid.add(new Label("Velocidade:"), 0, 1);
                 grid.add(velocidadeField, 1, 1);
                 grid.add(new Label("Força:"), 0, 2);
@@ -686,13 +680,15 @@ public class MainJFX extends Application implements PropertyChangeListener {
             }
 
             dialog.getDialogPane().setContent(grid);
+            final double[] velocidade = {-2};
+            final double[] forca = {-2};
+
 
             dialog.setResultConverter(dialogButton -> {
                 if (dialogButton == editarButtonType) {
                     try {
                         Map<String, Object> resultMap = new HashMap<>();
                         if (elemento.toString().equalsIgnoreCase("fauna")) {
-                            resultMap.put("direcao", Double.parseDouble(direcaoField.getText()));
                             resultMap.put("velocidade", Double.parseDouble(velocidadeField.getText()));
                             resultMap.put("forca", Double.parseDouble(forcaField.getText()));
                         } else if (elemento.toString().equalsIgnoreCase("flora")) {
@@ -707,26 +703,33 @@ public class MainJFX extends Application implements PropertyChangeListener {
             });
 
             Optional<Map<String, Object>> result = dialog.showAndWait();
+
             result.ifPresent(values -> {
                 boolean success = false;
                 if (elemento.toString().equalsIgnoreCase("fauna")) {
-                    double direcao = (double) values.get("direcao");
-                    double velocidade = (double) values.get("velocidade");
-                    double forca = (double) values.get("forca");
+                    if(values.get ("velocidade") == null)
+                        velocidade[0] = -2;
+                    else
+                        velocidade[0] = (double) values.get("velocidade");
+                    if(values.get ("forca") == null)
+                        forca[0] = -2;
+                    else
+                        forca[0] = (double) values.get("forca");
                     try {
-                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, direcao, velocidade, forca);
+                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, velocidade[0], forca[0]);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 } else if (elemento.toString().equalsIgnoreCase("flora")) {
-                    double forca = (double) values.get("forca");
+                    forca[0] = (double) values.get("forca");
                     try {
-                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, 0, 0, forca);
+                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id,  0, forca[0]);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
 
+                System.out.println("velocidade[0] = " + velocidade[0] + " forca[0] = " + forca[0]);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Resultado da Operação");
 
@@ -829,7 +832,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         stage.setScene(scene);
         stage.show();
     }
-
 
 
     @Override

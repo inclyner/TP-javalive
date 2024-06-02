@@ -147,8 +147,8 @@ public class EcossistemaFacade{
             return false;
         }
 
-        public boolean editarElementoCommand (String tipo,int id, double direcao, double velocidade, double forca) throws IOException {
-            if (cm.invokeCommand(new EditarElementoCommand(this.ecossistema, tipo, id, direcao, velocidade, forca))) {
+        public boolean editarElementoCommand (String tipo,int id, double velocidade, double forca) throws IOException {
+            if (cm.invokeCommand(new EditarElementoCommand(this.ecossistema, tipo, id, velocidade, forca))) {
                 support.firePropertyChange("atualiza", null, ecossistema);
                 return true;
             }

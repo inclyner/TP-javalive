@@ -574,17 +574,17 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return null;
     }
 
-    public boolean editElemento(String tipo, int id, double direcao, double velocidade, double forca) {
+    public boolean editElemento(String tipo, int id , double velocidade, double forca) {
         synchronized (elementos) {
             for (IElemento e : elementos) {
                 if (e instanceof Fauna fauna && e.getId() == id && tipo.equals("FAUNA")) {
-                    if (direcao > 0) fauna.setDirecao(direcao);
                     if (velocidade > 0) fauna.setVelocidade(velocidade);
 
-                    if (direcao == -1) {
+                    if (velocidade == -1) {
                         fauna.setForca(forca + ((Fauna) e).getForca());
-                    } //a direcao é -1 quando o edit elemento é chamado pelo injetarforcacommand
-                    else
+                    } //a velocidade é -1 quando o edit elemento é chamado pelo injetarforcacommand
+
+                    if(forca>0)
                         fauna.setForca(forca);
 
                     return true;
