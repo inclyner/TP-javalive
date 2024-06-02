@@ -74,8 +74,12 @@ public class EcossistemaFacade {
         this.timeUnit = timeUnit;
     }
 
-    public void changeEcossistema(int timeUnit, int initialForce, double growthRate, int overlapLoss, double movementRate) {
-
+    //!!!NAO se muda o tempo do jogo aqui e so nas definicoes da simulacao
+    public void changeEcossistema(int initialForce, double growthRate, int overlapLoss, double movementRate) {
+        ecossistema.setForcaInicial(initialForce);
+        ecossistema.setTaxaCrescimento(growthRate);
+        ecossistema.setForcaSobreposicao(overlapLoss);
+        ecossistema.setVelocidade(movementRate);
     }
 
     public GameEngineState checkGameState(){

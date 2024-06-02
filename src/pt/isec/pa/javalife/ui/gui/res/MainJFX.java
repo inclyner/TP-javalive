@@ -212,6 +212,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void adicionarElemento(String tipo) {
         // Criar um diálogo para adicionar um elemento
+        if(!ecossistemaFacade.verificaEcossitemaNull()) {
         Dialog<Elemento> dialog = new Dialog<>();
         dialog.setTitle("Adicionar Elemento " + tipo);
         dialog.setHeaderText("Insira os detalhes do novo elemento " + tipo);
@@ -282,8 +283,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
         // Mostrar o diálogo e esperar pela resposta do utilizador
         dialog.showAndWait();
-
-
+        }else
+            createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
     private void undo() {
@@ -379,11 +380,12 @@ public class MainJFX extends Application implements PropertyChangeListener {
         dimensionSlider.setMinorTickCount(4);
         dimensionSlider.setBlockIncrement(1);
         GridPane.setConstraints(dimensionSlider, 1, 1);
-        if (!permiteAlteracoes) {
-            dimensionSlider.setDisable(true);
-        }
         Label timeUnitLabel = new Label("Unidade de Tempo(ms):");
         GridPane.setConstraints(timeUnitLabel, 0, 3);
+        if (!permiteAlteracoes) {
+            dimensionSlider.setDisable(true);
+            timeUnitLabel.setDisable(true);
+        }
         TextField timeUnitInput = new TextField("1000");
         GridPane.setConstraints(timeUnitInput, 1, 3);
         Label initialForceLabel = new Label("Valor Inicial da Força:");
@@ -406,16 +408,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         Button enterButton = new Button("Enter");
         GridPane.setConstraints(enterButton, 1, 8);
         enterButton.setOnAction(e -> {
-            if(!listButtons.isEmpty()) {
-                for (Button button : listButtons.values()) {
-                    pane.getChildren().removeAll(button);
-                }
-                listButtons.clear();
-                for(Label label : listLabels.values()) {
-                    pane.getChildren().removeAll(label);
-                }
-                listLabels.clear();
-            }
             unidade_generica = (int) (dimensionSlider.getValue());
             timeUnit = Integer.parseInt(timeUnitInput.getText());
             initialForce = Integer.parseInt(initialForceInput.getText());
@@ -427,6 +419,16 @@ public class MainJFX extends Application implements PropertyChangeListener {
             else
                 escala = (scene.getHeight() - valorReduzirJanela) / unidade_generica;
             if (permiteAlteracoes) {
+                if(!listButtons.isEmpty()) {
+                    for (Button button : listButtons.values()) {
+                        pane.getChildren().removeAll(button);
+                    }
+                    listButtons.clear();
+                    for(Label label : listLabels.values()) {
+                        pane.getChildren().removeAll(label);
+                    }
+                    listLabels.clear();
+                }
                 desenharEcossistema();
                 try {
                     ecossistemaFacade.createEcossistema(unidade_generica, escala, timeUnit, initialForce, growthRate, overlapLoss, movementRate);
@@ -434,7 +436,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     throw new RuntimeException(ex);
                 }
             } else {
-                ecossistemaFacade.changeEcossistema(timeUnit, initialForce, growthRate, overlapLoss, movementRate);
+                ecossistemaFacade.changeEcossistema(initialForce, growthRate, overlapLoss, movementRate);
             }
             //region Print or use the collected values
             System.out.println("Dimensão do Ecossistema: " + unidade_generica);

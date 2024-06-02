@@ -52,20 +52,20 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
 
     }
 
-    public int getForcaInicial() {
-        return forcaInicial;
+    public void setForcaInicial(int forcaInicial) {
+        this.forcaInicial = forcaInicial;
     }
 
-    public int getForcaSobreposicao() {
-        return forcaSobreposicao;
+    public void setForcaSobreposicao(int forcaSobreposicao) {
+        this.forcaSobreposicao = forcaSobreposicao;
     }
 
-    public double getTaxaCrescimento() {
-        return taxaCrescimento;
+    public void setTaxaCrescimento(double taxaCrescimento) {
+        this.taxaCrescimento = taxaCrescimento;
     }
 
-    public double getVelocidade() {
-        return velocidade;
+    public void setVelocidade(double velocidade) {
+        this.velocidade = velocidade;
     }
 
     @Override
