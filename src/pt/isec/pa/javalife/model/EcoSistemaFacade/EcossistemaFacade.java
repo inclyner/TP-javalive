@@ -155,14 +155,19 @@ public class EcossistemaFacade{
             return false;
         }
 
-        public void exportasimulação (File file){
-            ecossistema.exportaSimulacao(file);
+        public void exportasimulacao(File file) throws IOException {
+            if (cm.invokeCommand(new ExportarCommand(this.ecossistema, file))) {
+                ecossistema.exportaSimulacao(file);
+            }
         }
 
+        public void importasimulacao (File selectedFile) throws IOException {
 
-        public void importasimulação (File selectedFile){
-            ecossistema.importaSimulacao(selectedFile);
+            if (cm.invokeCommand(new ImportarCommand(this.ecossistema, selectedFile))) {
+                ecossistema.importaSimulacao(selectedFile);
+            }
         }
+
 
     public void saveSnapShot() throws IOException {
         if (!cm.invokeCommand(new GravarSnapshot(ecossistema,cm.getOriginator(),cm.getCareTaker())))
