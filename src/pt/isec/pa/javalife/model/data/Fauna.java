@@ -155,4 +155,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     public void setVelocidade(double velocidade) {
         this.velocidade = velocidade;
     }
+
+    public double getVelocidade() {
+        return velocidade;
+    }
 }

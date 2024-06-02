@@ -13,6 +13,7 @@ public class EditarElementoCommand  extends AbstractCommand implements ICommand{
     private int id;
     private String tipo;
     private double velocidade, forca;
+    private double oldvelocidade, oldforca;
 
     public EditarElementoCommand(Ecossistema ecossistema, String tipo,int id,double velocidade, double forca) {
         super(ecossistema);
@@ -21,7 +22,10 @@ public class EditarElementoCommand  extends AbstractCommand implements ICommand{
         this.id = id;
         this.velocidade = velocidade;
         this.forca = forca;
-
+        if(velocidade>0)
+            this.oldvelocidade = ecossistema.obtemValoresAntigos(tipo, id, "Velocidade");
+        if(forca>0)
+            this.oldforca = ecossistema.obtemValoresAntigos(tipo, id, "Forca");
 
     }
 
@@ -32,6 +36,8 @@ public class EditarElementoCommand  extends AbstractCommand implements ICommand{
 
     @Override
     public boolean undo() {
+        if(velocidade>0 || forca>0)
+            return ecossistema.editElemento(tipo,id,oldvelocidade,oldforca);
         return false;
     }
 }
