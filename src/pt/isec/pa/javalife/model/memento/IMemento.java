@@ -1,9 +1,10 @@
 package pt.isec.pa.javalife.model.memento;
 
-import pt.isec.pa.javalife.model.data.Ecossistema;
+import java.io.IOException;
 
 public interface IMemento {
-    Ecossistema getState();
+    Object getState() throws IOException;
+
 
 
 }

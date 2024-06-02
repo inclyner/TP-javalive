@@ -5,6 +5,8 @@ import pt.isec.pa.javalife.model.EcoSistemaFacade.EcossistemaFacade;
 import pt.isec.pa.javalife.model.factory.ElementFactory;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
 import pt.isec.pa.javalife.model.gameengine.IGameEngineEvolve;
+import pt.isec.pa.javalife.model.memento.CareTaker;
+import pt.isec.pa.javalife.model.memento.Originator;
 
 import java.io.*;
 import java.util.*;
@@ -17,6 +19,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
     private int forcaInicial, forcaSobreposicao;
     private double taxaCrescimento, velocidade;
     private EcossistemaFacade ecossistemaFacade;
+
 
     // set up inicial do ecossistema (criação e inserção de elementos)
     public Ecossistema(EcossistemaFacade ecossistemaFacade, int dimensao, int forcaInicial, double taxaCrescimento, int forcaSobreposicao, double velocidade) {
@@ -626,6 +629,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         }
         return true;
     }
+
 
 }
 

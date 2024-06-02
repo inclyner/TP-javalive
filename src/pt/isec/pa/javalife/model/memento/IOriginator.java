@@ -6,5 +6,7 @@ public interface IOriginator {
 
     IMemento save() throws IOException;
 
-    void restore(IMemento memento);
+    void restore(IMemento memento) throws IOException;
+
+    IMemento getMemento();
 }

@@ -23,6 +23,7 @@ import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -123,13 +124,31 @@ public class MainJFX extends Application implements PropertyChangeListener {
         //editarElementoItem.setOnAction(event -> editarElemento());
         //eliminarElementoItem.setOnAction(event -> eliminarElemento());
         undoItem.setOnAction(event -> undo());
-        redoItem.setOnAction(event -> redo());
+        redoItem.setOnAction(event -> {
+            try {
+                redo();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         configSimulacaoItem.setOnAction(event -> configurarSimulacao());
         executarPararItem.setOnAction(event -> executarPararSimulacao());
         pausarContinuarItem.setOnAction(event -> pausarContinuarSimulacao());
-        gravarSnapshotItem.setOnAction(event -> gravarSnapshot());
-        restaurarSnapshotItem.setOnAction(event -> restaurarSnapshot());
+        gravarSnapshotItem.setOnAction(event -> {
+            try {
+                gravarSnapshot();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        restaurarSnapshotItem.setOnAction(event -> {
+            try {
+                restaurarSnapshot();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         aplicarSolItem.setOnAction(event -> aplicarSol());
         aplicarHerbicidaItem.setOnAction(event -> aplicarHerbicida());
@@ -276,6 +295,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     alert.setHeaderText("Valores Inválidos");
                     alert.setContentText("Por favor, insira valores numéricos válidos.");
                     alert.showAndWait();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
             return null;
@@ -292,7 +313,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         ecossistemaFacade.undo();
     }
 
-    private void redo() {
+    private void redo() throws IOException {
         ecossistemaFacade.redo();
     }
 
@@ -314,10 +335,12 @@ public class MainJFX extends Application implements PropertyChangeListener {
         }
     }
 
-    private void gravarSnapshot() {
+    private void gravarSnapshot() throws IOException {
+        ecossistemaFacade.saveSnapShot();
     }
 
-    private void restaurarSnapshot() {
+    private void restaurarSnapshot() throws IOException {
+        ecossistemaFacade.loadSnapShotAnterior();
     }
 
     private void aplicarSol() {
@@ -621,7 +644,12 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 double forca=0;
                 if(listLabels.containsKey(elemento.toString()+id))
                     forca = Double.parseDouble(listLabels.get(elemento.toString()+id).getText());
-                boolean success = ecossistemaFacade.removerElementoCommand(elemento.toString(), value, a, forca);
+                boolean success = false;
+                try {
+                    success = ecossistemaFacade.removerElementoCommand(elemento.toString(), value, a, forca);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 if (success) {
                     createPopUPInfo("O elemento com o ID " + id + " foi removido com sucesso.", "Elemento Removido");
                     pane.getChildren().remove(listButtons.get(elemento.toString() + id));
@@ -701,10 +729,18 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     double direcao = (double) values.get("direcao");
                     double velocidade = (double) values.get("velocidade");
                     double forca = (double) values.get("forca");
-                    success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, direcao, velocidade, forca);
+                    try {
+                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, direcao, velocidade, forca);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else if (elemento.toString().equalsIgnoreCase("flora")) {
                     double forca = (double) values.get("forca");
-                    success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, 0, 0, forca);
+                    try {
+                        success = ecossistemaFacade.editarElementoCommand(elemento.toString(), id, 0, 0, forca);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);

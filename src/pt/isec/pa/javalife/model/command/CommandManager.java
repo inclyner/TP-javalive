@@ -1,17 +1,26 @@
 package pt.isec.pa.javalife.model.command;
 
+import pt.isec.pa.javalife.model.memento.CareTaker;
+import pt.isec.pa.javalife.model.memento.Originator;
+
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class CommandManager {
+public class CommandManager{
     private Deque<ICommand> history; //private Stack<ICommand> history;
     private Deque<ICommand> redoCmds; //private Stack<ICommand> redoCmds;
+
+    Originator originator;
+    CareTaker careTaker;
     public CommandManager() {
         history = new ArrayDeque<>(); //history = new Stack<>();
         redoCmds = new ArrayDeque<>(); //redoCmds = new Stack<>();
+        originator = new Originator();
+        careTaker = new CareTaker(originator);
     }
 
-    public boolean invokeCommand(ICommand cmd) {
+    public boolean invokeCommand(ICommand cmd) throws IOException {
         redoCmds.clear();
         if (cmd.execute()) {
             history.push(cmd);
@@ -22,9 +31,12 @@ public class CommandManager {
     }
 
 
-    public void execute(ICommand command) {
+    public void execute(ICommand command) throws IOException {
         command.execute();
     }
+
+
+
 
     public boolean undo() {
         if (history.isEmpty())
@@ -35,12 +47,20 @@ public class CommandManager {
         return true;
     }
 
-    public boolean redo() {
+    public boolean redo() throws IOException {
         if (redoCmds.isEmpty())
             return false;
         ICommand cmd = redoCmds.pop();
         cmd.execute();
         history.push(cmd);
         return true;
+    }
+
+    public Originator getOriginator() {
+        return originator;
+    }
+
+    public CareTaker getCareTaker() {
+        return careTaker;
     }
 }
