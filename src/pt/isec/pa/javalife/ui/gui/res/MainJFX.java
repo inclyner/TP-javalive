@@ -420,64 +420,69 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
 
     private void showParameterPopup(boolean permiteAlteracoes) {
-        // Function to create and show the pop-up
+        // Função para criar e mostrar o pop-up
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Ecosystem Parameter Collector");
-        // Create the GridPane layout
+
+        // Criar o GridPane layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setVgap(8);
         grid.setHgap(10);
-        // Create labels and text fields for each parameter
-        Label dimensionLabel = new Label("Dimensao do Ecossistema:");
+
+        // Criar labels e text fields para cada parâmetro
+        Label dimensionLabel = new Label("Dimensão do Ecossistema:");
         GridPane.setConstraints(dimensionLabel, 0, 1);
-        Slider dimensionSlider = new Slider();
-        dimensionSlider.setMin(4);
-        if (scene.getWidth() < scene.getHeight())
-            dimensionSlider.setMax(scene.getWidth());
-        else if (scene.getWidth() > scene.getHeight())
-            dimensionSlider.setMax(scene.getHeight());
-        dimensionSlider.setShowTickMarks(true);
-        dimensionSlider.setShowTickLabels(true);
-        dimensionSlider.setMajorTickUnit(200);
-        dimensionSlider.setMinorTickCount(4);
-        dimensionSlider.setBlockIncrement(1);
-        GridPane.setConstraints(dimensionSlider, 1, 1);
+
+        TextField dimensionInput = new TextField("2");
+
+
+
+        GridPane.setConstraints(dimensionInput, 1, 1);
+
         Label timeUnitLabel = new Label("Unidade de Tempo(ms):");
         GridPane.setConstraints(timeUnitLabel, 0, 3);
+
         if (!permiteAlteracoes) {
-            dimensionSlider.setDisable(true);
+            dimensionInput.setDisable(true);
             timeUnitLabel.setDisable(true);
         }
+
         TextField timeUnitInput = new TextField("1000");
         GridPane.setConstraints(timeUnitInput, 1, 3);
+
         Label initialForceLabel = new Label("Valor Inicial da Força:");
         GridPane.setConstraints(initialForceLabel, 0, 4);
         TextField initialForceInput = new TextField("50");
         GridPane.setConstraints(initialForceInput, 1, 4);
+
         Label growthRateLabel = new Label("Valor de Crescimento da Flora:");
         GridPane.setConstraints(growthRateLabel, 0, 5);
         TextField growthRateInput = new TextField("0.5");
         GridPane.setConstraints(growthRateInput, 1, 5);
+
         Label overlapLossLabel = new Label("Valor de Perda por Sobreposição:");
         GridPane.setConstraints(overlapLossLabel, 0, 6);
         TextField overlapLossInput = new TextField("1");
         GridPane.setConstraints(overlapLossInput, 1, 6);
+
         Label movementRateLabel = new Label("Valor de Movimentação da Fauna:");
         GridPane.setConstraints(movementRateLabel, 0, 7);
         TextField movementRateInput = new TextField("0.5");
         GridPane.setConstraints(movementRateInput, 1, 7);
-        // Create the enter button
+
+        // Criar o botão de confirmação
         Button enterButton = new Button("Enter");
         GridPane.setConstraints(enterButton, 1, 8);
         enterButton.setOnAction(e -> {
-            unidade_generica = (int) (dimensionSlider.getValue());
+            unidade_generica = Integer.parseInt(dimensionInput.getText());
             timeUnit = Integer.parseInt(timeUnitInput.getText());
             initialForce = Integer.parseInt(initialForceInput.getText());
             growthRate = Double.parseDouble(growthRateInput.getText());
             overlapLoss = Integer.parseInt(overlapLossInput.getText());
             movementRate = Double.parseDouble(movementRateInput.getText());
+
             if (permiteAlteracoes) {
                 if (!listButtons.isEmpty()) {
                     for (Button button : listButtons.values()) {
@@ -498,7 +503,8 @@ public class MainJFX extends Application implements PropertyChangeListener {
             } else {
                 ecossistemaFacade.changeEcossistema(initialForce, growthRate, overlapLoss, movementRate);
             }
-            //region Print or use the collected values
+
+            // Região para imprimir ou usar os valores coletados
             System.out.println("Dimensão do Ecossistema: " + unidade_generica);
             System.out.println("Unidade de Tempo: " + timeUnit);
             System.out.println("Valor Inicial da Força: " + initialForce);
@@ -506,17 +512,20 @@ public class MainJFX extends Application implements PropertyChangeListener {
             System.out.println("Valor de Perda por Sobreposição: " + overlapLoss);
             System.out.println("Valor de Movimentação da Fauna: " + movementRate);
             System.out.println("escala = " + escala);
-            //endregion
-            // Close the pop-up
+
+            // Fechar o pop-up
             popupStage.close();
         });
-        // Add all elements to the grid
-        grid.getChildren().addAll(dimensionLabel, dimensionSlider, timeUnitLabel, timeUnitInput, initialForceLabel, initialForceInput, growthRateLabel, growthRateInput, overlapLossLabel, overlapLossInput, movementRateLabel, movementRateInput, enterButton);
-        // Set up the scene and stage for the pop-up
+
+        // Adicionar todos os elementos ao grid
+        grid.getChildren().addAll(dimensionLabel, dimensionInput, timeUnitLabel, timeUnitInput, initialForceLabel, initialForceInput, growthRateLabel, growthRateInput, overlapLossLabel, overlapLossInput, movementRateLabel, movementRateInput, enterButton);
+
+        // Configurar a cena e o palco para o pop-up
         Scene popupScene = new Scene(grid, 400, 300);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
+
 
 
     private void desenharEcossistema() {
