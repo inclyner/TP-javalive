@@ -159,7 +159,15 @@ public class MainJFX extends Application implements PropertyChangeListener {
     //region fucções menu
     private void criarSimulacao() {
         // Lógica para criar uma nova simulação
-        showParameterPopup(true);
+        if(ecossistemaFacade.verificaEcossitemaNull())
+            showParameterPopup(true);
+        else{
+            if(GameEngineState.READY==ecossistemaFacade.checkGameState())
+                showParameterPopup(true);
+            else
+                createPopUPInfo("Jogo nao esta parado", "Game Status");
+        }
+
     }
 
 
@@ -531,7 +539,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     forcaLabel.setText(forca);
                     forcaLabel.layoutXProperty().bind(button.layoutXProperty().add(button.widthProperty()));
                     forcaLabel.layoutYProperty().bind(button.layoutYProperty());
-                    pane.getChildren().add(forcaLabel);
                 }
             }
             button.setLayoutY(x * escala); // Posição X do botão no Pane
@@ -584,6 +591,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
                     listButtons.put(Elemento.FAUNA + id, button);
                     listLabels.put(Elemento.FAUNA + id, forcaLabel);
                     pane.getChildren().add(button);
+                    pane.getChildren().add(forcaLabel);
                 }
             }
         }
