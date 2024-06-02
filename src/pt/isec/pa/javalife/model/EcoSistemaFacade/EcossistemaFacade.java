@@ -4,6 +4,7 @@ package pt.isec.pa.javalife.model.EcoSistemaFacade;
 import pt.isec.pa.javalife.model.command.*;
 import pt.isec.pa.javalife.model.data.Area;
 import pt.isec.pa.javalife.model.data.Ecossistema;
+import pt.isec.pa.javalife.model.data.Elemento;
 import pt.isec.pa.javalife.model.gameengine.GameEngine;
 import pt.isec.pa.javalife.model.gameengine.GameEngineState;
 import pt.isec.pa.javalife.model.gameengine.IGameEngine;
@@ -19,9 +20,13 @@ public class EcossistemaFacade{
     private IGameEngine gameEngine;
     private final CommandManager cm;
     private int timeUnit;
+
+    int num_ticks=0;
+    //adicionar no evolve, quando chamo a funcao ele fica a 10
+    //no evolve ele vai aplicar a velocidade metade e o crescimento ao dobro
+    // e retira 1 tick
+
     //memento
-
-
 
 
     public EcossistemaFacade() {
@@ -183,4 +188,23 @@ public class EcossistemaFacade{
         ecossistema.atualiza();
     }
 
+    public boolean aplicarHerbicida(Elemento elemento, int id) throws IOException {
+        if (cm.invokeCommand(new AplicarHerbicidaCommand(ecossistema,elemento, id))) {
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean injetarForca(Elemento elemento, int id, double forca) throws IOException {
+        if (cm.invokeCommand(new injetarForcaCommand(ecossistema,elemento, id, forca))) {
+            support.firePropertyChange("atualiza", null, ecossistema);
+            return true;
+        }
+        return false;
+    }
+
+    public void aplicarSol() {
+
+    }
 }
