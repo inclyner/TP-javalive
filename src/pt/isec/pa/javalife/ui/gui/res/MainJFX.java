@@ -45,7 +45,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
     private Map<String, Button> listButtons = new HashMap<>();
     private Map<String, Label> listLabels = new HashMap<>();
     private Button finalButton;
-    private int valorReduzirJanela = 100;
+    private int valorReduzirJanela = 50;
 
     @Override
     public void start(Stage primaryStage) {
@@ -374,8 +374,13 @@ public class MainJFX extends Application implements PropertyChangeListener {
         GridPane.setConstraints(dimensionLabel, 0, 1);
         Slider dimensionSlider = new Slider();
         dimensionSlider.setMin(0);
-        dimensionSlider.setMax(scene.getWidth() - valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
-        dimensionSlider.setValue(scene.getWidth() / 2); // Valor inicial
+        if(scene.getWidth()<scene.getHeight()) {
+            dimensionSlider.setMax(scene.getWidth() - valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
+            dimensionSlider.setValue(scene.getWidth() / 2);
+        }else{
+            dimensionSlider.setMax(scene.getHeight() - valorReduzirJanela); // Assume 800 como o valor máximo da cena, ajuste conforme necessário
+            dimensionSlider.setValue(scene.getHeight() / 2);
+        }
         dimensionSlider.setShowTickMarks(true);
         dimensionSlider.setShowTickLabels(true);
         dimensionSlider.setMajorTickUnit(200);
@@ -415,7 +420,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
             growthRate = Double.parseDouble(growthRateInput.getText());
             overlapLoss = Integer.parseInt(overlapLossInput.getText());
             movementRate = Double.parseDouble(movementRateInput.getText());
-            escala = (scene.getWidth() - valorReduzirJanela) / unidade_generica;
+            if(scene.getWidth()<scene.getHeight())
+                escala = (scene.getWidth() - valorReduzirJanela) / unidade_generica;
+            else
+                escala = (scene.getHeight() - valorReduzirJanela) / unidade_generica;
             if (permiteAlteracoes) {
                 desenharEcossistema();
                 try {
@@ -450,7 +458,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
     private void desenharEcossistema() {
         pane = new Pane();
         pane.setStyle("-fx-background-color: lightblue;");// Define a cor de fundo desejada
-        pane.setMaxSize(scene.getWidth() - valorReduzirJanela, scene.getWidth() - valorReduzirJanela);
+        if(scene.getWidth()<scene.getHeight())
+            pane.setMaxSize(scene.getWidth() - valorReduzirJanela, scene.getWidth() - valorReduzirJanela);
+        else
+            pane.setMaxSize(scene.getHeight() - valorReduzirJanela, scene.getHeight()-valorReduzirJanela);
         root.setCenter(pane);
     }
 
