@@ -84,9 +84,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
         // Menu Eventos
         Menu menuEventos = new Menu("Eventos");
         MenuItem aplicarSolItem = new MenuItem("Aplicar Sol");
-        MenuItem aplicarHerbicidaItem = new MenuItem("Aplicar herbicida");
-        MenuItem injetarForcaItem = new MenuItem("Injetar força");
-        menuEventos.getItems().addAll(aplicarSolItem, aplicarHerbicidaItem, injetarForcaItem);
+        menuEventos.getItems().addAll(aplicarSolItem);
 
         // MenuBar
         MenuBar menuBar = new MenuBar();
@@ -151,8 +149,6 @@ public class MainJFX extends Application implements PropertyChangeListener {
         });
 
         aplicarSolItem.setOnAction(event -> aplicarSol());
-        aplicarHerbicidaItem.setOnAction(event -> aplicarHerbicida());
-        injetarForcaItem.setOnAction(event -> injetarForca());
         ecossistemaFacade.addPropertyChangeListener(this);
     }
 
@@ -356,35 +352,20 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void aplicarSol() {
+        ecossistemaFacade.aplicarSol();
     }
 
-    private void aplicarHerbicida() {
+    private boolean aplicarHerbicida(Elemento elemento, int id) throws IOException {
+        return ecossistemaFacade.aplicarHerbicida(elemento, id);
     }
 
 
-    private void injetarForca() {
+    private boolean injetarForca(Elemento elemento, int id, double forca) throws IOException {
+               return ecossistemaFacade.injetarForca(elemento, id,forca);
     }
 
     //endregion
 
-   /* private void createGridScene(Stage primaryStage, int width) {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setMaxSize(width * 50, width * 50); // Ajusta a largura e altura da grade de acordo com a entrada do usuário
-
-        // Adicionando linhas e colunas à grade
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < width; j++) {
-                grid.add(new Label("[" + i + "," + j + "]"), i, j);
-            }
-        }
-
-        Scene scene = new Scene(grid);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-    */
 
 
     private void showParameterPopup(boolean permiteAlteracoes) {
@@ -642,11 +623,11 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
             Optional<Integer> result = dialog.showAndWait();
             result.ifPresent(value -> {
-                Button button = listButtons.get(elemento.toString()+id);
-                Area a = new Area(button.getLayoutY()/escala, button.getLayoutX()/escala, (button.getLayoutY()+ button.getHeight())/escala, (button.getLayoutX()+button.getWidth())/escala);
-                double forca=0;
-                if(listLabels.containsKey(elemento.toString()+id))
-                    forca = Double.parseDouble(listLabels.get(elemento.toString()+id).getText());
+                Button button = listButtons.get(elemento.toString() + id);
+                Area a = new Area(button.getLayoutY() / escala, button.getLayoutX() / escala, (button.getLayoutY() + button.getHeight()) / escala, (button.getLayoutX() + button.getWidth()) / escala);
+                double forca = 0;
+                if (listLabels.containsKey(elemento.toString() + id))
+                    forca = Double.parseDouble(listLabels.get(elemento.toString() + id).getText());
                 boolean success = false;
                 try {
                     success = ecossistemaFacade.removerElementoCommand(elemento.toString(), value, a, forca);
@@ -656,7 +637,7 @@ public class MainJFX extends Application implements PropertyChangeListener {
                 if (success) {
                     createPopUPInfo("O elemento com o ID " + id + " foi removido com sucesso.", "Elemento Removido");
                     pane.getChildren().remove(listButtons.get(elemento.toString() + id));
-                    if(elemento.toString().equalsIgnoreCase(Elemento.FAUNA.toString()))
+                    if (elemento.toString().equalsIgnoreCase(Elemento.FAUNA.toString()))
                         pane.getChildren().remove(listLabels.get(elemento.toString() + id));
                 } else {
                     createPopUPInfo("O elemento com o ID " + id + " não pôde ser removido.", "Erro ao Remover");
@@ -762,6 +743,70 @@ public class MainJFX extends Application implements PropertyChangeListener {
             });
         });
 
+        // Botão de injetar força para fauna
+        Button injetarForcaButton = new Button("Injetar Força");
+        injetarForcaButton.setFont(new Font("Arial", 14));
+        injetarForcaButton.setStyle("-fx-background-color: #007bff; -fx-text-fill: white;");
+        injetarForcaButton.setOnAction(e -> {
+            // Lógica de injeção de força
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Injetar Força");
+            dialog.setHeaderText("Insira o valor da força a injetar:");
+
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(valor -> {
+                try {
+                    double forca = Double.parseDouble(valor);
+                    boolean success = injetarForca(elemento, id, forca);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Resultado da Operação");
+
+                    if (success) {
+                        alert.setHeaderText("Força Injetada");
+                        alert.setContentText("A força " + forca + " foi injetada na fauna com o ID " + id + " com sucesso.");
+                    } else {
+                        alert.setHeaderText("Erro ao Injetar Força");
+                        alert.setContentText("Não foi possível injetar a força na fauna com o ID " + id + ".");
+                    }
+
+                    alert.showAndWait();
+                } catch (NumberFormatException | IOException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erro de Formato");
+                    alert.setHeaderText("Formato Inválido");
+                    alert.setContentText("Por favor, insira um valor numérico válido para a força.");
+                    alert.showAndWait();
+                }
+            });
+        });
+
+        // Botão de herbicida para flora
+        Button herbicidaButton = new Button("Herbicida");
+        herbicidaButton.setFont(new Font("Arial", 14));
+        herbicidaButton.setStyle("-fx-background-color: #8b0000; -fx-text-fill: white;");
+        herbicidaButton.setOnAction(e -> {
+            // Lógica de aplicação de herbicida
+            boolean success = false;
+            try {
+                success = aplicarHerbicida(elemento, id);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Resultado da Operação");
+
+            if (success) {
+                alert.setHeaderText("Herbicida Aplicado");
+                alert.setContentText("O herbicida foi aplicado na flora com o ID " + id + " com sucesso.");
+            } else {
+                alert.setHeaderText("Erro ao Aplicar Herbicida");
+                alert.setContentText("Não foi possível aplicar o herbicida na flora com o ID " + id + ".");
+            }
+
+            alert.showAndWait();
+        });
+
         if (elemento.toString().equalsIgnoreCase("inanimado")) {
             editarButton.setDisable(true);
         }
@@ -770,9 +815,17 @@ public class MainJFX extends Application implements PropertyChangeListener {
         VBox layout = new VBox(20); // Espaçamento entre elementos
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
+
+        // Adicionar botões ao layout
         layout.getChildren().addAll(titleLabel, label, eliminarButton, editarButton);
 
-        Scene scene = new Scene(layout, 400, 300);
+        if (elemento.toString().equalsIgnoreCase("fauna")) {
+            layout.getChildren().add(injetarForcaButton);
+        } else if (elemento.toString().equalsIgnoreCase("flora")) {
+            layout.getChildren().add(herbicidaButton);
+        }
+
+        Scene scene = new Scene(layout, 400, 400); // Ajustado o tamanho da cena
         stage.setScene(scene);
         stage.show();
     }
