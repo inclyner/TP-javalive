@@ -189,24 +189,30 @@ public class MainJFX extends Application implements PropertyChangeListener {
 
     private void exportarSimulacao(Stage stage) {
         // Lógica para exportar a simulação para um ficheiro CSV
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        File file = fileChooser.showSaveDialog(stage);
-        if (file != null) {
-            // Função que exporta os elementos
-            ecossistemaFacade.exportasimulação(file);
-        }
+        if (!ecossistemaFacade.verificaEcossitemaNull()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                // Função que exporta os elementos
+                ecossistemaFacade.exportasimulação(file);
+            }
+        } else
+            createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
     private void importarSimulacao(Stage stage) {
         // Lógica para importar uma simulação de um ficheiro CSV
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile != null) {
-            //Funcao que le o ficheiro mas apenas coloca os elementos(sem ser os sobrepostos)
-            ecossistemaFacade.importasimulação(selectedFile);
-        }
+        if (!ecossistemaFacade.verificaEcossitemaNull()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                //Funcao que le o ficheiro mas apenas coloca os elementos(sem ser os sobrepostos)
+                ecossistemaFacade.importasimulação(selectedFile);
+            }
+        } else
+            createPopUPInfo("Ecossistema ainda nao foi criado", "Game Status");
     }
 
     private void sairSimulacao(Stage stage) {
