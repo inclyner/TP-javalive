@@ -548,7 +548,7 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     } else if (e.getArea().baixo() > elemento.getArea().cima()) {
                         verticalDistance = e.getArea().baixo() - elemento.getArea().cima();
                     }
-                    if (horizontalDistance < dist || verticalDistance < dist) {
+                    if (horizontalDistance <= dist && verticalDistance <= dist) {
                         return true;
                     }
                 }
@@ -710,6 +710,22 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
         return false;
     }
 
+    public double obtemValoresAntigos(String tipo, int id, String aux) {
+        for (IElemento e : elementos) {
+            if(e.getType().toString().equalsIgnoreCase(tipo) && e.getId()==id){
+                if(aux.equalsIgnoreCase("Velocidade")) {
+                    if (e instanceof Fauna fauna)
+                        return fauna.getVelocidade();
+                }
+                else if(aux.equalsIgnoreCase("Forca"))
+                    if(e instanceof Fauna fauna)
+                        return fauna.getForca();
+                    else if (e instanceof Flora flora)
+                        return flora.getForca();
+            }
+        }
+        return 0;
+    }
 
 }
 
