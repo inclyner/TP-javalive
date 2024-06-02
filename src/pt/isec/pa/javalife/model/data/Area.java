@@ -1,6 +1,8 @@
 package pt.isec.pa.javalife.model.data;
 
-public record Area(double cima, double esquerda, double baixo, double direita) {
+import java.io.Serializable;
+
+public record Area(double cima, double esquerda, double baixo, double direita){
     public boolean compareTo(Area outra, Area board) { //devolve true se estiverem um em cima do outro
         if ((this.direita > board.direita || this.esquerda < board.esquerda || this.baixo > board.baixo || this.cima < board.cima))
             return true;

@@ -1,11 +1,18 @@
 package pt.isec.pa.javalife.model.command;
 
 import pt.isec.pa.javalife.model.data.Ecossistema;
+import pt.isec.pa.javalife.model.memento.CareTaker;
+import pt.isec.pa.javalife.model.memento.Originator;
+
+import java.io.IOException;
 
 public interface ICommand {
-    boolean execute();
+    boolean execute() throws IOException;
 
     boolean undo();
+
+
+
 }
 
 abstract class AbstractCommand implements ICommand {

@@ -2,10 +2,7 @@ package pt.isec.pa.javalife.model.memento;
 
 import pt.isec.pa.javalife.model.data.Ecossistema;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 public class Memento implements IMemento {
     byte[] state;
@@ -21,14 +18,18 @@ public class Memento implements IMemento {
 
 
     @Override
-    public Ecossistema getState() {
+    public Object getState() {
         if (state == null) return null;
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(state); ObjectInputStream ois = new ObjectInputStream(bais)) {
-            return (Ecossistema) ois.readObject();
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(state);
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
+            System.out.println("passou no getstate");
+            return ois.readObject();
         } catch (Exception e) {
             return null;
         }
     }
 
 
-}
+    }
+
+

@@ -6,18 +6,25 @@ import java.io.IOException;
 import java.io.Serializable;
 
 public class Originator implements Serializable, IOriginator {
-    Ecossistema state;
+    public Ecossistema state;
 
-    @Override
+
+
+
     public IMemento save() throws IOException {
         return new Memento(this);
     }
 
     @Override
-    public void restore(IMemento memento) {
+    public void restore(IMemento memento) throws IOException {
         Object obj = memento.getState();
         if (obj instanceof Originator m)
             state = m.state;
+    }
+
+    @Override
+    public IMemento getMemento() {
+        return null;
     }
 
 
