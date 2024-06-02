@@ -19,8 +19,11 @@ public sealed class Flora extends ElementoBase implements IElementoComForca perm
         this.forcaSobreposicao = forcaSobreposicao;
     }
 
-    public boolean evoluir() {
-        setForca(forca + forcaTick);
+    public boolean evoluir(Boolean sol) {
+        if (sol) {
+            setForca(forca + 2*forcaTick);
+        }else
+            setForca(forca + forcaTick);
         if (forca >= 90) {
             return numdeReproducoes < 2;
         }

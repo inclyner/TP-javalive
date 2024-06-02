@@ -21,6 +21,7 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     private static int proxid = 1;
     private final int id;
 
+
     public Fauna(Area area, double forca, double velocidade) {
         super(area);
         this.id = proxid;
@@ -57,27 +58,41 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
     }
 
 
-    public Area movimentacao() {
+    public Area movimentacao(Boolean sol) {
         direcao = (int) (Math.random() * 359);
-        return new Area(getArea().cima() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().esquerda() + velocidade * Math.sin(Math.toRadians(direcao)),
-                getArea().baixo() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().direita() + velocidade * Math.sin(Math.toRadians(direcao)));
+        if (sol) {
+            return new Area(getArea().cima() + (velocidade/2) * Math.cos(Math.toRadians(direcao)), getArea().esquerda() + (velocidade/2) * Math.sin(Math.toRadians(direcao)),
+                    getArea().baixo() + (velocidade/2) * Math.cos(Math.toRadians(direcao)), getArea().direita() + (velocidade/2) * Math.sin(Math.toRadians(direcao)));
+        } else {
+            return new Area(getArea().cima() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().esquerda() + velocidade * Math.sin(Math.toRadians(direcao)),
+                    getArea().baixo() + velocidade * Math.cos(Math.toRadians(direcao)), getArea().direita() + velocidade * Math.sin(Math.toRadians(direcao)));
+        }
     }
 
-    public Area moverParaComida(Area area, boolean existePedra) {
+    public Area moverParaComida(Area area, boolean existePedra, boolean sol) {
             double deltaX = area.esquerda() - this.getArea().esquerda();
             double deltaY = area.cima() - this.getArea().cima();
+            double deslocamentoX;
+            double deslocamentoY;
             // Calcula o ângulo em radianos entre a posição atual e a posição de destino
             double angulo = Math.atan2(deltaY, deltaX);
             // Calcula o deslocamento em X e Y baseado no ângulo e no passo
-            double deslocamentoX = velocidade * Math.cos(angulo);
-            double deslocamentoY = velocidade * Math.sin(angulo);
             if (existePedra) {
+
+                if(sol){
+                    deslocamentoX = (velocidade/2) * Math.cos(angulo);
+                    deslocamentoY = (velocidade/2) * Math.sin(angulo);
+                }
+                else{
+                    deslocamentoX = velocidade * Math.cos(angulo);
+                    deslocamentoY = velocidade * Math.sin(angulo);
+                }
                 return new Area(this.getArea().cima() + deslocamentoY,
                     this.getArea().esquerda() + deslocamentoX,
                     this.getArea().baixo() + deslocamentoY,
                     this.getArea().direita() + deslocamentoX);
             } else {
-                return movimentacao();
+                return movimentacao(sol);
             }
     }
 
@@ -123,8 +138,8 @@ public sealed class Fauna extends ElementoBase implements IElementoComForca perm
         return elemetoPerseguir;
     }
 
-    public boolean verificarAdjacente(Area area) {
-        return moverParaComida(elemetoPerseguir.getArea(), true).compareTo(elemetoPerseguir.getArea(), area);
+    public boolean verificarAdjacente(Area area,Boolean sol) {
+        return moverParaComida(elemetoPerseguir.getArea(), true, sol).compareTo(elemetoPerseguir.getArea(), area);
     }
 
     @Override

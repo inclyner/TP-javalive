@@ -21,10 +21,7 @@ public class EcossistemaFacade{
     private final CommandManager cm;
     private int timeUnit;
 
-    int num_ticks=0;
-    //adicionar no evolve, quando chamo a funcao ele fica a 10
-    //no evolve ele vai aplicar a velocidade metade e o crescimento ao dobro
-    // e retira 1 tick
+
 
     //memento
 
@@ -205,6 +202,7 @@ public class EcossistemaFacade{
     }
 
     public void aplicarSol() {
+        ecossistema.aplicaSol();
 
     }
 }
