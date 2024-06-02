@@ -340,7 +340,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void gravarSnapshot() throws IOException {
-        ecossistemaFacade.saveSnapShot();
+        if(!ecossistemaFacade.verificaEcossitemaNull())
+            ecossistemaFacade.saveSnapShot();
+        else
+            createPopUPInfo("Nao existe ecossistema criado", "Games Status");
     }
 
     private void restaurarSnapshot() throws IOException {
@@ -352,7 +355,10 @@ public class MainJFX extends Application implements PropertyChangeListener {
     }
 
     private void aplicarSol() {
-        ecossistemaFacade.aplicarSol();
+        if(!ecossistemaFacade.verificaEcossitemaNull())
+            ecossistemaFacade.aplicarSol();
+        else
+            createPopUPInfo("Nao existe ecossistema criado", "Games Status");
     }
 
     private boolean aplicarHerbicida(Elemento elemento, int id) throws IOException {

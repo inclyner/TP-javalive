@@ -656,7 +656,6 @@ public class Ecossistema implements Serializable, IGameEngineEvolve {
                     // Verifica se o elemento se sobrepõe a algum existente
                     if (verificaElementoArea(temp, tipo)) {
                         // Se o elemento passar nas verificações, cria e adiciona
-
                         addElemento(Elemento.valueOf(tipo), temp, forca);
                         System.out.println("ELEMENTO ADICIONADO temp = " + temp);
 

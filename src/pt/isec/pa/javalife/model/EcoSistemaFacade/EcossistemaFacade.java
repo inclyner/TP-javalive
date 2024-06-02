@@ -156,7 +156,6 @@ public class EcossistemaFacade{
         }
 
         public void exportasimulação (File file){
-
             ecossistema.exportaSimulacao(file);
         }
 
