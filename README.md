@@ -82,4 +82,3 @@ Implemented using JavaFX:
 
 This README provides an overview of the TP PA-JAVALIFE project, its structure, implemented design patterns, ecosystem elements, and GUI functionalities.
 
-For detailed documentation, refer to JavaDoc comments in the source code.
