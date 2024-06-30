@@ -11,7 +11,9 @@ The application is structured into packages as follows:
 - `pt.isec.pa.javalife.model.data`: Manages data structures.
 - `pt.isec.pa.javalife.model.gameengine`: Handles the tick generator for simulation.
 - `pt.isec.pa.javalife.ui.gui`: Implements the graphical user interface using JavaFX.
-- Other possible packages: `pt.isec.pa.javalife.model.command`, `pt.isec.pa.javalife.model.memento`, `pt.isec.pa.javalife.ui.gui.res` (for multimedia resources management).
+- `pt.isec.pa.javalife.model.command`
+- `pt.isec.pa.javalife.model.memento`
+- `pt.isec.pa.javalife.ui.gui.res` (for multimedia resources management).
 
 ## General Requirements
 
