@@ -47,6 +47,7 @@ Implemented design patterns within the project:
 - Fixed elements in the simulation area.
 - Surrounding barrier preventing animated elements from leaving.
 - Rectangular shapes of various sizes.
+- ![image](https://github.com/inclyner/TP-javalive/assets/84443911/e8142742-de53-4176-871a-a4282add5919)
 
 ### Flora
 
@@ -56,6 +57,7 @@ Implemented design patterns within the project:
 - Adjacency defined for reproduction and interaction with fauna.
 - Strength decay when overlapped by fauna.
 - Represented with customizable color and transparency.
+- ![image](https://github.com/inclyner/TP-javalive/assets/84443911/4cc5c2b5-aeca-4366-b3d3-d4267b9d6da7)
 
 ### Fauna
 
@@ -65,6 +67,7 @@ Implemented design patterns within the project:
 - Forage when strength below 35.
 - Attack other fauna or feed on flora.
 - Reproduction at strength 50, reducing parent's strength by 25.
+![image](https://github.com/inclyner/TP-javalive/assets/84443911/d752b2ac-fb0f-400d-99f3-f0020bc1c23a)
 
 ## GUI Application
 
@@ -75,10 +78,16 @@ Implemented using JavaFX:
 
 ### Menu Options
 
-- File: Create, Open, Save, Export, Import, Exit.
-- Ecossistema: General settings, Add elements, Edit/Delete elements, Undo/Redo.
-- Simulation: Configuration, Start/Stop, Pause/Resume, Save/Restore snapshot.
-- Events: Sun application, Herbicide injection, Strength injection.
+- File: Create, Open, Save, Export, Import, Exit. ![image](https://github.com/inclyner/TP-javalive/assets/84443911/96299677-d831-4825-96dc-64b8f38cb7a2)
+- Ecossistema: General settings, Add elements, Edit/Delete elements, Undo/Redo.![image](https://github.com/inclyner/TP-javalive/assets/84443911/d752b2ac-fb0f-400d-99f3-f0020bc1c23a)
+- Simulation: Configuration, Start/Stop, Pause/Resume, Save/Restore snapshot.![image](https://github.com/inclyner/TP-javalive/assets/84443911/4cc5c2b5-aeca-4366-b3d3-d4267b9d6da7)
+- Events: Sun application, Herbicide injection, Strength injection.![image](https://github.com/inclyner/TP-javalive/assets/84443911/e8142742-de53-4176-871a-a4282add5919)
+
+
+
+
+
+
 
 ---
 
@@ -87,13 +96,13 @@ This README provides an overview of the TP PA-JAVALIFE project, its structure, i
 
 
 
-![image](https://github.com/inclyner/TP-javalive/assets/84443911/d752b2ac-fb0f-400d-99f3-f0020bc1c23a)
 
-![image](https://github.com/inclyner/TP-javalive/assets/84443911/4cc5c2b5-aeca-4366-b3d3-d4267b9d6da7)
 
-![image](https://github.com/inclyner/TP-javalive/assets/84443911/96299677-d831-4825-96dc-64b8f38cb7a2)
 
-![image](https://github.com/inclyner/TP-javalive/assets/84443911/e8142742-de53-4176-871a-a4282add5919)
+
+
+
+
 
 
 ![image](https://github.com/inclyner/TP-javalive/assets/84443911/af2d5b27-2d1a-4b2d-94d9-a74d6d327a01)
